@@ -119,6 +119,44 @@ describe("Hermes plugin installer", () => {
     assert.ok(!fs.existsSync(path.join(ignoredHome, "plugins", PLUGIN_ID)));
   });
 
+  it("reports partial profile sync without failing the primary Hermes home", () => {
+    const sourcePluginDir = makeSourcePlugin();
+    const hermesHome = makeTempDir();
+    const opsHome = path.join(hermesHome, "profiles", "ops");
+    const browserHome = path.join(hermesHome, "profiles", "browser");
+    fs.mkdirSync(opsHome, { recursive: true });
+    fs.mkdirSync(browserHome, { recursive: true });
+    fs.writeFileSync(path.join(opsHome, "config.yaml"), "plugins: {}\n", "utf8");
+    fs.writeFileSync(path.join(browserHome, "config.yaml"), "plugins: {}\n", "utf8");
+    const calls = [];
+    const spawnSync = (command, args, options) => {
+      calls.push({ command, args, options });
+      if (options.env.HERMES_HOME === opsHome) {
+        return { status: 1, stdout: "", stderr: "profile enable failed" };
+      }
+      return { status: 0, stdout: "", stderr: "" };
+    };
+
+    const result = registerHermesPlugin({
+      silent: true,
+      hermesHome,
+      sourcePluginDir,
+      hermesCommand: "hermes",
+      spawnSync,
+      env: {},
+    });
+
+    assert.strictEqual(result.status, "ok");
+    assert.strictEqual(result.profileStatus, "partial");
+    assert.strictEqual(result.profileErrorCount, 1);
+    assert.match(result.profileWarning, /profile enable failed/);
+    assert.deepStrictEqual(calls.map((call) => call.options.env.HERMES_HOME), [hermesHome, browserHome, opsHome]);
+    assert.deepStrictEqual(
+      result.profileResults.map((entry) => [entry.hermesHome, entry.status]),
+      [[hermesHome, "ok"], [browserHome, "ok"], [opsHome, "error"]]
+    );
+  });
+
   it("can skip Hermes profile sync when requested", () => {
     const sourcePluginDir = makeSourcePlugin();
     const hermesHome = makeTempDir();

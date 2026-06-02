@@ -327,6 +327,19 @@ function registerHermesPlugin(options = {}) {
   };
 
   if (firstError) {
+    const profileErrors = results.filter((entry) => entry.status === "error");
+    if (primaryResult && primaryResult.status === "ok") {
+      return {
+        ...base,
+        status: "ok",
+        profileStatus: "partial",
+        profileErrorCount: profileErrors.length,
+        profileWarning: firstError.message,
+        message: installed || updated
+          ? "Hermes plugin installed; some profiles failed to enable"
+          : "Hermes plugin already installed; some profiles failed to enable",
+      };
+    }
     return {
       ...base,
       status: "error",

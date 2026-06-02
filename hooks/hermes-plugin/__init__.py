@@ -261,7 +261,7 @@ def _post_state(body: Dict[str, Any]) -> None:
     _no_server_until = time.monotonic() + NO_SERVER_COOLDOWN_SECONDS
 
 
-def _post_permission(tool_name: str, tool_input: dict, session_id: str) -> Optional[dict]:
+def _post_permission(tool_name: str, tool_input: dict, session_id: str, platform: str = "") -> Optional[dict]:
     """POST to Clawd's /permission endpoint and block until user decides.
 
     Returns the JSON response body as a dict, or None if Clawd is unreachable,
@@ -290,7 +290,8 @@ def _post_permission(tool_name: str, tool_input: dict, session_id: str) -> Optio
         "cwd": _runtime_cwd(),
         "agent_pid": os.getpid(),
     }
-    _add_process_meta(payload_dict)
+    if platform != "webui":
+        _add_process_meta(payload_dict)
     payload = json.dumps(payload_dict).encode("utf-8")
     headers = {
         "Content-Type": "application/json",
@@ -1031,6 +1032,8 @@ def _handle_clarify_tool(**kwargs: Any):
     - The permission bubble fails to create
     """
     args = kwargs.get("args", {})
+    if not isinstance(args, dict):
+        args = {}
     question = str(args.get("question") or "").strip()
     choices_raw = args.get("choices")
     choices: list[str] = []
@@ -1046,7 +1049,7 @@ def _handle_clarify_tool(**kwargs: Any):
     session_id = _session_id("pre_tool_call", kwargs)
 
     try:
-        result = _post_permission("clarify", tool_input, session_id)
+        result = _post_permission("clarify", tool_input, session_id, _session_platform(session_id, kwargs))
     except Exception:
         _append_log({
             "ts": _utc_now(),
@@ -1092,7 +1095,7 @@ def _handle_permission_request(tool_name: str, **kwargs: Any):
     session_id = _session_id("pre_tool_call", kwargs)
 
     try:
-        result = _post_permission(tool_name, tool_input, session_id)
+        result = _post_permission(tool_name, tool_input, session_id, _session_platform(session_id, kwargs))
     except Exception:
         _append_log({
             "ts": _utc_now(),

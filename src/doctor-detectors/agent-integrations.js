@@ -66,7 +66,7 @@ function withAgentBubbleNote(detail, prefs, agentId) {
   // State-only agents (capabilities.permissionApproval === false) never
   // surface a Clawd bubble in the first place, so annotating them as
   // "permission bubbles disabled" would be misleading. Antigravity, Pi,
-  // OpenClaw, and Hermes are current examples.
+  // and OpenClaw are current examples.
   const agent = getAgent(agentId);
   if (agent && agent.capabilities && agent.capabilities.permissionApproval === false) {
     return detail;
