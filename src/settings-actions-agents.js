@@ -49,6 +49,7 @@ const INSTALLABLE_AGENT_IDS = new Set([
   "openclaw",
   "hermes",
   "qoder",
+  "reasonix",
 ]);
 const SETTABLE_AGENT_FLAGS = AGENT_FLAGS.filter((flag) => flag !== "integrationInstalled");
 

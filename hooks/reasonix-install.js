@@ -27,12 +27,10 @@ const REASONIX_HOOK_EVENTS = [
   "UserPromptSubmit",
   "PreToolUse",
   "PostToolUse",
-  "PostToolUseFailure",
   "Stop",
   "SubagentStop",
   "Notification",
   "PreCompact",
-  "PostCompact",
 ];
 
 function isClawdHookCommand(command) {

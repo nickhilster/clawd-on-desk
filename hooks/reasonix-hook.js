@@ -15,12 +15,10 @@ const EVENT_TO_STATE = {
   UserPromptSubmit: "thinking",
   PreToolUse: "working",
   PostToolUse: "working",
-  PostToolUseFailure: "error",
   Stop: "attention",
   SubagentStop: "working",
   Notification: "notification",
   PreCompact: "sweeping",
-  PostCompact: "attention",
 };
 
 const config = getPlatformConfig();

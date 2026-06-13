@@ -5,7 +5,7 @@
 
 module.exports = {
   id: "reasonix",
-  name: "Reasonix",
+  name: "Reasonix CLI",
   processNames: { win: ["reasonix.exe"], mac: ["reasonix"], linux: ["reasonix"] },
   eventSource: "hook",
   eventMap: {
@@ -14,18 +14,16 @@ module.exports = {
     UserPromptSubmit: "thinking",
     PreToolUse: "working",
     PostToolUse: "working",
-    PostToolUseFailure: "error",
     Stop: "attention",
     SubagentStop: "working",
     Notification: "notification",
     PreCompact: "sweeping",
-    PostCompact: "attention",
   },
   capabilities: {
     httpHook: false,
     permissionApproval: false,
     interactiveBubble: false,
-    notificationHook: false,
+    notificationHook: true,
     sessionEnd: true,
     subagent: true,
   },

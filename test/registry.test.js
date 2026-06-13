@@ -42,7 +42,7 @@ describe("Agent Registry", () => {
     assert.strictEqual(registry.getAgent("openclaw").name, "OpenClaw");
     assert.strictEqual(registry.getAgent("hermes").name, "Hermes Agent");
     assert.strictEqual(registry.getAgent("qoder").name, "Qoder");
-    assert.strictEqual(registry.getAgent("reasonix").name, "Reasonix");
+    assert.strictEqual(registry.getAgent("reasonix").name, "Reasonix CLI");
     assert.strictEqual(registry.getAgent("nonexistent"), undefined);
   });
 
@@ -259,7 +259,7 @@ describe("Agent Registry", () => {
     assert.strictEqual(reasonix.capabilities.httpHook, false);
     assert.strictEqual(reasonix.capabilities.permissionApproval, false);
     assert.strictEqual(reasonix.capabilities.interactiveBubble, false);
-    assert.strictEqual(reasonix.capabilities.notificationHook, false);
+    assert.strictEqual(reasonix.capabilities.notificationHook, true);
     assert.strictEqual(reasonix.capabilities.sessionEnd, true);
     assert.strictEqual(reasonix.capabilities.subagent, true);
   });
@@ -348,11 +348,10 @@ describe("Agent Registry", () => {
     assert.strictEqual(reasonix.eventMap.UserPromptSubmit, "thinking");
     assert.strictEqual(reasonix.eventMap.PreToolUse, "working");
     assert.strictEqual(reasonix.eventMap.PostToolUse, "working");
-    assert.strictEqual(reasonix.eventMap.PostToolUseFailure, "error");
     assert.strictEqual(reasonix.eventMap.Stop, "attention");
     assert.strictEqual(reasonix.eventMap.SubagentStop, "working");
+    assert.strictEqual(reasonix.eventMap.Notification, "notification");
     assert.strictEqual(reasonix.eventMap.PreCompact, "sweeping");
-    assert.strictEqual(reasonix.eventMap.PostCompact, "attention");
     assert.strictEqual(reasonix.eventMap.SessionEnd, "sleeping");
   });
 

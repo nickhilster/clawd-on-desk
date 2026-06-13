@@ -397,15 +397,18 @@ function createIntegrationSyncRuntime(options = {}) {
     } catch (err) {
       console.warn("Clawd: failed to sync CodeWhale hooks:", err.message);
       return { status: "error", message: err && err.message ? err.message : "Failed to sync CodeWhale hooks" };
+    }
+  }
+
   function syncReasonixHooks() {
     try {
       if (typeof ctx.syncReasonixHooksImpl === "function") return ctx.syncReasonixHooksImpl();
       const { registerReasonixHooks } = require("../hooks/reasonix-install.js");
-      const { added, updated } = registerReasonixHooks({ silent: true });
-      if (added > 0 || updated > 0) {
-        console.log(`Clawd: synced Reasonix hooks (added ${added}, updated ${updated})`);
+      const result = registerReasonixHooks({ silent: true });
+      if (hasPositiveCount(result.added) || hasPositiveCount(result.updated)) {
+        console.log(`Clawd: synced Reasonix hooks (added ${result.added}, updated ${result.updated})`);
       }
-      return { status: "ok", added, updated };
+      return normalizeCountSyncResult(result, "Reasonix", "reasonix-not-installed");
     } catch (err) {
       console.warn("Clawd: failed to sync Reasonix hooks:", err.message);
       return { status: "error", message: err && err.message ? err.message : "Failed to sync Reasonix hooks" };
