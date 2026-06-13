@@ -42,6 +42,7 @@ const INSTALLABLE_AGENT_IDS = new Set([
   "kiro-cli",
   "kimi-cli",
   "qwen-code",
+  "codewhale",
   "opencode",
   "pi",
   "openclaw",

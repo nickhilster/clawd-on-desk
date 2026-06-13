@@ -13,6 +13,7 @@ const codebuddy = require("../../hooks/codebuddy-install");
 const kiro = require("../../hooks/kiro-install");
 const kimi = require("../../hooks/kimi-install");
 const qwen = require("../../hooks/qwen-code-install");
+const codewhale = require("../../hooks/codewhale-install");
 const opencode = require("../../hooks/opencode-install");
 const pi = require("../../hooks/pi-install");
 const openclaw = require("../../hooks/openclaw-install");
@@ -145,6 +146,19 @@ const AGENT_DESCRIPTORS = Object.freeze([
     marker: qwen.MARKER,
     nested: true,
     hookEvents: qwen.QWEN_CODE_HOOK_EVENTS,
+  }),
+  Object.freeze({
+    agentId: "codewhale",
+    agentName: agentName("codewhale"),
+    eventSource: agentEventSource("codewhale"),
+    parentDir: path.dirname(codewhale.resolveCodewhaleConfigPath()),
+    configPath: codewhale.resolveCodewhaleConfigPath(),
+    configMode: "codewhale-hooks-toml",
+    autoInstall: true,
+    marker: "managed by clawd-on-desk",
+    commandMarker: "codewhale-hook.js",
+    nested: true,
+    hookEvents: codewhale.HOOK_ENTRIES.map((entry) => entry[0]),
   }),
   Object.freeze({
     agentId: "opencode",

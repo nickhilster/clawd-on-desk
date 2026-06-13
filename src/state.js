@@ -1476,7 +1476,7 @@ function updateSession(sessionId, state, event, opts = {}) {
     // wait-for-input alerts toggle is off.
     if (
       event === "Notification"
-      && state === "notification"
+      && (state === "notification" || state === "attention")
       && srcAgentId
       && typeof ctx.isAgentNotificationHookEnabled === "function"
       && !ctx.isAgentNotificationHookEnabled(srcAgentId)
@@ -1715,7 +1715,7 @@ function detectRunningAgentProcesses(callback) {
   const { execFile, exec } = require("child_process");
   if (process.platform === "win32") {
     const psScript =
-      "$names = 'claude.exe','codex.exe','copilot.exe','gemini.exe','agy.exe','codebuddy.exe','kiro-cli.exe','kimi.exe','opencode.exe','pi.exe','hermes.exe','qodercli.exe','qoder-cli.exe'; " +
+      "$names = 'claude.exe','codex.exe','copilot.exe','gemini.exe','agy.exe','codebuddy.exe','kiro-cli.exe','kimi.exe','codewhale.exe','opencode.exe','pi.exe','hermes.exe','qodercli.exe','qoder-cli.exe'; " +
       "$match = Get-CimInstance Win32_Process | Where-Object { " +
         "$names -contains $_.Name -or ($_.Name -eq 'node.exe' -and $_.CommandLine -like '*claude-code*') " +
       "} | Select-Object -First 1; " +
@@ -1727,7 +1727,7 @@ function detectRunningAgentProcesses(callback) {
       (err, stdout) => done(!err && /\d+/.test(stdout))
     );
   } else {
-    exec("pgrep -f 'claude-code|codex|copilot|codebuddy|kimi|@earendil-works/pi-coding-agent|pi-coding-agent/dist/cli\\.js' || pgrep -x 'gemini' || pgrep -x 'agy' || pgrep -x 'kiro-cli' || pgrep -x 'opencode' || pgrep -x 'hermes' || pgrep -x 'qodercli' || pgrep -x 'qoder-cli'", { timeout: 3000 },
+    exec("pgrep -f 'claude-code|codex|copilot|codebuddy|kimi|@earendil-works/pi-coding-agent|pi-coding-agent/dist/cli\\.js' || pgrep -x 'gemini' || pgrep -x 'agy' || pgrep -x 'kiro-cli' || pgrep -x 'codewhale' || pgrep -x 'opencode' || pgrep -x 'hermes' || pgrep -x 'qodercli' || pgrep -x 'qoder-cli'", { timeout: 3000 },
       (err) => done(!err)
     );
   }

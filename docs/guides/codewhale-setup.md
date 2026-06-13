@@ -51,10 +51,11 @@
 | `mode_change`（其他） | attention（感叹号） | agent/plan/yolo 切换 |
 | `on_error` | error | CodeWhale 发生错误 |
 
-### 2.2 自动注册
+### 2.2 按需安装与同步
 
-- Clawd 启动时自动将 7 个 hooks 条目写入 `~/.codewhale/config.toml`
-- 桌宠设置面板中的 "Sync Hooks" 按钮可手动重新同步
+- 全新安装默认不会写入 CodeWhale hooks；需要本机 CodeWhale 追踪时，先到 **Settings → Agents → CodeWhale → Install** 安装并启用集成
+- 安装且启用后，Clawd 启动时会继续同步 7 个 hooks 条目到 `~/.codewhale/config.toml`
+- Settings / Doctor 的 Fix / Repair 会手动重新同步；`node hooks/codewhale-install.js` 仍可用于调试或预注册
 - 卸载支持（`node hooks/codewhale-install.js --uninstall`）
 
 ### 2.3 会话标签优化
@@ -256,7 +257,7 @@ const AGENTS = [
 
 ```js
 // agents 默认值白名单中新增
-"codewhale": { enabled: true, permissionsEnabled: false, notificationHookEnabled: true },
+"codewhale": { integrationInstalled: false, enabled: false, permissionsEnabled: false, notificationHookEnabled: true },
 ```
 
 ### 5.4 `src/integration-sync.js`
@@ -269,7 +270,7 @@ function syncCodewhaleHooks() {
 }
 ```
 
-Clawd 启动时和用户触发 Sync 时自动调用此函数。
+CodeWhale 只有在 Settings 中安装且启用后才会在 Clawd 启动时自动调用此函数；用户触发 Install / Fix / Repair 时也会调用。
 
 ### 5.5 `src/server-agent-id.js`
 
@@ -302,7 +303,7 @@ const NON_COLLAPSIBLE = [
 ];
 ```
 
-确保 CodeWhale 在 agent 列表中不被折叠隐藏。
+确保 CodeWhale 在 agent 列表中显示为可展开项，并露出通知开关。
 
 ### 5.8 `package.json`
 
@@ -386,9 +387,9 @@ CodeWhale 有两个独立的 hook/事件系统：
 ### 8.1 螃蟹不动
 
 1. 确认 Clawd 在运行：`curl http://127.0.0.1:23333/state` 返回 `{"ok":true}`
-2. 确认 hooks 已注册：`grep "codewhale-hook" ~/.codewhale/config.toml` 应有 7 个条目
-3. 确认 hooks 用的是 `node` 而非 `electron`：同上
-4. 确认 CodeWhale agent 已启用：Settings → Agents → CodeWhale → Enabled
+2. 确认已在 **Settings → Agents → CodeWhale → Install** 安装并启用集成
+3. 确认 hooks 已注册：`grep "codewhale-hook" ~/.codewhale/config.toml` 应有 7 个条目
+4. 确认 hooks 用的是 `node` 而非 `electron`：同上
 5. 手动模拟测试：
    ```bash
    DEEPSEEK_SESSION_ID=test_001 \
@@ -407,8 +408,8 @@ CodeWhale 有两个独立的 hook/事件系统：
 
 ### 8.4 Hook 命令用了 electron 而非 node
 
-如果 Clawd 自动同步覆盖了 hooks：
-1. 手动重新注册：`node hooks/codewhale-install.js`
+如果已安装且启用的 CodeWhale 集成在 Clawd 启动同步时覆盖了 hooks：
+1. 从 **Settings → Agents → CodeWhale → Fix / Repair** 重新同步，或调试时手动运行 `node hooks/codewhale-install.js`
 2. 确认 `codewhale-install.js` 包含 Electron 检测修复（第 54 行）
 
 ### 8.5 安装脚本失败
@@ -431,11 +432,16 @@ npm install
 sudo chown root:root node_modules/electron/dist/chrome-sandbox
 sudo chmod 4755 node_modules/electron/dist/chrome-sandbox
 
-# 3. 注册 CodeWhale hooks
-node hooks/codewhale-install.js
-
-# 4. 启动桌宠
+# 3. 启动桌宠
 npm start
+```
+
+启动后打开 **Settings → Agents → CodeWhale → Install**。安装且启用后，Clawd 会在后续启动时继续同步 CodeWhale hooks。
+
+如需在启动桌宠前调试 installer，也可以手动执行：
+
+```bash
+node hooks/codewhale-install.js
 ```
 
 ### 9.2 日常使用

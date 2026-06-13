@@ -59,8 +59,10 @@ describe("agent installation detector", () => {
   it("detects generic parent-directory agents and reports Clawd marker presence separately", () => {
     const homeDir = makeHome();
     const qwenDir = path.join(homeDir, ".qwen");
+    const codewhaleDir = path.join(homeDir, ".codewhale");
     const marker = getAgentDescriptor("qwen-code").marker;
     mkdirp(qwenDir);
+    mkdirp(codewhaleDir);
     writeJson(path.join(qwenDir, "settings.json"), {
       hooks: {
         SessionStart: [{ hooks: [{ type: "command", command: `"node" "/app/hooks/${marker}" SessionStart` }] }],
@@ -69,12 +71,16 @@ describe("agent installation detector", () => {
 
     const report = detectAgentInstallations({ homeDir, now: 1 });
     const qwen = byId(report, "qwen-code");
+    const codewhale = byId(report, "codewhale");
 
     assert.strictEqual(qwen.detectedInstalled, true);
     assert.strictEqual(qwen.confidence, "high");
     assert.strictEqual(qwen.reason, "parent-dir");
     assert.strictEqual(qwen.clawdIntegration.detected, true);
     assert.strictEqual(qwen.clawdIntegration.reason, "marker-found");
+    assert.strictEqual(codewhale.detectedInstalled, true);
+    assert.strictEqual(codewhale.confidence, "high");
+    assert.strictEqual(codewhale.reason, "parent-dir");
   });
 
   it("does not confuse Antigravity's ~/.gemini/config with Gemini CLI", () => {

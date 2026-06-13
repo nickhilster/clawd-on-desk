@@ -36,6 +36,7 @@ function makeRuntime(overrides = {}) {
     syncKiroHooksImpl: () => calls.push({ name: "kiro" }),
     syncKimiHooksImpl: () => calls.push({ name: "kimi" }),
     syncQwenHooksImpl: () => calls.push({ name: "qwen" }),
+    syncCodewhaleHooksImpl: () => calls.push({ name: "codewhale" }),
     syncCodexHooksImpl: () => calls.push({ name: "codex" }),
     repairCodexHooksImpl: (options) => {
       calls.push({ name: "codex-repair" });
@@ -98,6 +99,7 @@ describe("integration sync runtime", () => {
       "kiro",
       "kimi",
       "qwen",
+      "codewhale",
       "codex",
       "pi",
       "openclaw",
@@ -123,6 +125,7 @@ describe("integration sync runtime", () => {
       "kiro",
       "kimi",
       "qwen",
+      "codewhale",
       "codex",
       "opencode",
       "openclaw",
@@ -208,6 +211,13 @@ describe("integration sync runtime", () => {
         modulePath: "../hooks/qwen-code-install.js",
         exportName: "registerQwenCodeHooks",
         reason: "qwen-not-installed",
+      },
+      {
+        agentId: "codewhale",
+        ctxKey: "syncCodewhaleHooksImpl",
+        modulePath: "../hooks/codewhale-install.js",
+        exportName: "registerCodewhaleHooks",
+        reason: "codewhale-not-installed",
       },
       {
         agentId: "codex",
@@ -492,6 +502,33 @@ describe("integration sync runtime", () => {
       assert.deepStrictEqual(logs, []);
     } finally {
       piInstall.registerPiExtension = originalRegister;
+      console.log = originalLog;
+    }
+  });
+
+  it("does not log CodeWhale hook sync when the config is already current", () => {
+    const codewhaleInstall = require("../hooks/codewhale-install");
+    const originalRegister = codewhaleInstall.registerCodewhaleHooks;
+    const originalLog = console.log;
+    const logs = [];
+    codewhaleInstall.registerCodewhaleHooks = () => ({
+      added: 0,
+      removed: 7,
+      updated: false,
+      skipped: true,
+    });
+    console.log = (message) => logs.push(message);
+
+    try {
+      const { runtime } = makeRuntime({ ctx: { syncCodewhaleHooksImpl: undefined } });
+      const result = runtime.syncCodewhaleHooks();
+
+      assert.strictEqual(result.status, "ok");
+      assert.strictEqual(result.added, 0);
+      assert.strictEqual(result.updated, false);
+      assert.deepStrictEqual(logs, []);
+    } finally {
+      codewhaleInstall.registerCodewhaleHooks = originalRegister;
       console.log = originalLog;
     }
   });

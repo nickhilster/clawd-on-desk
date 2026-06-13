@@ -23,6 +23,7 @@ describe("doctor agent descriptors", () => {
         "kiro-cli",
         "kimi-cli",
         "qwen-code",
+        "codewhale",
         "opencode",
         "pi",
         "openclaw",
@@ -43,6 +44,7 @@ describe("doctor agent descriptors", () => {
     const kiro = require("../hooks/kiro-install");
     const kimi = require("../hooks/kimi-install");
     const qwen = require("../hooks/qwen-code-install");
+    const codewhale = require("../hooks/codewhale-install");
     const opencode = require("../hooks/opencode-install");
     const pi = require("../hooks/pi-install");
     const openclaw = require("../hooks/openclaw-install");
@@ -82,6 +84,11 @@ describe("doctor agent descriptors", () => {
     assert.strictEqual(getAgentDescriptor("qwen-code").configPath, qwen.DEFAULT_CONFIG_PATH);
     assert.strictEqual(getAgentDescriptor("qwen-code").marker, qwen.MARKER);
     assert.deepStrictEqual(getAgentDescriptor("qwen-code").hookEvents, qwen.QWEN_CODE_HOOK_EVENTS);
+
+    assert.strictEqual(getAgentDescriptor("codewhale").parentDir, path.dirname(codewhale.resolveCodewhaleConfigPath()));
+    assert.strictEqual(getAgentDescriptor("codewhale").configPath, codewhale.resolveCodewhaleConfigPath());
+    assert.strictEqual(getAgentDescriptor("codewhale").marker, "managed by clawd-on-desk");
+    assert.deepStrictEqual(getAgentDescriptor("codewhale").hookEvents, codewhale.HOOK_ENTRIES.map((entry) => entry[0]));
 
     assert.strictEqual(getAgentDescriptor("opencode").parentDir, opencode.DEFAULT_PARENT_DIR);
     assert.strictEqual(getAgentDescriptor("opencode").configPath, opencode.DEFAULT_CONFIG_PATH);
@@ -141,6 +148,44 @@ describe("doctor agent descriptors", () => {
     assert.strictEqual(descriptor.autoInstall, true);
     assert.strictEqual(descriptor.marker, copilot.MARKER);
     assert.deepStrictEqual(descriptor.hookEvents, copilot.COPILOT_HOOK_EVENTS);
+  });
+
+  it("checks CodeWhale hooks with the dedicated TOML mode", () => {
+    const codewhale = require("../hooks/codewhale-install");
+    const descriptor = getAgentDescriptor("codewhale");
+
+    assert.strictEqual(descriptor.eventSource, "hook");
+    assert.strictEqual(descriptor.configMode, "codewhale-hooks-toml");
+    assert.strictEqual(descriptor.autoInstall, true);
+    assert.strictEqual(descriptor.marker, "managed by clawd-on-desk");
+    assert.strictEqual(descriptor.commandMarker, "codewhale-hook.js");
+    assert.strictEqual(descriptor.nested, true);
+    assert.deepStrictEqual(descriptor.hookEvents, codewhale.HOOK_ENTRIES.map((entry) => entry[0]));
+  });
+
+  it("CodeWhale descriptor honors CODEWHALE_CONFIG_PATH at module-load time", () => {
+    const descriptorsPath = require.resolve("../src/doctor-detectors/agent-descriptors");
+    const codewhalePath = require.resolve("../hooks/codewhale-install");
+    const oldCodewhaleConfigPath = process.env.CODEWHALE_CONFIG_PATH;
+    const oldDeepseekConfigPath = process.env.DEEPSEEK_CONFIG_PATH;
+    process.env.CODEWHALE_CONFIG_PATH = path.join(__dirname, "tmp-codewhale.toml");
+    delete process.env.DEEPSEEK_CONFIG_PATH;
+    delete require.cache[descriptorsPath];
+    delete require.cache[codewhalePath];
+    try {
+      const { getAgentDescriptor: getFresh } = require("../src/doctor-detectors/agent-descriptors");
+      const descriptor = getFresh("codewhale");
+      assert.strictEqual(descriptor.configPath, process.env.CODEWHALE_CONFIG_PATH);
+      assert.strictEqual(descriptor.parentDir, path.dirname(process.env.CODEWHALE_CONFIG_PATH));
+    } finally {
+      if (oldCodewhaleConfigPath === undefined) delete process.env.CODEWHALE_CONFIG_PATH;
+      else process.env.CODEWHALE_CONFIG_PATH = oldCodewhaleConfigPath;
+      if (oldDeepseekConfigPath === undefined) delete process.env.DEEPSEEK_CONFIG_PATH;
+      else process.env.DEEPSEEK_CONFIG_PATH = oldDeepseekConfigPath;
+      delete require.cache[descriptorsPath];
+      delete require.cache[codewhalePath];
+      require("../src/doctor-detectors/agent-descriptors");
+    }
   });
 
   it("Copilot descriptor honors $COPILOT_HOME at module-load time", () => {

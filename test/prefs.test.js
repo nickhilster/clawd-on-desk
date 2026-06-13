@@ -79,7 +79,7 @@ describe("prefs.getDefaults", () => {
       assert.strictEqual(d.agents[id].enabled, true, `${id} should default enabled`);
       assert.strictEqual(d.agents[id].integrationInstalled, true, `${id} should default installed`);
     }
-    for (const id of ["copilot-cli", "cursor-agent", "gemini-cli", "antigravity-cli", "codebuddy", "kiro-cli", "kimi-cli", "qwen-code", "opencode", "pi", "openclaw", "hermes", "qoder"]) {
+    for (const id of ["copilot-cli", "cursor-agent", "gemini-cli", "antigravity-cli", "codebuddy", "kiro-cli", "kimi-cli", "qwen-code", "codewhale", "opencode", "pi", "openclaw", "hermes", "qoder"]) {
       assert.strictEqual(d.agents[id].enabled, false, `${id} should default disabled`);
       assert.strictEqual(d.agents[id].integrationInstalled, false, `${id} should default not installed`);
     }
@@ -95,7 +95,7 @@ describe("prefs.getDefaults", () => {
         `${id} should default permissionsEnabled`
       );
     }
-    for (const id of ["antigravity-cli", "pi", "openclaw", "qoder"]) {
+    for (const id of ["antigravity-cli", "codewhale", "pi", "openclaw", "qoder"]) {
       assert.strictEqual(
         d.agents[id].permissionsEnabled,
         false,
@@ -133,6 +133,14 @@ describe("prefs.getDefaults", () => {
     assert.strictEqual(d.agents.qoder.enabled, false);
     assert.strictEqual(d.agents.qoder.permissionsEnabled, false);
     assert.strictEqual(d.agents.qoder.notificationHookEnabled, true);
+  });
+
+  it("defaults CodeWhale permission bubbles off (state-only)", () => {
+    const d = prefs.getDefaults();
+    assert.strictEqual(d.agents.codewhale.integrationInstalled, false);
+    assert.strictEqual(d.agents.codewhale.enabled, false);
+    assert.strictEqual(d.agents.codewhale.permissionsEnabled, false);
+    assert.strictEqual(d.agents.codewhale.notificationHookEnabled, true);
   });
 
   it("defaults Pi permission bubbles off", () => {
@@ -551,7 +559,7 @@ describe("prefs.validate", () => {
 
   it("seeds all known agents with notificationHookEnabled=true", () => {
     const d = prefs.getDefaults();
-    for (const id of ["claude-code", "codex", "copilot-cli", "cursor-agent", "gemini-cli", "codebuddy", "kiro-cli", "kimi-cli", "qwen-code", "opencode", "pi", "openclaw", "hermes", "qoder"]) {
+    for (const id of ["claude-code", "codex", "copilot-cli", "cursor-agent", "gemini-cli", "codebuddy", "kiro-cli", "kimi-cli", "qwen-code", "codewhale", "opencode", "pi", "openclaw", "hermes", "qoder"]) {
       assert.strictEqual(
         d.agents[id].notificationHookEnabled,
         true,

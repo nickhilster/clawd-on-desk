@@ -270,6 +270,7 @@ function detectInstallation(descriptor, paths, options) {
     case "codebuddy":
     case "kimi-cli":
     case "qwen-code":
+    case "codewhale":
     case "opencode":
     case "qoder":
       if (dirExists(fsImpl, paths.parentDir)) return installationResult(true, "high", "parent-dir", `${paths.parentDir} exists`);

@@ -385,6 +385,21 @@ function createIntegrationSyncRuntime(options = {}) {
     }
   }
 
+  function syncCodewhaleHooks() {
+    try {
+      if (typeof ctx.syncCodewhaleHooksImpl === "function") return ctx.syncCodewhaleHooksImpl();
+      const { registerCodewhaleHooks } = require("../hooks/codewhale-install.js");
+      const result = registerCodewhaleHooks({ silent: true });
+      if (hasPositiveCount(result.added) || hasPositiveCount(result.updated)) {
+        console.log(`Clawd: synced CodeWhale hooks (added ${result.added}, updated ${result.updated})`);
+      }
+      return normalizeCountSyncResult(result, "CodeWhale", "codewhale-not-installed");
+    } catch (err) {
+      console.warn("Clawd: failed to sync CodeWhale hooks:", err.message);
+      return { status: "error", message: err && err.message ? err.message : "Failed to sync CodeWhale hooks" };
+    }
+  }
+
   const AGENT_INTEGRATION_SYNCERS = Object.freeze({
     "gemini-cli": syncGeminiHooks,
     "antigravity-cli": syncAntigravityHooks,
@@ -394,6 +409,7 @@ function createIntegrationSyncRuntime(options = {}) {
     "kiro-cli": syncKiroHooks,
     "kimi-cli": syncKimiHooks,
     "qwen-code": syncQwenHooks,
+    codewhale: syncCodewhaleHooks,
     codex: syncCodexHooks,
     opencode: syncOpencodePlugin,
     pi: syncPiExtension,
@@ -491,6 +507,7 @@ function createIntegrationSyncRuntime(options = {}) {
     syncKiroHooks,
     syncKimiHooks,
     syncQwenHooks,
+    syncCodewhaleHooks,
     syncCodexHooks,
     syncOpencodePlugin,
     syncPiExtension,
