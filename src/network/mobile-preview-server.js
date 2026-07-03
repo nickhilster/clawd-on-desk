@@ -10,6 +10,12 @@ const path = require("path");
 const crypto = require("crypto");
 const os = require("os");
 const WebSocket = require("ws");
+let Bonjour;
+try {
+  Bonjour = require("bonjour");
+} catch {
+  Bonjour = null;
+}
 
 const PROTOCOL_VERSION = "v1";
 const DEFAULT_PORT = 23334;
@@ -75,6 +81,8 @@ function initMobilePreviewServer(ctx) {
   let activePort = null;
   let heartbeatTimer = null;
   let closed = false;
+  let bonjourService = null;
+  let bonjourInstance = null;
 
   // ── HTTP server (serves PWA + WebSocket upgrade) ──
 
@@ -280,6 +288,46 @@ function initMobilePreviewServer(ctx) {
     }
   }
 
+  // ── mDNS advertisement ──
+
+  function advertiseMDNS() {
+    if (!Bonjour) return;
+    try {
+      bonjourInstance = new Bonjour();
+      bonjourService = bonjourInstance.publish({
+        name: `clawd-on-desk-${machineId.slice(0, 8)}`,
+        type: "clawd",
+        protocol: "tcp",
+        port: activePort,
+        host: os.hostname(),
+        txt: {
+          machineId,
+          machineName,
+          token,
+          version: PROTOCOL_VERSION,
+        },
+      });
+      console.log(`[mobile-preview] mDNS advertised as clawd-on-desk-${machineId.slice(0, 8)}._clawd._tcp.local`);
+    } catch (err) {
+      console.error("[mobile-preview] mDNS advertisement failed:", err.message);
+    }
+  }
+
+  function unAdvertiseMDNS() {
+    if (bonjourService) {
+      try {
+        bonjourService.stop();
+      } catch {}
+      bonjourService = null;
+    }
+    if (bonjourInstance) {
+      try {
+        bonjourInstance.destroy();
+      } catch {}
+      bonjourInstance = null;
+    }
+  }
+
   // ── Public API ──
 
   function start() {
@@ -304,6 +352,7 @@ function initMobilePreviewServer(ctx) {
       const onListening = () => {
         activePort = ports[idx];
         console.log(`[mobile-preview] started on 0.0.0.0:${activePort}`);
+        advertiseMDNS();
         httpServer.removeListener("error", onError);
         httpServer.removeListener("listening", onListening);
         resolve(activePort);
@@ -321,6 +370,7 @@ function initMobilePreviewServer(ctx) {
     closed = true;
     sessionCache.clear();
     stopHeartbeat();
+    unAdvertiseMDNS();
     for (const c of clients) { try { c.close(1001, "Server shutting down"); } catch {} }
     clients.clear();
     clientMeta.clear();

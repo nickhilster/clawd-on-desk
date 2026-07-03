@@ -177,6 +177,9 @@ body { display: flex; flex-direction: column; height: 100%; }
 }
 .input-group textarea { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
 .input-group input:focus, .input-group textarea:focus { border-color: var(--accent); }
+.discovery-section { margin-bottom: 14px; }
+.discovery-results { margin-top: 10px; padding: 10px; background: var(--bg); border-radius: 8px; }
+.discovery-results.hidden { display: none; }
 .manual-form { margin-top: 14px; padding-top: 14px; border-top: 0.5px solid var(--card-border); }
 .btn-group { display: flex; gap: 10px; margin-top: 16px; }
 .primary-btn, .secondary-btn {
