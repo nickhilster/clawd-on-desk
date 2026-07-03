@@ -649,6 +649,13 @@
       html += '<div class="settings-section">';
       html += '<div class="settings-section-title">添加设备</div>';
       html += '<p class="settings-tab-desc">在该设备的 Clawd 设置 → 移动端 中复制连接链接，粘贴到下方。</p>';
+
+      // Discovery section
+      html += '<div class="discovery-section">';
+      html += '<button class="secondary-btn" id="btn-discover-machines">🔍 发现设备</button>';
+      html += '<div class="discovery-results hidden" id="discovery-results"></div>';
+      html += '</div>';
+
       html += '<div class="input-group"><textarea id="pair-input" rows="2" placeholder="http://192.168.x.x:23334/mobile/?host=...&amp;port=...&amp;token=..."></textarea></div>';
       html += '<div class="btn-group"><button class="primary-btn" id="btn-add-pair">添加</button>';
       html += '<button class="secondary-btn" id="btn-toggle-manual">手动输入</button></div>';
@@ -717,6 +724,91 @@
         if (!result.ok) { showToast(result.error, "error"); return; }
         showToast("已添加设备：" + result.machine.name, "success");
       });
+
+      var self = this;
+      document.getElementById("btn-discover-machines").addEventListener("click", function() {
+        self.discover(machineManager);
+      });
+    }
+
+    discover(machineManager) {
+      var btn = document.getElementById("btn-discover-machines");
+      var resultDiv = document.getElementById("discovery-results");
+      btn.disabled = true;
+      btn.textContent = "🔍 搜索中...";
+      resultDiv.innerHTML = "";
+      resultDiv.classList.remove("hidden");
+
+      this._discoverMachines().then(function(machines) {
+        if (machines.length === 0) {
+          resultDiv.innerHTML = "<p style='color: #888; text-align: center;'>未找到可用的设备。请确保设备在同一局域网内。</p>";
+        } else {
+          var html = "<div style='display: flex; flex-direction: column; gap: 8px;'>";
+          machines.forEach(function(m) {
+            html += "<div style='border: 1px solid #444; border-radius: 4px; padding: 12px; background: #1a1a1a;'>";
+            html += "<div style='font-weight: bold; margin-bottom: 4px;'>" + esc(m.machineName || "Unknown") + "</div>";
+            html += "<div style='font-size: 12px; color: #aaa; margin-bottom: 8px;'>" + esc(m.host) + ":" + m.port + "</div>";
+            html += "<button class='primary-btn' style='width: 100%; padding: 8px; font-size: 12px;' data-host='" + esc(m.host) + "' data-port='" + m.port + "' data-token='" + esc(m.token) + "' data-name='" + esc(m.machineName || "Unknown") + "'>连接</button>";
+            html += "</div>";
+          });
+          html += "</div>";
+          resultDiv.innerHTML = html;
+          resultDiv.querySelectorAll("button").forEach(function(btn) {
+            btn.addEventListener("click", function() {
+              var result = machineManager.addMachine({
+                name: this.getAttribute("data-name"),
+                host: this.getAttribute("data-host"),
+                port: parseInt(this.getAttribute("data-port"), 10),
+                token: this.getAttribute("data-token"),
+              });
+              if (!result.ok) { showToast(result.error, "error"); return; }
+              showToast("已添加设备：" + result.machine.name, "success");
+              resultDiv.classList.add("hidden");
+            });
+          });
+        }
+
+        btn.disabled = false;
+        btn.textContent = "🔍 发现设备";
+      }).catch(function(err) {
+        resultDiv.innerHTML = "<p style='color: #f44; text-align: center;'>搜索失败: " + esc(String(err)) + "</p>";
+        btn.disabled = false;
+        btn.textContent = "🔍 发现设备";
+      });
+    }
+
+    _discoverMachines() {
+      var list = this._getSubnetIPs();
+      var timeout = 3000;
+      var promises = list.map(function(ip) {
+        return fetch("http://" + ip + ":23334/api/connection-info", { method: "GET", timeout: timeout })
+          .then(function(res) { return res.json(); })
+          .then(function(data) {
+            if (data && data.status === "ok" && data.machineId) {
+              return {
+                host: ip,
+                port: data.port || 23334,
+                token: data.token || "",
+                machineId: data.machineId,
+                machineName: data.machineName || "Unknown",
+              };
+            }
+            return null;
+          })
+          .catch(function() { return null; });
+      });
+      return Promise.all(promises).then(function(results) {
+        return results.filter(function(r) { return r !== null; });
+      });
+    }
+
+    _getSubnetIPs() {
+      var ips = [];
+      var baseIP = "192.168.1";
+      for (var i = 1; i <= 254; i++) {
+        ips.push(baseIP + "." + i);
+      }
+      return ips;
     }
   }
 
