@@ -4,31 +4,31 @@
   // === Constants ===
 
   var STATE_CONFIG = {
-    error:        { icon: "error",        color: "#ef4444", priority: 0, label: "错误" },
-    attention:    { icon: "attention",    color: "#b45309", priority: 1, label: "需要关注" },
-    working:      { icon: "working",      color: "#22c55e", priority: 2, label: "工作中" },
-    juggling:     { icon: "juggling",     color: "#22c55e", priority: 2, label: "多任务" },
-    thinking:     { icon: "thinking",     color: "#3b82f6", priority: 3, label: "思考中" },
-    notification: { icon: "notification", color: "#d97757", priority: 4, label: "通知" },
-    sweeping:     { icon: "sweeping",     color: "#71717a", priority: 5, label: "清理中" },
-    carrying:     { icon: "carrying",     color: "#71717a", priority: 5, label: "搬运中" },
-    idle:         { icon: "idle",         color: "#71717a", priority: 6, label: "空闲" },
-    sleeping:     { icon: "sleeping",     color: "#a1a1aa", priority: 7, label: "休眠" },
+    error:        { icon: "error",        color: "#ef4444", priority: 0, label: "Error" },
+    attention:    { icon: "attention",    color: "#b45309", priority: 1, label: "Attention" },
+    working:      { icon: "working",      color: "#22c55e", priority: 2, label: "Working" },
+    juggling:     { icon: "juggling",     color: "#22c55e", priority: 2, label: "Juggling" },
+    thinking:     { icon: "thinking",     color: "#3b82f6", priority: 3, label: "Thinking" },
+    notification: { icon: "notification", color: "#d97757", priority: 4, label: "Notification" },
+    sweeping:     { icon: "sweeping",     color: "#71717a", priority: 5, label: "Sweeping" },
+    carrying:     { icon: "carrying",     color: "#71717a", priority: 5, label: "Carrying" },
+    idle:         { icon: "idle",         color: "#71717a", priority: 6, label: "Idle" },
+    sleeping:     { icon: "sleeping",     color: "#a1a1aa", priority: 7, label: "Sleeping" },
   };
 
   var CONNECTION_STATES = {
-    connected:    { dot: "connected", text: "已连接", color: "#22c55e" },
-    connecting:   { dot: "connecting", text: "连接中...", color: "#b45309" },
-    reconnecting: { dot: "reconnecting", text: "重连中...", color: "#ef4444" },
-    disconnected: { dot: "", text: "离线", color: "#52525b" },
-    auth_failed:  { dot: "", text: "认证失败", color: "#ef4444" },
+    connected:    { dot: "connected", text: "Connected", color: "#22c55e" },
+    connecting:   { dot: "connecting", text: "Connecting...", color: "#b45309" },
+    reconnecting: { dot: "reconnecting", text: "Reconnecting...", color: "#ef4444" },
+    disconnected: { dot: "", text: "Offline", color: "#52525b" },
+    auth_failed:  { dot: "", text: "Auth Failed", color: "#ef4444" },
   };
 
   var EVENT_LABELS_CN = {
-    UserPromptSubmit: "用户输入", PreToolUse: "工具启动", PostToolUse: "工具完成",
-    PostToolUseFailure: "工具失败", Stop: "已完成", SessionStart: "会话开始",
-    SessionEnd: "会话结束", PermissionRequest: "需要权限", Notification: "通知",
-    SubagentStart: "子代理启动", SubagentStop: "子代理停止",
+    UserPromptSubmit: "User Input", PreToolUse: "Tool Start", PostToolUse: "Tool Complete",
+    PostToolUseFailure: "Tool Failed", Stop: "Completed", SessionStart: "Session Start",
+    SessionEnd: "Session End", PermissionRequest: "Permission", Notification: "Notification",
+    SubagentStart: "Subagent Start", SubagentStop: "Subagent Stop",
   };
 
   var MACHINES_KEY = "clawd-machines";
@@ -59,10 +59,10 @@
   function formatAgo(ts) {
     if (!ts) return "";
     var sec = Math.floor((Date.now() - ts) / 1000);
-    if (sec < 5) return "刚刚";
-    if (sec < 60) return sec + "秒前";
-    if (sec < 3600) return Math.floor(sec / 60) + "分钟前";
-    return Math.floor(sec / 3600) + "小时前";
+    if (sec < 5) return "just now";
+    if (sec < 60) return sec + "s ago";
+    if (sec < 3600) return Math.floor(sec / 60) + "m ago";
+    return Math.floor(sec / 3600) + "h ago";
   }
 
   function eventLabel(eventName) {
@@ -175,7 +175,7 @@
       if (s === "error" || s === "attention") {
         this._notify(config.label, label + suffix + " - " + config.label, s);
       } else if ((prev === "working" || prev === "thinking") && s === "idle") {
-        this._notify("任务完成", label + suffix + " 已完成任务", "idle");
+        this._notify("Task Complete", label + suffix + " task completed", "idle");
       }
     }
 
@@ -264,7 +264,7 @@
       };
       socket.onclose = function(event) {
         if (socket !== self.ws) return; // stale socket — ignore
-        if (event.code === 1008) { self._setState("auth_failed"); log("Auth failed", self.name); showToast((self.name || self.host) + ": Token 已过期，请重新添加", "error"); return; }
+        if (event.code === 1008) { self._setState("auth_failed"); log("Auth failed", self.name); showToast((self.name || self.host) + ": Token expired, please re-add", "error"); return; }
         if (connected) log("Disconnected (code: " + event.code + ")", self.name);
         if (self.handlers.onDisconnected) self.handlers.onDisconnected(self);
         self._scheduleReconnect();
@@ -276,7 +276,7 @@
       this.retryCount++;
       this._setState("reconnecting");
       if (this.retryCount === 5) {
-        showToast((this.name || this.host) + ": 仍在重连…请检查该设备是否已开启", "info", true);
+        showToast((this.name || this.host) + ": reconnecting... check if device is online", "info", true);
       }
       var self = this;
       this.reconnectTimer = setTimeout(function() { self.reconnectDelay = Math.min(self.reconnectDelay * 2, self.maxReconnectDelay); self._doConnect(); }, this.reconnectDelay);
@@ -395,10 +395,10 @@
 
     addMachine(input) {
       if (!input || !input.host || !input.port || !input.token) {
-        return { ok: false, error: "请填写完整的 Host / Port / Token" };
+        return { ok: false, error: "Host / Port / Token required" };
       }
       if (this.machines.size >= MAX_MACHINES && !this.machines.has(input.host + ":" + input.port)) {
-        return { ok: false, error: "最多支持 " + MAX_MACHINES + " 台设备" };
+        return { ok: false, error: "Maximum " + MAX_MACHINES + " machines supported" };
       }
       var record = this._register({
         id: input.host + ":" + input.port,
@@ -490,8 +490,8 @@
 
       if (this.machinesMeta.length === 0) {
         this.container.innerHTML = '<div class="empty-state"><div class="empty-icon">' + icon("paw") + '</div>' +
-          '<div class="empty-text">添加设备开始监控</div>' +
-          '<div class="empty-hint">前往"设备"页添加桌面端</div></div>';
+          '<div class="empty-text">Add devices to get started</div>' +
+          '<div class="empty-hint">Go to Devices tab to add a desktop</div></div>';
         return;
       }
 
@@ -503,7 +503,7 @@
       });
 
       var totalSessions = this.sessions.size;
-      var html = '<div class="section-label">活跃会话 &middot; ' + totalSessions + '</div>';
+      var html = '<div class="section-label">Active Sessions &middot; ' + totalSessions + '</div>';
 
       var machinesSorted = this.machinesMeta.slice().sort(function(a, b) { return a.name.localeCompare(b.name); });
       for (var mi = 0; mi < machinesSorted.length; mi++) {
@@ -524,7 +524,7 @@
         html += '</div>';
 
         if (entries.length === 0) {
-          html += '<div class="machine-group-empty">' + (isOffline ? "等待连接…" : "暂无活跃会话") + '</div>';
+          html += '<div class="machine-group-empty">' + (isOffline ? "Waiting to connect..." : "No active sessions") + '</div>';
         } else {
           for (var i = 0; i < entries.length; i++) html += this._renderCard(entries[i][0], entries[i][1]);
         }
@@ -568,7 +568,7 @@
       if (s.updatedAt) { html += '<span class="meta-sep">&middot;</span><span class="meta-item meta-time" data-ts="' + s.updatedAt + '">' + formatAgo(s.updatedAt) + '</span>'; }
       html += '</div>';
       html += '<div class="card-divider"></div>';
-      html += '<div class="card-footer" data-sid="' + compositeId + '"><div class="footer-events">' + icon("activity") + '<span>最近事件</span>';
+      html += '<div class="card-footer" data-sid="' + compositeId + '"><div class="footer-events">' + icon("activity") + '<span>Recent Activity</span>';
       if (events.length) html += '<span class="event-count">' + events.length + '</span>';
       html += '</div><span class="footer-chevron">' + (isExpanded ? icon("collapse") : icon("expand")) + '</span></div>';
       if (events.length) html += this._renderEvents(events, isExpanded, this._animatingSid === compositeId);
@@ -626,9 +626,9 @@
 
       // Device list
       html += '<div class="settings-section">';
-      html += '<div class="settings-section-title">已添加设备 &middot; ' + machines.length + '</div>';
+      html += '<div class="settings-section-title">Added Devices &middot; ' + machines.length + '</div>';
       if (machines.length === 0) {
-        html += '<div class="machines-empty">尚未添加任何设备</div>';
+        html += '<div class="machines-empty">No devices added</div>';
       } else {
         html += '<div class="machine-list">';
         for (var i = 0; i < machines.length; i++) {
@@ -647,31 +647,31 @@
 
       // Add device
       html += '<div class="settings-section">';
-      html += '<div class="settings-section-title">添加设备</div>';
-      html += '<p class="settings-tab-desc">在该设备的 Clawd 设置 → 移动端 中复制连接链接，粘贴到下方。</p>';
+      html += '<div class="settings-section-title">Add Device</div>';
+      html += '<p class="settings-tab-desc">Copy the connection URL from Desktop Settings → Mobile and paste below.</p>';
 
       // Discovery section
       html += '<div class="discovery-section">';
-      html += '<button class="secondary-btn" id="btn-discover-machines">🔍 发现设备</button>';
+      html += '<button class="secondary-btn" id="btn-discover-machines">🔍 Discover Machines</button>';
       html += '<div class="discovery-results hidden" id="discovery-results"></div>';
       html += '</div>';
 
       html += '<div class="input-group"><textarea id="pair-input" rows="2" placeholder="http://192.168.x.x:23334/mobile/?host=...&amp;port=...&amp;token=..."></textarea></div>';
-      html += '<div class="btn-group"><button class="primary-btn" id="btn-add-pair">添加</button>';
-      html += '<button class="secondary-btn" id="btn-toggle-manual">手动输入</button></div>';
+      html += '<div class="btn-group"><button class="primary-btn" id="btn-add-pair">Add</button>';
+      html += '<button class="secondary-btn" id="btn-toggle-manual">Manual Entry</button></div>';
 
       html += '<div class="manual-form hidden" id="manual-form">';
-      html += '<div class="input-group"><label>名称（可选）</label><input type="text" id="manual-name" placeholder="我的笔记本"></div>';
+      html += '<div class="input-group"><label>Name (Optional)</label><input type="text" id="manual-name" placeholder="My Laptop"></div>';
       html += '<div class="input-group"><label>Host / IP</label><input type="text" id="manual-host" placeholder="192.168.1.10"></div>';
       html += '<div class="input-group"><label>Port</label><input type="number" id="manual-port" placeholder="23334"></div>';
       html += '<div class="input-group"><label>Token</label><input type="text" id="manual-token" placeholder="token"></div>';
-      html += '<div class="btn-group"><button class="primary-btn" id="btn-add-manual">添加设备</button></div>';
+      html += '<div class="btn-group"><button class="primary-btn" id="btn-add-manual">Add Device</button></div>';
       html += '</div>';
       html += '</div>';
 
       // Log section (collapsed by default)
       html += '<div class="log-section">';
-      html += '<button class="log-toggle" id="btn-toggle-log">日志 (' + _logBuffer.length + ')</button>';
+      html += '<button class="log-toggle" id="btn-toggle-log">Logs (' + _logBuffer.length + ')</button>';
       html += '<div class="log-body" id="settings-log-content"></div>';
       html += '</div>';
 
@@ -705,10 +705,10 @@
       document.getElementById("btn-add-pair").addEventListener("click", function() {
         var text = document.getElementById("pair-input").value;
         var parsed = parsePairInput(text);
-        if (!parsed) { showToast("无法解析连接信息，请检查粘贴内容", "error"); return; }
+        if (!parsed) { showToast("Failed to parse connection info", "error"); return; }
         var result = machineManager.addMachine(parsed);
         if (!result.ok) { showToast(result.error, "error"); return; }
-        showToast("已添加设备：" + result.machine.name, "success");
+        showToast("Device added: " + result.machine.name, "success");
       });
 
       document.getElementById("btn-toggle-manual").addEventListener("click", function() {
@@ -722,7 +722,7 @@
         var tokenVal = document.getElementById("manual-token").value.trim();
         var result = machineManager.addMachine({ name: name, host: hostVal, port: portVal, token: tokenVal });
         if (!result.ok) { showToast(result.error, "error"); return; }
-        showToast("已添加设备：" + result.machine.name, "success");
+        showToast("Device added: " + result.machine.name, "success");
       });
 
       var self = this;
@@ -735,20 +735,20 @@
       var btn = document.getElementById("btn-discover-machines");
       var resultDiv = document.getElementById("discovery-results");
       btn.disabled = true;
-      btn.textContent = "🔍 搜索中...";
+      btn.textContent = "🔍 Searching...";
       resultDiv.innerHTML = "";
       resultDiv.classList.remove("hidden");
 
       this._discoverMachines().then(function(machines) {
         if (machines.length === 0) {
-          resultDiv.innerHTML = "<p style='color: #888; text-align: center;'>未找到可用的设备。请确保设备在同一局域网内。</p>";
+          resultDiv.innerHTML = "<p style='color: #888; text-align: center;'>No devices found. Make sure devices are on the same network.</p>";
         } else {
           var html = "<div style='display: flex; flex-direction: column; gap: 8px;'>";
           machines.forEach(function(m) {
             html += "<div style='border: 1px solid #444; border-radius: 4px; padding: 12px; background: #1a1a1a;'>";
             html += "<div style='font-weight: bold; margin-bottom: 4px;'>" + esc(m.machineName || "Unknown") + "</div>";
             html += "<div style='font-size: 12px; color: #aaa; margin-bottom: 8px;'>" + esc(m.host) + ":" + m.port + "</div>";
-            html += "<button class='primary-btn' style='width: 100%; padding: 8px; font-size: 12px;' data-host='" + esc(m.host) + "' data-port='" + m.port + "' data-token='" + esc(m.token) + "' data-name='" + esc(m.machineName || "Unknown") + "'>连接</button>";
+            html += "<button class='primary-btn' style='width: 100%; padding: 8px; font-size: 12px;' data-host='" + esc(m.host) + "' data-port='" + m.port + "' data-token='" + esc(m.token) + "' data-name='" + esc(m.machineName || "Unknown") + "'>Connect</button>";
             html += "</div>";
           });
           html += "</div>";
@@ -762,18 +762,18 @@
                 token: this.getAttribute("data-token"),
               });
               if (!result.ok) { showToast(result.error, "error"); return; }
-              showToast("已添加设备：" + result.machine.name, "success");
+              showToast("Device added: " + result.machine.name, "success");
               resultDiv.classList.add("hidden");
             });
           });
         }
 
         btn.disabled = false;
-        btn.textContent = "🔍 发现设备";
+        btn.textContent = "🔍 Discover Machines";
       }).catch(function(err) {
-        resultDiv.innerHTML = "<p style='color: #f44; text-align: center;'>搜索失败: " + esc(String(err)) + "</p>";
+        resultDiv.innerHTML = "<p style='color: #f44; text-align: center;'>Search failed: " + esc(String(err)) + "</p>";
         btn.disabled = false;
-        btn.textContent = "🔍 发现设备";
+        btn.textContent = "🔍 Discover Machines";
       });
     }
 
@@ -848,7 +848,7 @@
         var result = this.machineManager.addMachine({
           host: urlHost, port: parseInt(urlPort, 10), token: urlToken, name: urlName || undefined,
         });
-        if (result.ok) showToast("已添加设备：" + result.machine.name, "success");
+        if (result.ok) showToast("Device added: " + result.machine.name, "success");
         try { window.history.replaceState(null, "", window.location.pathname); } catch {}
       } else {
         this.machineManager.connectAll();
