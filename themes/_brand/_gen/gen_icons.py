@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "spark" / "assets" / "_gen"))
 from svg2apng import render_svg_to_pil  # reuse the proven PyQt5 rasterizer
@@ -30,9 +31,14 @@ tray.save(ASSETS_DIR / "tray-iconTemplate.png")
 flash = render_svg_to_pil(SVG_SRC, size=32)
 flash.save(ASSETS_DIR / "tray-icon-flash.png")
 
-# Dock icon (macOS): matches assets/icon.png at dock tile scale per the
-# existing comment in src/main.js about the ~72.6% fill convention
-dock = render_svg_to_pil(SVG_SRC, size=512)
-dock.save(ASSETS_DIR / "dock-icon.png")
+# Dock icon (macOS): 1024px canvas, artwork padded to the Apple Big Sur+ grid
+# (~80.5%, 824/1024) rather than full-bleed -- see test/main-mac-dock-icon.test.js.
+DOCK_CANVAS = 1024
+DOCK_CONTENT = 824
+dock_content = render_svg_to_pil(SVG_SRC, size=DOCK_CONTENT)
+dock_canvas = Image.new("RGBA", (DOCK_CANVAS, DOCK_CANVAS), (0, 0, 0, 0))
+offset = (DOCK_CANVAS - DOCK_CONTENT) // 2
+dock_canvas.paste(dock_content, (offset, offset), dock_content)
+dock_canvas.save(ASSETS_DIR / "dock-icon.png")
 
 print("wrote icon.png, icon.ico, tray-icon.png, tray-iconTemplate.png, tray-icon-flash.png, dock-icon.png")
