@@ -111,3 +111,24 @@ scripts/*
 
 # Cursor local config (MCP, rules from omc setup)
 .cursor/
+
+# Android build artifacts (vendored from clawd-on-mobile)
+android/.gradle/
+android/.idea/
+android/.kotlin/
+android/build/
+android/app/build/
+android/local.properties
+android/*.hprof
+
+# Android release keystore (distributed via GitHub Releases, not git)
+android/release-keystore.jks
+android/release-keystore.b64
+android/keystore-base64.txt
+android/ks_b64.tmp
+android/release.keystore
+android/build-debug.log
+android/build-release.log
+
+# Relay server dependencies
+relay/node_modules/

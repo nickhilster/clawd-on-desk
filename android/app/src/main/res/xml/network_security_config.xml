@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--
+        Cleartext is allowed here because Android's network security config has no
+        way to scope cleartextTrafficPermitted to "any RFC1918 LAN address" — only
+        literal domains/IPs are supported, not CIDR ranges. The actual restriction
+        lives in app code: ConnectionConfig.isLan/isValidHost only allow ws:// to be
+        used for private/site-local/loopback/.local hosts; every other host goes
+        through wss:// with system trust anchors (see LanConnectionStrategy).
+    -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

@@ -1,0 +1,156 @@
+package com.teambotics.deskbuddy.mobile.ui.navigation
+
+import android.util.Log
+import com.teambotics.deskbuddy.mobile.ClawdApp
+import com.teambotics.deskbuddy.mobile.data.PrefsStore
+import com.teambotics.deskbuddy.mobile.notification.StatusNotifier
+import com.teambotics.deskbuddy.mobile.service.WsConnectionService
+import com.teambotics.deskbuddy.mobile.util.HttpClientProvider
+import com.teambotics.deskbuddy.mobile.ws.CertFingerprintInfo
+import com.teambotics.deskbuddy.mobile.ws.StreamingClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+
+/**
+ * Manages [WsConnectionService] lifecycle, client acquisition, TOFU certificate
+ * handling, notification updates, and auto-reconnect.
+ *
+ * Extracted from [ClawdNavGraph] so the composable only owns routing.
+ */
+class ServiceManager(
+    private val context: android.content.Context,
+    private val scope: CoroutineScope,
+    private val prefsStore: PrefsStore,
+    private val statusNotifier: StatusNotifier,
+) {
+    companion object {
+        private const val TAG = "ServiceManager"
+    }
+
+    private val _streamingClient = MutableStateFlow<StreamingClient?>(null)
+    /** Current [StreamingClient], null until service starts or fallback creates one. */
+    val streamingClient: StateFlow<StreamingClient?> = _streamingClient.asStateFlow()
+
+    private val collectorJobs = mutableListOf<Job>()
+
+    private val _pendingCert = MutableStateFlow<CertFingerprintInfo?>(null)
+    /** Non-null when a TOFU certificate confirmation dialog should be shown. */
+    val pendingCert: StateFlow<CertFingerprintInfo?> = _pendingCert.asStateFlow()
+
+    // ======================================================================
+    //  Initialization
+    // ======================================================================
+
+    /**
+     * Start service, acquire [StreamingClient], auto-reconnect, and begin collectors.
+     * Call once from a `LaunchedEffect(Unit)`.
+     */
+    suspend fun initialize() {
+        WsConnectionService.start(context)
+        val client = acquireClient()
+        _streamingClient.value = client
+        if (client != null) startCollectors(client)
+    }
+
+    /**
+     * Re-acquire [StreamingClient] after a connection change (e.g. QR/manual scan).
+     * Call from a `LaunchedEffect(refreshKey)`.
+     */
+    suspend fun refresh() {
+        val client = acquireClient()
+        _streamingClient.value = client
+        if (client != null) startCollectors(client)
+    }
+
+    private suspend fun acquireClient(): StreamingClient? {
+        WsConnectionService.getClient()?.let { ws ->
+            ws.reconnect()
+            return ws
+        }
+        val ws = withTimeoutOrNull(5_000L) {
+            WsConnectionService.clientReady.first()
+        }
+        if (ws != null) {
+            ws.reconnect()
+            return ws
+        }
+        Log.w(TAG, "Service client not ready in 5s")
+        return null
+    }
+
+    // ======================================================================
+    //  Long-running collectors
+    // ======================================================================
+
+    private fun startCollectors(ws: StreamingClient) {
+        collectorJobs.forEach { it.cancel() }
+        collectorJobs.clear()
+
+        collectorJobs += scope.launch {
+            ws.certFingerprintPending.collect { info ->
+                _pendingCert.value = info
+            }
+        }
+
+        collectorJobs += scope.launch {
+            var lastDisplayState: String? = null
+            var lastSessionsJson = ""
+            ws.displayState.collect { displayState ->
+                val sessionsMap = ws.sessions.value
+                val sessionsJson = sessionsMap.keys.sorted().joinToString(",") +
+                    "|" + sessionsMap.values.map { "${it.sessionId}:${it.state}:${it.badge}" }.joinToString(",")
+                if (displayState != lastDisplayState || sessionsJson != lastSessionsJson) {
+                    lastDisplayState = displayState
+                    lastSessionsJson = sessionsJson
+                    statusNotifier.updateNotifications(displayState, sessionsMap)
+                }
+            }
+        }
+
+        collectorJobs += scope.launch {
+            for (request in ClawdApp.approvalChannel) {
+                Log.d(TAG, "Received approval request from channel: id=${request.requestId}")
+                onApprovalFromNotification?.invoke(request)
+            }
+        }
+    }
+
+    /** Callback set by NavGraph to route notification-tap approval requests to the ViewModel. */
+    var onApprovalFromNotification: ((com.teambotics.deskbuddy.mobile.data.PermissionRequestData) -> Unit)? = null
+
+    // ======================================================================
+    //  Public actions
+    // ======================================================================
+
+    /** Start or restart the service with an optional new [config][com.teambotics.deskbuddy.mobile.data.ConnectionConfig]. */
+    fun startService(config: com.teambotics.deskbuddy.mobile.data.ConnectionConfig? = null) {
+        config?.let { prefsStore.saveConfig(it) }
+        WsConnectionService.start(context, config)
+    }
+
+    /** Trust the pending TOFU certificate. */
+    fun trustCert(cert: CertFingerprintInfo) {
+        prefsStore.setCertFingerprint(cert.fingerprint)
+        HttpClientProvider.setCertFingerprint(cert.fingerprint)
+        _pendingCert.value = null
+        _streamingClient.value?.setConnectionState(com.teambotics.deskbuddy.mobile.ws.ConnectionState.CONNECTED)
+    }
+
+    /** Reject the pending TOFU certificate. */
+    fun rejectCert(ws: StreamingClient) {
+        _pendingCert.value = null
+        ws.disconnect()
+    }
+
+    /** Cancel all long-running collectors and release resources. */
+    fun destroy() {
+        collectorJobs.forEach { it.cancel() }
+        collectorJobs.clear()
+    }
+}

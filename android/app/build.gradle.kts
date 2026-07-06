@@ -1,0 +1,130 @@
+plugins {
+    // Clawd Mobile Android
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
+}
+
+android {
+    namespace = "com.teambotics.deskbuddy.mobile"
+    compileSdk = 35
+
+    defaultConfig {
+        applicationId = "com.teambotics.deskbuddy.mobile"
+        minSdk = 26
+        targetSdk = 35
+        versionCode = 1007
+        versionName = "0.11.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters += listOf("arm64-v8a")
+        }
+    }
+
+    signingConfigs {
+        create("release") {
+            val ks = findProperty("KEYSTORE_FILE") as? String?
+                ?: System.getenv("KEYSTORE_FILE") ?: ""
+            storeFile = if (ks.isNotEmpty()) rootProject.file(ks) else null
+            storePassword = findProperty("STORE_PASSWORD") as? String?
+                ?: System.getenv("STORE_PASSWORD") ?: ""
+            keyAlias = findProperty("KEY_ALIAS") as? String?
+                ?: System.getenv("KEY_ALIAS") ?: ""
+            keyPassword = findProperty("KEY_PASSWORD") as? String?
+                ?: System.getenv("KEY_PASSWORD") ?: ""
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
+        }
+        debug {
+            isMinifyEnabled = false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    lint {
+        disable += "UnsafeImplicitIntentLaunch"  // ApprovalReceiver exported=false, intent is safe
+        abortOnError = true
+    }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
+
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
+}
+
+dependencies {
+    // Compose
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.graphics)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons)
+    debugImplementation(libs.compose.ui.tooling)
+
+    // Core
+    implementation(libs.core.ktx)
+    implementation(libs.activity.compose)
+    implementation(libs.navigation.compose)
+    implementation(libs.lifecycle.runtime)
+
+    // HTTP / WebSocket
+    implementation(libs.okhttp)
+    // WebSocket client (replaces OkHttp WebSocket — OkHttp 4.12.0 has frame parsing bug)
+    implementation(libs.nv.websocket.client)
+
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
+
+    // Camera + QR
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.view)
+    implementation(libs.zxing.core)
+
+    // WebView asset loader (maps assets/ to https:// for fetch() in SVG WebView)
+    implementation(libs.webkit)
+
+    // Encrypted SharedPreferences (AES-256-GCM)
+    implementation(libs.security.crypto)
+
+    // WorkManager for reliable background tasks (approval responses)
+    implementation(libs.work.runtime)
+
+    // DI (Hilt)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.hilt.navigation.compose)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
+    testImplementation(libs.mockwebserver)
+
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.work.testing)
+    debugImplementation(libs.androidx.test.monitor)
+}

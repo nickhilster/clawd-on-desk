@@ -1,0 +1,167 @@
+package com.teambotics.deskbuddy.mobile.ui.navigation
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.teambotics.deskbuddy.mobile.R
+import com.teambotics.deskbuddy.mobile.data.PrefsStore
+import com.teambotics.deskbuddy.mobile.notification.StatusNotifier
+import com.teambotics.deskbuddy.mobile.ui.approval.ApprovalViewModel
+import com.teambotics.deskbuddy.mobile.ui.sessions.SessionsScreen
+import com.teambotics.deskbuddy.mobile.ui.scan.ScanScreen
+import com.teambotics.deskbuddy.mobile.ui.manual.ManualScreen
+import com.teambotics.deskbuddy.mobile.ui.settings.SettingsScreen
+
+@Composable
+fun ClawdNavGraph() {
+    val navController = rememberNavController()
+    val context = LocalContext.current
+    val prefsStore = remember { PrefsStore.getInstance(context) }
+    val statusNotifier = remember { StatusNotifier(context, prefsStore) }
+
+    val scope = rememberCoroutineScope()
+    val serviceManager = remember { ServiceManager(context, scope, prefsStore, statusNotifier) }
+
+    // Initialize: start service + acquire client + auto-reconnect
+    LaunchedEffect(Unit) { serviceManager.initialize() }
+
+    LaunchedEffect(Unit) {
+        if (prefsStore.isFloatingPetEnabled()
+            && android.provider.Settings.canDrawOverlays(context)
+            && !com.teambotics.deskbuddy.mobile.overlay.FloatingPetService.isRunning
+        ) {
+            context.startForegroundService(
+                android.content.Intent(context, com.teambotics.deskbuddy.mobile.overlay.FloatingPetService::class.java)
+            )
+        }
+    }
+
+    // Clean up collectors when NavGraph leaves composition
+    DisposableEffect(Unit) {
+        onDispose { serviceManager.destroy() }
+    }
+
+    // Re-acquire client when refreshKey changes (QR/manual scan)
+    var refreshKey by remember { mutableIntStateOf(0) }
+    LaunchedEffect(refreshKey) { if (refreshKey > 0) serviceManager.refresh() }
+
+    val ws = serviceManager.streamingClient.collectAsState().value
+    if (ws == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
+    // TOFU certificate dialog
+    val pendingCert by serviceManager.pendingCert.collectAsState()
+    pendingCert?.let { cert ->
+        AlertDialog(
+            onDismissRequest = { serviceManager.rejectCert(ws) },
+            title = { Text(stringResource(R.string.cert_confirm_title)) },
+            text = {
+                Text(
+                    stringResource(R.string.cert_confirm_connecting_to, cert.host) + "\n\n" +
+                    stringResource(R.string.cert_confirm_fingerprint, cert.fingerprint)
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { serviceManager.trustCert(cert) }) {
+                    Text(stringResource(R.string.cert_confirm_trust))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { serviceManager.rejectCert(ws) }) {
+                    Text(stringResource(R.string.cert_confirm_cancel))
+                }
+            }
+        )
+    }
+
+    // Scaffold with SnackbarHost for error feedback
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = "sessions",
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable("sessions") {
+                val approvalViewModel: ApprovalViewModel = viewModel(
+                    key = "approval_$refreshKey",
+                    factory = ApprovalViewModel.Factory(context.applicationContext as android.app.Application, ws)
+                )
+
+                // Collect error events and show Snackbar
+                LaunchedEffect(approvalViewModel) {
+                    approvalViewModel.errorEvents.collect { message ->
+                        snackbarHostState.showSnackbar(
+                            message = message,
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                }
+
+                // Wire up pending approval check + notification-tap routing
+                statusNotifier.hasPendingApprovals = { approvalViewModel.pendingRequests.value.isNotEmpty() }
+                serviceManager.onApprovalFromNotification = { request ->
+                    approvalViewModel.restoreRequestFromNotification(request)
+                }
+
+                SessionsScreen(
+                    navController = navController,
+                    streamingClient = ws,
+                    approvalViewModel = approvalViewModel,
+                    prefsStore = prefsStore,
+                    sessionMerger = com.teambotics.deskbuddy.mobile.service.WsConnectionService.getSessionMerger()
+                )
+            }
+            composable("scan") {
+                ScanScreen(
+                    onBack = { navController.popBackStack() },
+                    onScanned = { config ->
+                        serviceManager.startService(config)
+                        refreshKey++
+                        navController.navigate("sessions") {
+                            popUpTo("sessions") { inclusive = true }
+                        }
+                    }
+                )
+            }
+            composable("manual") {
+                ManualScreen(
+                    prefsStore = prefsStore,
+                    onBack = { navController.popBackStack() },
+                    onConnect = { config ->
+                        serviceManager.startService(config)
+                        refreshKey++
+                        navController.navigate("sessions") {
+                            popUpTo("sessions") { inclusive = true }
+                        }
+                    }
+                )
+            }
+            composable("settings") {
+                SettingsScreen(
+                    navController = navController,
+                    streamingClient = ws,
+                    prefsStore = prefsStore,
+                    snackbarHostState = snackbarHostState
+                )
+            }
+        }
+    }
+}

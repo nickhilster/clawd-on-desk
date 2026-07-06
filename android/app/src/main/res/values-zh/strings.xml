@@ -1,0 +1,258 @@
+<resources>
+    <!-- App -->
+    <string name="app_name">DeskBuddy Mobile</string>
+
+    <!-- Notification channels -->
+    <string name="channel_approval">审批请求</string>
+    <string name="channel_approval_desc">权限审批和确认请求的高优先级通知</string>
+    <string name="channel_status">会话状态</string>
+    <string name="channel_status_desc">显示各会话当前状态的低优先级通知</string>
+    <string name="channel_alert">重要通知</string>
+    <string name="channel_alert_desc">任务完成或需要关注时的通知</string>
+    <string name="channel_service">后台连接</string>
+    <string name="channel_service_desc">保持与桌面端连接的低优先级通知</string>
+
+    <!-- Connection status -->
+    <string name="status_connecting">连接中…</string>
+    <string name="status_connected">已连接</string>
+    <string name="status_connected_to">已连接 - %s</string>
+    <string name="status_reconnecting">重新连接中…</string>
+    <string name="status_auth_failed">认证失败</string>
+    <string name="status_disconnected">已断开</string>
+    <string name="status_circuit_open">连接失败 - 点击重试</string>
+    <string name="status_not_connected">未连接</string>
+    <string name="error_not_connected">未连接到服务端，无法发送响应</string>
+    <string name="error_send_failed">发送失败，请重试</string>
+    <string name="status_syncing">正在同步…</string>
+
+    <!-- Connection alerts -->
+    <string name="alert_disconnect_title">😴 和桌面端失联了</string>
+    <string name="alert_disconnect_text">检查一下网络？</string>
+    <string name="alert_reconnect_title">✅ 重新连上啦</string>
+    <string name="alert_reconnect_text">继续摸鱼！</string>
+
+    <!-- Event labels (Session.eventLabel) -->
+    <string name="event_user_prompt">用户输入</string>
+    <string name="event_pre_tool">工具启动</string>
+    <string name="event_post_tool">工具完成</string>
+    <string name="event_post_tool_fail">工具失败</string>
+    <string name="event_stop">已完成</string>
+    <string name="event_session_start">会话开始</string>
+    <string name="event_session_end">会话结束</string>
+    <string name="event_permission">需要权限</string>
+    <string name="event_elicitation">需要选择</string>
+    <string name="event_notification">通知</string>
+    <string name="event_subagent_start">子代理启动</string>
+    <string name="event_subagent_stop">子代理停止</string>
+
+    <!-- Notification messages (StatusNotifier) -->
+    <string name="notify_done_title">%s 搞定啦</string>
+    <string name="notify_done_text">快来看看成果！</string>
+    <string name="notify_fail_title">%s 任务失败</string>
+    <string name="notify_fail_text">来看看发生了什么？</string>
+    <string name="notify_attention_title">%s 遇到麻烦了</string>
+    <string name="notify_attention_text">来看看？</string>
+    <string name="notify_error_title">%s 出错了</string>
+    <string name="notify_error_text">需要你关注一下</string>
+    <string name="notify_approval_title">%s 需要你的审批</string>
+    <string name="notify_approval_text">Claude 请求执行权限</string>
+
+    <!-- Notification messages (NotificationHelper) -->
+    <string name="notify_permission_title">🦀 %s 需要你来拍板！</string>
+    <string name="notify_permission_body">需要您的确认</string>
+    <string name="notify_elicitation_title">🦀 %s 需要你做选择</string>
+    <string name="notify_elicitation_body">请选择一个选项</string>
+    <string name="action_allow">允许</string>
+    <string name="action_deny">拒绝</string>
+
+    <!-- Floating pet -->
+    <string name="pet_notification_title">DeskBuddy</string>
+    <string name="pet_notification_text">桌宠正在运行中</string>
+    <string name="pet_bubble_enter_app">进入 App</string>
+    <string name="pet_bubble_no_sessions">暂无活跃会话</string>
+
+    <!-- Permission dialogs (MainActivity) -->
+    <string name="perm_notification_title">通知权限</string>
+    <string name="perm_notification_desc">用于接收会话状态变化、权限审批请求等通知推送。关闭后将无法收到实时提醒。</string>
+    <string name="perm_camera_title">摄像头权限</string>
+    <string name="perm_camera_desc">用于扫描 PC 端显示的二维码，快速建立连接。仅在扫码时使用。</string>
+    <string name="perm_overlay_title">悬浮窗权限</string>
+    <string name="perm_overlay_desc">用于显示桌宠悬浮窗，需要在系统设置中手动开启。</string>
+    <string name="perm_battery_title">后台保活权限</string>
+    <string name="perm_battery_desc">为确保后台 WebSocket 连接不被系统杀死，请允许 DeskBuddy Mobile 忽略电池优化。\n\n国产手机（MIUI、ColorOS、EMUI 等）会强制关闭后台应用，此权限可避免 3 秒断连问题。</string>
+    <string name="action_skip">跳过</string>
+
+    <!-- Sessions screen -->
+    <string name="sessions_active_title">活跃会话</string>
+    <string name="sessions_empty_title">扫码配对开始监控</string>
+    <string name="sessions_empty_subtitle">前往「设置」扫码或手动连接</string>
+    <string name="sessions_go_settings">前往设置</string>
+    <string name="sessions_tab_sessions">会话</string>
+    <string name="sessions_tab_devices">设备</string>
+    <string name="sessions_tab_settings">设置</string>
+    <string name="sessions_rename">重命名</string>
+    <string name="sessions_rename_title">重命名会话</string>
+    <string name="sessions_save">保存</string>
+    <string name="sessions_cancel">取消</string>
+    <string name="sessions_recent_events">最近事件</string>
+    <string name="sessions_waiting">等待中</string>
+    <string name="sessions_waiting_auth">等待授权</string>
+    <string name="sessions_waiting_choice">等待选择</string>
+    <string name="sessions_action_permission">权限</string>
+    <string name="sessions_action_choice">选择</string>
+
+    <!-- Elicitation (AskUserQuestion) -->
+    <string name="elicitation_choose_one">请选择一个选项</string>
+    <string name="elicitation_choose_multiple">请选择一个或多个选项</string>
+    <string name="elicitation_other">其他</string>
+    <string name="elicitation_submit">提交</string>
+    <string name="elicitation_next">下一步</string>
+    <string name="elicitation_previous">上一步</string>
+    <string name="elicitation_question_of">第 %1$d 题，共 %2$d 题</string>
+    <string name="sessions_device">设备</string>
+    <string name="sessions_device_status">状态</string>
+    <string name="sessions_device_address">地址</string>
+    <string name="sessions_device_sessions">活跃会话</string>
+    <string name="sessions_device_transport">传输协议</string>
+    <string name="sessions_relay_title">未来中继服务，敬请期待。\n\n中继服务将支持通过云端中继连接 PC 端，无需处于同一局域网。</string>
+    <string name="sessions_relay_ok">知道了</string>
+
+    <!-- Time formatting -->
+    <string name="time_just_now">刚刚</string>
+    <string name="time_seconds">%d秒前</string>
+    <string name="time_minutes">%d分钟前</string>
+    <string name="time_hours">%d小时前</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">设置</string>
+    <string name="settings_back">返回</string>
+    <string name="settings_scan_connect">扫码连接</string>
+    <string name="settings_scan_desc">扫描 PC 端显示的二维码，自动建立连接。</string>
+    <string name="settings_scan_open">打开扫码</string>
+    <string name="settings_manual_connect">手动连接</string>
+    <string name="settings_manual_desc">手动输入 PC 端的 IP 地址、端口和 Token 进行连接。</string>
+    <string name="settings_manual_open">手动输入连接</string>
+    <string name="settings_notification">通知设置</string>
+    <string name="settings_notification_desc">控制 App 各类通知的开关。关闭后将不再收到对应类型的通知推送。</string>
+    <string name="settings_pet">桌宠</string>
+    <string name="settings_about">关于</string>
+    <string name="settings_ip_address">IP 地址</string>
+    <string name="settings_port">端口</string>
+    <string name="settings_copy">复制</string>
+    <string name="settings_disconnect">断开连接并关闭桌宠</string>
+    <string name="settings_pet_recenter">回到屏幕中央</string>
+    <string name="settings_pet_click_through">透明区域点击穿透</string>
+    <string name="settings_pet_click_through_desc">点击宠物透明部分时穿透到下层应用</string>
+    <string name="settings_pet_sleep_timeout">空闲进入睡眠</string>
+    <string name="settings_pet_sleep_30s">30秒</string>
+    <string name="settings_pet_sleep_1min">1分钟</string>
+    <string name="settings_pet_sleep_5min">5分钟</string>
+    <string name="settings_pet_sleep_never">不睡眠</string>
+    <string name="toast_recentered">宠物已回到屏幕中央</string>
+    <string name="toast_disconnected">桌宠已关闭</string>
+    <string name="settings_pet_size">大小</string>
+    <string name="settings_pet_character">角色</string>
+    <string name="settings_pet_enable">启用桌宠</string>
+    <string name="settings_pet_overlay_granted">需要悬浮窗权限（已授予）</string>
+    <string name="settings_pet_overlay_needed">需要悬浮窗权限（未授予）</string>
+    <string name="settings_pet_desc">在屏幕上显示一个可爱的桌宠小螃蟹。</string>
+    <string name="settings_notify_master">通知总开关</string>
+    <string name="settings_notify_master_desc">启用后 App 可发送通知</string>
+    <string name="settings_notify_approval">权限审批通知</string>
+    <string name="settings_notify_approval_desc">Claude 请求执行权限时通知你</string>
+    <string name="settings_notify_status">会话状态通知</string>
+    <string name="settings_notify_status_desc">会话状态变化（完成、错误等）时通知</string>
+    <string name="settings_notify_alert">告警通知</string>
+    <string name="settings_notify_alert_desc">需要立即关注的事件通知</string>
+
+    <!-- About section -->
+    <string name="about_subtitle">陪你 AI 编码的移动端伙伴。</string>
+    <string name="about_version">版本</string>
+    <string name="about_repo">代码仓库</string>
+    <string name="about_fork">Fork 仓库</string>
+    <string name="about_license">开源协议</string>
+    <string name="about_author">原作者</string>
+    <string name="about_author_name">Ruller_Lulu / 鹿鹿</string>
+    <string name="about_maintainer">维护者</string>
+    <string name="about_mobile_maintainer">移动端维护者</string>
+    <string name="about_check_update">检查更新</string>
+
+    <!-- Manual connect screen -->
+    <string name="manual_title">手动连接</string>
+    <string name="manual_host_label">桌面端地址</string>
+    <string name="manual_port_label">端口</string>
+    <string name="manual_token_placeholder">32位token</string>
+    <string name="manual_token_label">Token</string>
+    <string name="manual_connect">连接</string>
+    <string name="manual_history">连接历史</string>
+    <string name="manual_delete">删除</string>
+    <string name="manual_fill_required">请填写完整连接信息</string>
+
+    <!-- Certificate confirmation dialog (NavGraph) -->
+    <string name="cert_confirm_title">证书确认</string>
+    <string name="cert_confirm_connecting_to">正在连接到 %s</string>
+    <string name="cert_confirm_fingerprint">服务器证书指纹 (SHA-256):\n%s\n\n确认此指纹与服务器一致？</string>
+    <string name="cert_confirm_trust">信任并连接</string>
+    <string name="cert_confirm_cancel">取消</string>
+
+    <!-- Approval labels (ApprovalSheet) -->
+    <string name="approval_label_auto_accept">自动接受编辑</string>
+    <string name="approval_label_plan_mode">切换到计划模式</string>
+    <string name="approval_label_always_allow">始终允许</string>
+    <string name="approval_label_allow_in">允许 %1$s 在 %2$s</string>
+    <string name="approval_label_always_allow_tool">始终允许: %s</string>
+
+    <!-- Settings extras -->
+    <string name="settings_pet_resize_hint">💡 调整大小后需关闭再开启悬浮窗生效</string>
+    <string name="settings_debug_log">连接日志</string>
+    <string name="settings_debug_log_desc">连接过程的详细日志，用于排查问题。</string>
+    <string name="action_refresh">刷新</string>
+    <string name="action_copy_all">复制全部</string>
+    <string name="action_clear">清除</string>
+    <string name="settings_no_log">暂无日志</string>
+
+    <!-- Scan screen -->
+    <string name="scan_title">扫码配对</string>
+    <string name="scan_need_camera">需要摄像头权限</string>
+    <string name="scan_grant_camera">授予权限</string>
+    <string name="scan_qr_hint">将 QR 码放入框内</string>
+
+    <!-- Language settings -->
+    <string name="settings_language">语言</string>
+    <string name="settings_language_desc">选择 App 显示语言，切换后立即生效。</string>
+    <string name="settings_language_zh">中文</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_relay">远程中继</string>
+
+    <!-- Relay settings -->
+    <string name="relay_address">Relay 地址</string>
+    <string name="relay_token">连接 Token</string>
+    <string name="relay_token_placeholder">输入 Connection Token</string>
+    <string name="relay_enabled">已启用</string>
+    <string name="relay_disconnected">已断开</string>
+    <string name="relay_disconnect">断开 Relay</string>
+    <string name="relay_connect">连接 Relay</string>
+    <string name="relay_enter_address">请输入 Relay 地址</string>
+    <string name="relay_checking">检查中…</string>
+    <string name="relay_running">运行中 | PC: %s, Phone: %s</string>
+    <string name="relay_connect_failed">无法连接: %s</string>
+    <string name="relay_check_status">检查状态</string>
+    <string name="relay_description">通过远程服务器中继连接，支持非局域网环境。需要在 Linux VPS 上部署 relay 服务器。</string>
+
+    <!-- Approval bubble (overlay) -->
+    <string name="approval_hint">审批（点击展开）</string>
+    <string name="approval_hint_count">审批（%d）（点击展开）</string>
+    <string name="approval_swipe_hint">← 拒绝    滑动    允许 →</string>
+    <string name="approval_swipe_allow">← 拒绝          允许 ✓</string>
+    <string name="approval_swipe_deny">← 拒绝 ✓        允许 →</string>
+    <string name="approval_elicitation_hint">问题（打开App）</string>
+
+    <!-- Relay connection status -->
+    <string name="relay_status_connected">Relay 已连接</string>
+    <string name="relay_status_connecting">Relay 连接中</string>
+    <string name="relay_status_reconnecting">Relay 重连中</string>
+    <string name="relay_status_auth_failed">Relay 认证失败</string>
+    <string name="relay_status_disconnected">Relay 已断开</string>
+    <string name="relay_status_circuit_open">Relay 连接暂停</string>
+    <string name="relay_status_unknown">Relay 状态未知</string>
+</resources>
