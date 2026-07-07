@@ -602,4 +602,28 @@ describe("state-session-snapshot builder", () => {
     const flagged = buildSessionSnapshot(flaggedSessions, { statePriority: STATE_PRIORITY, getAgentIconUrl: () => null });
     assert.notStrictEqual(sessionSnapshotSignature(base), sessionSnapshotSignature(flagged));
   });
+
+  describe("todos in snapshot", () => {
+    it("passes through a session's todos array", () => {
+      const snap = buildSessionSnapshot(new Map([
+        ["s1", session("working", { todos: [{ content: "A", status: "pending" }] })],
+      ]));
+      assert.deepStrictEqual(snap.sessions[0].todos, [{ content: "A", status: "pending" }]);
+    });
+
+    it("defaults to null when the session has no todos", () => {
+      const snap = buildSessionSnapshot(new Map([["s1", session("working")]]));
+      assert.strictEqual(snap.sessions[0].todos, null);
+    });
+
+    it("changing only todos changes the snapshot signature", () => {
+      const before = buildSessionSnapshot(new Map([
+        ["s1", session("working", { todos: [{ content: "A", status: "pending" }] })],
+      ]));
+      const after = buildSessionSnapshot(new Map([
+        ["s1", session("working", { todos: [{ content: "A", status: "completed" }] })],
+      ]));
+      assert.notStrictEqual(sessionSnapshotSignature(before), sessionSnapshotSignature(after));
+    });
+  });
 });

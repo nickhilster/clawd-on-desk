@@ -225,6 +225,7 @@ function buildSessionSnapshotEntry(id, session, sessionAliases = {}, options = {
     contextUsage: snapshotContextUsage(session),
     antigravityQuota: normalizeQuotaGroup(session && session.antigravityQuota, ANTIGRAVITY_QUOTA_FIELDS),
     claudeQuota: normalizeQuotaGroup(session && session.claudeQuota, CLAUDE_QUOTA_FIELDS),
+    todos: (session && Array.isArray(session.todos)) ? session.todos : null,
     assistantLastOutput: (session && typeof session.assistantLastOutput === "string")
       ? session.assistantLastOutput
       : null,
@@ -358,6 +359,7 @@ function sessionSnapshotSignature(snapshot) {
       contextUsage: entry.contextUsage,
       antigravityQuota: entry.antigravityQuota,
       claudeQuota: entry.claudeQuota,
+      todos: entry.todos,
       assistantLastOutput: entry.assistantLastOutput,
       assistantLastOutputTruncated: !!entry.assistantLastOutputTruncated,
       lastEventLabelKey: entry.lastEvent ? entry.lastEvent.labelKey : null,
