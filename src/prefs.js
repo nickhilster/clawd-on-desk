@@ -982,9 +982,9 @@ function load(prefsPath) {
     try {
       const bak = prefsPath + ".bak";
       fs.copyFileSync(prefsPath, bak);
-      console.warn(`Clawd: prefs file unreadable, backed up to ${bak}:`, err.message);
+      console.warn(`DeskBuddy: prefs file unreadable, backed up to ${bak}:`, err.message);
     } catch (bakErr) {
-      console.warn("Clawd: prefs file unreadable and backup failed:", err.message, bakErr.message);
+      console.warn("DeskBuddy: prefs file unreadable and backup failed:", err.message, bakErr.message);
     }
     return { snapshot: getDefaults(), locked: false };
   }
@@ -995,7 +995,7 @@ function load(prefsPath) {
   const incomingVersion = typeof raw.version === "number" ? raw.version : 0;
   if (incomingVersion > CURRENT_VERSION) {
     console.warn(
-      `Clawd: prefs file version ${incomingVersion} is newer than supported (${CURRENT_VERSION}). ` +
+      `DeskBuddy: prefs file version ${incomingVersion} is newer than supported (${CURRENT_VERSION}). ` +
       `Settings will be readable but not saved to avoid data loss.`
     );
     return { snapshot: validate(raw), locked: true };

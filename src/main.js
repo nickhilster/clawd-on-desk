@@ -20,7 +20,7 @@ const _xwaylandRelaunch = planXWaylandRelaunch({
 });
 if (_xwaylandRelaunch) {
   console.log(
-    "Clawd: Linux — relaunching under XWayland (--ozone-platform=x11) " +
+    "DeskBuddy: Linux — relaunching under XWayland (--ozone-platform=x11) " +
     "(issue #441; override with CLAWD_OZONE_PLATFORM=wayland|x11|auto)"
   );
   process.env.CLAWD_OZONE_RELAUNCHED = "1";
@@ -49,7 +49,7 @@ if (_xwaylandRelaunch) {
   }
   if (_xwaylandChild && typeof _xwaylandChild.on === "function") {
     _xwaylandChild.on("error", (err) => {
-      console.error("Clawd: XWayland relaunch spawn error:", err && err.message ? err.message : err);
+      console.error("DeskBuddy: XWayland relaunch spawn error:", err && err.message ? err.message : err);
     });
   }
   if (_xwaylandChild && typeof _xwaylandChild.pid === "number") {
@@ -63,7 +63,7 @@ if (_xwaylandRelaunch) {
   // listener above also prevents async exec failures (ENOENT/EACCES) from
   // crashing this fallback path.
   delete process.env.CLAWD_OZONE_RELAUNCHED;
-  console.error("Clawd: XWayland relaunch failed; continuing under native Wayland (issue #441).");
+  console.error("DeskBuddy: XWayland relaunch failed; continuing under native Wayland (issue #441).");
 }
 
 const { clampTextScale, scaleWidth, scaleHeight, resolveTextScaleForKey } = require("./text-scale");
@@ -155,7 +155,7 @@ if (isWin) {
     const user32 = koffi.load("user32.dll");
     _allowSetForeground = user32.func("bool __stdcall AllowSetForegroundWindow(int dwProcessId)");
   } catch (err) {
-    console.warn("Clawd: koffi/AllowSetForegroundWindow not available:", err.message);
+    console.warn("DeskBuddy: koffi/AllowSetForegroundWindow not available:", err.message);
   }
 }
 
@@ -165,7 +165,7 @@ if (isWin) {
 const { createForegroundFullscreenProbe } = require("./win-fullscreen-detect");
 const _isForegroundFullscreen = createForegroundFullscreenProbe({
   isWin,
-  onError: (err) => console.warn("Clawd: win-fullscreen-detect not available:", err && err.message),
+  onError: (err) => console.warn("DeskBuddy: win-fullscreen-detect not available:", err && err.message),
 });
 
 // ── Windows: switch the dev console to UTF-8 ──
@@ -200,7 +200,7 @@ if (isWin) {
     }
   } catch (err) {
     // Best-effort — mojibake in dev console is annoying but not fatal.
-    console.warn("Clawd: SetConsoleOutputCP(65001) failed:", err && err.message);
+    console.warn("DeskBuddy: SetConsoleOutputCP(65001) failed:", err && err.message);
   }
 }
 
@@ -429,14 +429,14 @@ function hydrateSystemBackedSettings() {
   try {
     systemValue = !!_readSystemOpenAtLogin();
   } catch (err) {
-    console.warn("Clawd: failed to read system openAtLogin during hydration:", err && err.message);
+    console.warn("DeskBuddy: failed to read system openAtLogin during hydration:", err && err.message);
   }
   const result = _settingsController.hydrate({
     openAtLogin: systemValue,
     openAtLoginHydrated: true,
   });
   if (result && result.status === "error") {
-    console.warn("Clawd: openAtLogin hydration failed:", result.message);
+    console.warn("DeskBuddy: openAtLogin hydration failed:", result.message);
   }
 }
 
@@ -452,7 +452,7 @@ function hydrateFreshInstallLanguage() {
   try {
     detected = prefsModule.mapLocaleToLang(app.getLocale());
   } catch (err) {
-    console.warn("Clawd: failed to detect device locale for language:", err && err.message);
+    console.warn("DeskBuddy: failed to detect device locale for language:", err && err.message);
     return;
   }
   if (detected && detected !== _settingsController.get("lang")) {
@@ -658,7 +658,7 @@ if (codexPetMain.summaryHasActiveOrphan(_startupCodexPetSyncSummary, _requestedT
     themeOverrides: nextOverrides,
   });
   if (result && result.status === "error") {
-    console.warn("Clawd: Codex Pet active theme fallback hydrate failed:", result.message);
+    console.warn("DeskBuddy: Codex Pet active theme fallback hydrate failed:", result.message);
   }
   _startupCodexPetSyncSummary = codexPetMain.mergeSyncSummaries(
     _startupCodexPetSyncSummary,
@@ -682,7 +682,7 @@ if (_loadedStartupTheme._id !== _requestedThemeId || _loadedStartupTheme._varian
     themeVariant: nextVariantMap,
   });
   if (result && result.status === "error") {
-    console.warn("Clawd: theme hydrate after fallback failed:", result.message);
+    console.warn("DeskBuddy: theme hydrate after fallback failed:", result.message);
   }
 }
 
@@ -936,14 +936,14 @@ function applyTextScaleNow() {
       settingsWindowRuntime.applyTextScaleToWindow();
     }
   } catch (err) {
-    console.warn("Clawd: settings window text scale failed:", err && err.message);
+    console.warn("DeskBuddy: settings window text scale failed:", err && err.message);
   }
   try {
     if (_dashboard && typeof _dashboard.applyTextScaleToWindow === "function") {
       _dashboard.applyTextScaleToWindow();
     }
   } catch (err) {
-    console.warn("Clawd: dashboard text scale failed:", err && err.message);
+    console.warn("DeskBuddy: dashboard text scale failed:", err && err.message);
   }
   repositionAnchoredFloatingSurfaces();
 }
@@ -1570,7 +1570,7 @@ function reconcilePowerSaveBlocker() {
       powerSaveBlockerId = null;
     }
   } catch (err) {
-    console.warn("Clawd: reconcilePowerSaveBlocker failed:", err);
+    console.warn("DeskBuddy: reconcilePowerSaveBlocker failed:", err);
   }
 }
 function releasePowerSaveBlocker() {
@@ -1740,7 +1740,7 @@ function buildTutorialAgentOnboardingState() {
   try {
     detection = detectAgentInstallations({ skipDefaultIntegrations: false }) || detection;
   } catch (err) {
-    console.warn("Clawd: tutorial agent detection failed:", err && err.message);
+    console.warn("DeskBuddy: tutorial agent detection failed:", err && err.message);
   }
   return bucketAgentsForTutorial({
     detectionAgents: detection.agents,
@@ -1779,7 +1779,7 @@ function getTutorialHeroSrc() {
   try {
     _tutorialHeroSrcCache = pathToFileURL(path.join(__dirname, "..", "assets", "icon.png")).href;
   } catch (err) {
-    console.warn("Clawd: failed to resolve tutorial icon:", err && err.message);
+    console.warn("DeskBuddy: failed to resolve tutorial icon:", err && err.message);
     _tutorialHeroSrcCache = "";
   }
   return _tutorialHeroSrcCache;
@@ -1794,7 +1794,7 @@ function getTutorialDoneHeroSvg() {
       "utf8"
     );
   } catch (err) {
-    console.warn("Clawd: failed to read tutorial done hero:", err && err.message);
+    console.warn("DeskBuddy: failed to read tutorial done hero:", err && err.message);
     _tutorialDoneHeroSvgCache = "";
   }
   return _tutorialDoneHeroSvgCache;
@@ -2608,7 +2608,7 @@ function hardwareBuddyLog(msg) {
   if (sessionDebugLog) {
     sessionLog(line);
   } else {
-    console.log(`Clawd: ${line}`);
+    console.log(`DeskBuddy: ${line}`);
   }
 }
 
@@ -2650,7 +2650,7 @@ function broadcastHardwareBuddyStatus(status) {
       }
     }
   } catch (err) {
-    console.warn("Clawd: Hardware Buddy status broadcast failed:", err && err.message);
+    console.warn("DeskBuddy: Hardware Buddy status broadcast failed:", err && err.message);
   }
 }
 
@@ -2834,7 +2834,7 @@ unsubscribeHardwareBuddySettings = _settingsController.subscribeKey("hardwareBud
   try {
     hardwareBuddyAdapter.applySettingsChange();
   } catch (err) {
-    console.warn("Clawd: failed to apply Hardware Buddy settings:", err && err.message);
+    console.warn("DeskBuddy: failed to apply Hardware Buddy settings:", err && err.message);
     hardwareBuddyLog(`settings apply failed: ${err && err.message ? err.message : err}`);
   }
 });
@@ -2971,7 +2971,7 @@ const _menuCtx = {
   set bubbleFollowPet(v) { _settingsController.applyUpdate("bubbleFollowPet", v); },
   get hideBubbles() { return getAllBubblesHidden(); },
   set hideBubbles(v) { _settingsController.applyCommand("setAllBubblesHidden", { hidden: !!v }).catch((err) => {
-    console.warn("Clawd: setAllBubblesHidden failed:", err && err.message);
+    console.warn("DeskBuddy: setAllBubblesHidden failed:", err && err.message);
   }); },
   get autoApproveAllPermissions() { return _settingsController.get("autoApproveAllPermissions") === true; },
   // Route through the gated command. The menu shows its own native danger
@@ -2980,7 +2980,7 @@ const _menuCtx = {
   // gated so the confirm dialog is a real boundary, not UI-only.
   set autoApproveAllPermissions(v) {
     _settingsController.applyCommand("setAutoApproveAll", { enabled: !!v, confirmed: true }).catch((err) => {
-      console.warn("Clawd: setAutoApproveAll failed:", err && err.message);
+      console.warn("DeskBuddy: setAutoApproveAll failed:", err && err.message);
     });
   },
   get soundMuted() { return soundMuted; },
@@ -3411,11 +3411,11 @@ registerSessionIpc({
     if (result && typeof result.then === "function") {
       result
         .then((r) => {
-          if (r && r.status === "error") console.warn("Clawd: failed to pin Session HUD:", r.message);
+          if (r && r.status === "error") console.warn("DeskBuddy: failed to pin Session HUD:", r.message);
         })
-        .catch((err) => console.warn("Clawd: failed to pin Session HUD:", err && err.message));
+        .catch((err) => console.warn("DeskBuddy: failed to pin Session HUD:", err && err.message));
     } else if (result && result.status === "error") {
-      console.warn("Clawd: failed to pin Session HUD:", result.message);
+      console.warn("DeskBuddy: failed to pin Session HUD:", result.message);
     }
   },
   getLanWsServer: () => _lanWss,
@@ -3557,7 +3557,7 @@ function createWindow() {
     },
     statPath: (p) => fs.promises.stat(p),
     openTerminalAt: (dir) => openTerminalAt(dir),
-    dropLog: (message) => console.log(`Clawd: ${message}`),
+    dropLog: (message) => console.log(`DeskBuddy: ${message}`),
   });
 
   registerPermissionIpc({
@@ -3815,7 +3815,7 @@ try {
     movementController.setEnabled(value === true);
   });
 } catch (err) {
-  console.warn("Clawd: freeRoam subscribeKey failed:", err && err.message);
+  console.warn("DeskBuddy: freeRoam subscribeKey failed:", err && err.message);
 }
 
 // Convenience getters for mini state (used throughout main.js)
@@ -3842,7 +3842,7 @@ function installTerminalFocusExtension() {
   extSrc = extSrc.replace("app.asar" + path.sep, "app.asar.unpacked" + path.sep);
 
   if (!fs.existsSync(extSrc)) {
-    console.log("Clawd: terminal-focus extension source not found, skipping auto-install");
+    console.log("DeskBuddy: terminal-focus extension source not found, skipping auto-install");
     return;
   }
 
@@ -3865,13 +3865,13 @@ function installTerminalFocusExtension() {
         fs.copyFileSync(path.join(extSrc, file), path.join(dest, file));
       }
       installed++;
-      console.log(`Clawd: installed terminal-focus extension to ${dest}`);
+      console.log(`DeskBuddy: installed terminal-focus extension to ${dest}`);
     } catch (err) {
-      console.warn(`Clawd: failed to install extension to ${dest}:`, err.message);
+      console.warn(`DeskBuddy: failed to install extension to ${dest}:`, err.message);
     }
   }
   if (installed > 0) {
-    console.log(`Clawd: terminal-focus extension installed to ${installed} editor(s). Restart VS Code/Cursor to activate.`);
+    console.log(`DeskBuddy: terminal-focus extension installed to ${installed} editor(s). Restart VS Code/Cursor to activate.`);
   }
 }
 
@@ -3940,9 +3940,9 @@ if (!gotTheLock) {
         });
       }
     } catch (err) {
-      console.warn("Clawd: Codex hook balloon failed:", err && err.message);
+      console.warn("DeskBuddy: Codex hook balloon failed:", err && err.message);
     }
-    console.warn(`Clawd: Codex official hook needs attention (${verdict.signature}): ${verdict.detailText || ""}`);
+    console.warn(`DeskBuddy: Codex official hook needs attention (${verdict.signature}): ${verdict.detailText || ""}`);
   }
 
   function maybeNudgeCodexHookHealth() {
@@ -3960,7 +3960,7 @@ if (!gotTheLock) {
       }
       if (decision.shouldNotify) fireCodexHookNudge(verdict);
     } catch (err) {
-      console.warn("Clawd: Codex hook health nudge failed:", err && err.message);
+      console.warn("DeskBuddy: Codex hook health nudge failed:", err && err.message);
     }
   }
 
@@ -3998,7 +3998,7 @@ if (!gotTheLock) {
     sessionDebugLog = path.join(app.getPath("userData"), "session-debug.log");
     focusDebugLog = path.join(app.getPath("userData"), "focus-debug.log");
     initTelegramMigrationController().catch((err) => {
-      console.warn("Clawd: migration controller init failed:", err && err.message);
+      console.warn("DeskBuddy: migration controller init failed:", err && err.message);
     });
     createWindow();
     systemWakeRecovery = createSystemWakeRecovery({
@@ -4013,7 +4013,7 @@ if (!gotTheLock) {
       },
       log: sessionLog,
       onError: (err) => safeConsoleError(
-        "Clawd: system wake recovery failed:",
+        "DeskBuddy: system wake recovery failed:",
         err && err.message ? err.message : err
       ),
     });
@@ -4043,11 +4043,11 @@ if (!gotTheLock) {
     try {
       if (!_settingsController.get("tutorialSeen")) _tutorial.open();
     } catch (err) {
-      console.warn("Clawd: failed to open first-run tutorial:", err && err.message);
+      console.warn("DeskBuddy: failed to open first-run tutorial:", err && err.message);
     }
     codexPetMain.enqueueImportUrlsFromArgv(process.argv);
     codexPetMain.flushPendingImportUrls().catch((err) => {
-      console.warn("Clawd: Codex Pet import queue failed:", err && err.message);
+      console.warn("DeskBuddy: Codex Pet import queue failed:", err && err.message);
     });
 
     // Register persistent global shortcuts from the validated prefs snapshot.
@@ -4064,13 +4064,13 @@ if (!gotTheLock) {
     try {
       hardwareBuddyAdapter.start();
     } catch (err) {
-      console.warn("Clawd: failed to start Hardware Buddy adapter:", err && err.message);
+      console.warn("DeskBuddy: failed to start Hardware Buddy adapter:", err && err.message);
       hardwareBuddyLog(`start failed: ${err && err.message ? err.message : err}`);
     }
 
     // Auto-install VS Code/Cursor terminal-focus extension
     try { installTerminalFocusExtension(); } catch (err) {
-      console.warn("Clawd: failed to auto-install terminal-focus extension:", err.message);
+      console.warn("DeskBuddy: failed to auto-install terminal-focus extension:", err.message);
     }
 
     // Auto-updater: setup event handlers (user triggers check via tray menu)

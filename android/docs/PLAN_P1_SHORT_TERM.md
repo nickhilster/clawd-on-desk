@@ -120,7 +120,7 @@ private fun handleNewRequest(request: PermissionRequestData) {
 **当前代码**：
 ```kotlin
 fun fromClawdUrl(url: String): ConnectionConfig? {
-    val regex = Regex("^clawd://([^:]+):(\\d+)/([a-f0-9]{16,})$")
+    val regex = Regex("^deskbuddy://([^:]+):(\\d+)/([a-f0-9]{16,})$")
     val match = regex.matchEntire(url) ?: return null
     return ConnectionConfig(
         host = match.groupValues[1],
@@ -133,7 +133,7 @@ fun fromClawdUrl(url: String): ConnectionConfig? {
 **修改方案**：
 ```kotlin
 fun fromClawdUrl(url: String): ConnectionConfig? {
-    val regex = Regex("^clawd://([^:]+):(\\d+)/([a-f0-9]{16,})$")
+    val regex = Regex("^deskbuddy://([^:]+):(\\d+)/([a-f0-9]{16,})$")
     val match = regex.matchEntire(url) ?: return null
     val host = match.groupValues[1]
 
@@ -166,10 +166,10 @@ private fun isValidHost(host: String): Boolean {
 ```
 
 **验证**：
-- `clawd://192.168.1.10:23334/token...` → 正常解析
-- `clawd://my-mac.local:23334/token...` → 正常解析
-- `clawd://evil.com:23334/token...` → 返回 null
-- `clawd://not-an-ip:23334/token...` → 返回 null
+- `deskbuddy://192.168.1.10:23334/token...` → 正常解析
+- `deskbuddy://my-mac.local:23334/token...` → 正常解析
+- `deskbuddy://evil.com:23334/token...` → 返回 null
+- `deskbuddy://not-an-ip:23334/token...` → 返回 null
 
 ---
 
@@ -350,7 +350,7 @@ fun getClient(config: ConnectionConfig): OkHttpClient {
 
 - [ ] PrefsStore 全局单例，迁移只执行一次
 - [ ] SSE 重连不会创建重复审批请求
-- [ ] `clawd://evil.com/...` 深链被拒绝
+- [ ] `deskbuddy://evil.com/...` 深链被拒绝
 - [ ] ProGuard 和版本目录无 Glide/mlkitBarcode 残留
 - [ ] OkHttpClient 统一由 HttpClientProvider 管理
 - [ ] Token 从 URL 移到 Authorization header（需桌面端配合）

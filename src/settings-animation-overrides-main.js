@@ -208,7 +208,7 @@ function createSettingsAnimationOverridesMain(options = {}) {
     const tasks = pendingPostReloadTasks;
     pendingPostReloadTasks = [];
     for (const task of tasks) {
-      try { task(); } catch (err) { console.warn("Clawd: post-reload task threw:", err && err.message); }
+      try { task(); } catch (err) { console.warn("DeskBuddy: post-reload task threw:", err && err.message); }
     }
   }
 
@@ -495,9 +495,9 @@ function createSettingsAnimationOverridesMain(options = {}) {
     } catch (err) {
       const message = err && err.message;
       if (err && err.code === "ANIMATION_PREVIEW_POSTER_TIMEOUT") {
-        console.warn("Clawd: animation preview poster capture timed out:", message);
+        console.warn("DeskBuddy: animation preview poster capture timed out:", message);
       } else {
-        console.warn("Clawd: failed to capture animation preview poster:", message);
+        console.warn("DeskBuddy: failed to capture animation preview poster:", message);
       }
     } finally {
       if (job && job.previewPosterCacheKey) {
@@ -1226,7 +1226,7 @@ function createSettingsAnimationOverridesMain(options = {}) {
         themeCount: Object.keys(overrides).length,
       };
     } catch (err) {
-      console.warn("Clawd: export-animation-overrides failed:", err && err.message);
+      console.warn("DeskBuddy: export-animation-overrides failed:", err && err.message);
       return { status: "error", message: (err && err.message) || "export failed" };
     }
   }
@@ -1246,7 +1246,7 @@ function createSettingsAnimationOverridesMain(options = {}) {
       }
       filePath = result.filePaths[0];
     } catch (err) {
-      console.warn("Clawd: import-animation-overrides dialog failed:", err && err.message);
+      console.warn("DeskBuddy: import-animation-overrides dialog failed:", err && err.message);
       return { status: "error", message: (err && err.message) || "dialog failed" };
     }
 

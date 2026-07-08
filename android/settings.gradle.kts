@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ClawdMobile"
+rootProject.name = "DeskBuddyMobile"
 include(":app")

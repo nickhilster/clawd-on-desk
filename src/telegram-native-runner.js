@@ -508,7 +508,7 @@ function createTelegramNativeRunner({
     try {
       const msg = await client.sendMessage({
         chat_id: chatId,
-        text: "Clawd: test native Telegram bot. Tap to confirm.",
+        text: "DeskBuddy: test native Telegram bot. Tap to confirm.",
         reply_markup: {
           inline_keyboard: [[{ text: "Confirm", callback_data: `clawd-test:${nonce}` }]],
         },

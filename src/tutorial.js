@@ -58,7 +58,7 @@ module.exports = function initTutorial(ctx = {}) {
         agents = ctx.getAgentOnboardingState() || agents;
       }
     } catch (err) {
-      console.warn("Clawd: tutorial getAgentOnboardingState failed:", err && err.message);
+      console.warn("DeskBuddy: tutorial getAgentOnboardingState failed:", err && err.message);
     }
     return {
       i18n: typeof ctx.getI18n === "function" ? ctx.getI18n() : {},
@@ -135,14 +135,14 @@ module.exports = function initTutorial(ctx = {}) {
     ipcMain.removeAllListeners("tutorial:open-settings-tab");
     ipcMain.on("tutorial:open-settings-tab", (_e, tab) => {
       try { if (typeof ctx.openSettingsTab === "function") ctx.openSettingsTab(tab); } catch (err) {
-        console.warn("Clawd: tutorial openSettingsTab failed:", err && err.message);
+        console.warn("DeskBuddy: tutorial openSettingsTab failed:", err && err.message);
       }
     });
 
     ipcMain.removeAllListeners("tutorial:set-lang");
     ipcMain.on("tutorial:set-lang", (_e, value) => {
       try { if (typeof ctx.setLang === "function") ctx.setLang(value); } catch (err) {
-        console.warn("Clawd: tutorial setLang failed:", err && err.message);
+        console.warn("DeskBuddy: tutorial setLang failed:", err && err.message);
       }
       // Re-push so the wizard re-renders in the newly chosen language.
       sendState();
@@ -151,7 +151,7 @@ module.exports = function initTutorial(ctx = {}) {
     ipcMain.removeAllListeners("tutorial:open-shortcuts");
     ipcMain.on("tutorial:open-shortcuts", () => {
       try { if (typeof ctx.openSettingsTab === "function") ctx.openSettingsTab("shortcuts"); } catch (err) {
-        console.warn("Clawd: tutorial open shortcuts failed:", err && err.message);
+        console.warn("DeskBuddy: tutorial open shortcuts failed:", err && err.message);
       }
     });
 
@@ -167,7 +167,7 @@ module.exports = function initTutorial(ctx = {}) {
 
   function markSeen() {
     try { if (typeof ctx.markTutorialSeen === "function") ctx.markTutorialSeen(); } catch (err) {
-      console.warn("Clawd: tutorial markTutorialSeen failed:", err && err.message);
+      console.warn("DeskBuddy: tutorial markTutorialSeen failed:", err && err.message);
     }
   }
 

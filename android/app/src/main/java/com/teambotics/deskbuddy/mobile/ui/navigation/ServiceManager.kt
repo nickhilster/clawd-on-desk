@@ -1,7 +1,7 @@
 package com.teambotics.deskbuddy.mobile.ui.navigation
 
 import android.util.Log
-import com.teambotics.deskbuddy.mobile.ClawdApp
+import com.teambotics.deskbuddy.mobile.DeskBuddyApp
 import com.teambotics.deskbuddy.mobile.data.PrefsStore
 import com.teambotics.deskbuddy.mobile.notification.StatusNotifier
 import com.teambotics.deskbuddy.mobile.service.WsConnectionService
@@ -114,7 +114,7 @@ class ServiceManager(
         }
 
         collectorJobs += scope.launch {
-            for (request in ClawdApp.approvalChannel) {
+            for (request in DeskBuddyApp.approvalChannel) {
                 Log.d(TAG, "Received approval request from channel: id=${request.requestId}")
                 onApprovalFromNotification?.invoke(request)
             }

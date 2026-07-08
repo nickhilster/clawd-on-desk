@@ -108,7 +108,7 @@ module.exports = function initMenu(ctx) {
           }
           rebuildAllMenus();
         }).catch((err) => {
-          console.warn("Clawd: auto-pilot confirm failed:", err && err.message);
+          console.warn("DeskBuddy: auto-pilot confirm failed:", err && err.message);
           rebuildAllMenus();
         });
       },
@@ -140,7 +140,7 @@ module.exports = function initMenu(ctx) {
       icon = nativeImage.createFromPath(path.join(__dirname, "../assets/tray-icon.png")).resize({ width: 32, height: 32 });
     }
     ctx.tray = new Tray(icon);
-    ctx.tray.setToolTip("Clawd Desktop Pet — Teambotics");
+    ctx.tray.setToolTip("DeskBuddy — Teambotics");
     buildTrayMenu();
   }
 

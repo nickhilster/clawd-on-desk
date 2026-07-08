@@ -1,6 +1,6 @@
 {
-  "name": "Clawd on Mobile",
-  "short_name": "Clawd",
+  "name": "DeskBuddy Mobile",
+  "short_name": "DeskBuddy",
   "description": "Track AI coding agent sessions across all your machines from your phone",
   "start_url": "/mobile/",
   "display": "standalone",

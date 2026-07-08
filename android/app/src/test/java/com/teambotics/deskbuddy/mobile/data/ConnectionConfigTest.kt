@@ -5,8 +5,8 @@ import org.junit.Assert.*
 
 class ConnectionConfigTest {
     @Test
-    fun `parse valid clawd url`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:23334/abcdef1234567890abcdef1234567890")
+    fun `parse valid deskbuddy url`() {
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:23334/abcdef1234567890abcdef1234567890")
         assertNotNull(config)
         assertEquals("192.168.1.10", config!!.host)
         assertEquals(23334, config.port)
@@ -15,57 +15,57 @@ class ConnectionConfigTest {
 
     @Test
     fun `reject invalid url`() {
-        assertNull(ConnectionConfig.fromClawdUrl("http://example.com"))
-        assertNull(ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:23334/short"))
+        assertNull(ConnectionConfig.fromDeskBuddyUrl("http://example.com"))
+        assertNull(ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:23334/short"))
     }
 
     @Test
     fun `accept uppercase hex token and lowercase it`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:23334/ABCDEF1234567890ABCDEF1234567890")
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:23334/ABCDEF1234567890ABCDEF1234567890")
         assertNotNull(config)
         assertEquals("abcdef1234567890abcdef1234567890", config!!.token)
     }
 
     @Test
     fun `accept mixed case hex token and lowercase it`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:23334/aAbBcCdD11223344aAbBcCdD11223344")
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:23334/aAbBcCdD11223344aAbBcCdD11223344")
         assertNotNull(config)
         assertEquals("aabbccdd11223344aabbccdd11223344", config!!.token)
     }
 
     @Test
     fun `accept localhost host`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://localhost:23334/abcdef1234567890abcdef1234567890")
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://localhost:23334/abcdef1234567890abcdef1234567890")
         assertNotNull(config)
         assertEquals("localhost", config!!.host)
     }
 
     @Test
     fun `accept mDNS dot-local host`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://my-mac.local:23334/abcdef1234567890abcdef1234567890")
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://my-mac.local:23334/abcdef1234567890abcdef1234567890")
         assertNotNull(config)
         assertEquals("my-mac.local", config!!.host)
     }
 
     @Test
     fun `reject public domain host`() {
-        assertNull(ConnectionConfig.fromClawdUrl("clawd://evil.com:23334/abcdef1234567890abcdef1234567890"))
-        assertNull(ConnectionConfig.fromClawdUrl("clawd://example.org:23334/abcdef1234567890abcdef1234567890"))
+        assertNull(ConnectionConfig.fromDeskBuddyUrl("deskbuddy://evil.com:23334/abcdef1234567890abcdef1234567890"))
+        assertNull(ConnectionConfig.fromDeskBuddyUrl("deskbuddy://example.org:23334/abcdef1234567890abcdef1234567890"))
     }
 
     @Test
     fun `reject arbitrary string host`() {
-        assertNull(ConnectionConfig.fromClawdUrl("clawd://not-a-valid-host:23334/abcdef1234567890abcdef1234567890"))
+        assertNull(ConnectionConfig.fromDeskBuddyUrl("deskbuddy://not-a-valid-host:23334/abcdef1234567890abcdef1234567890"))
     }
 
     @Test
     fun `reject out of range IP octets`() {
-        assertNull(ConnectionConfig.fromClawdUrl("clawd://999.999.999.999:23334/abcdef1234567890abcdef1234567890"))
+        assertNull(ConnectionConfig.fromDeskBuddyUrl("deskbuddy://999.999.999.999:23334/abcdef1234567890abcdef1234567890"))
     }
 
     @Test
     fun `reject non-numeric port`() {
-        assertNull(ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:abc/abcdef1234567890abcdef1234567890"))
+        assertNull(ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:abc/abcdef1234567890abcdef1234567890"))
     }
 
     @Test
@@ -84,7 +84,7 @@ class ConnectionConfigTest {
     @Test
     fun `generate correct pair url`() {
         val config = ConnectionConfig("192.168.1.10", 23334, "abcdef1234567890abcdef1234567890")
-        assertEquals("clawd://192.168.1.10:23334/abcdef1234567890abcdef1234567890", config.pairUrl())
+        assertEquals("deskbuddy://192.168.1.10:23334/abcdef1234567890abcdef1234567890", config.pairUrl())
     }
 
     @Test
@@ -124,23 +124,23 @@ class ConnectionConfigTest {
         assertFalse(config.streamUrlMasked().contains("abcdef"))
     }
 
-    // ── fromClawdUrl edge cases ────────────────────────────────────────
+    // ── fromDeskBuddyUrl edge cases ────────────────────────────────────────
 
     @Test
     fun `reject empty url`() {
-        assertNull(ConnectionConfig.fromClawdUrl(""))
+        assertNull(ConnectionConfig.fromDeskBuddyUrl(""))
     }
 
     @Test
     fun `coerce port 0 to 1`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:0/abcdef1234567890abcdef1234567890")
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:0/abcdef1234567890abcdef1234567890")
         assertNotNull(config)
         assertEquals(1, config!!.port)  // coerceIn(1, 65535) clamps 0 → 1
     }
 
     @Test
     fun `coerce port over 65535 to 65535`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:99999/abcdef1234567890abcdef1234567890")
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:99999/abcdef1234567890abcdef1234567890")
         assertNotNull(config)
         assertEquals(65535, config!!.port)  // coerceIn(1, 65535) clamps 99999 → 65535
     }
@@ -156,9 +156,9 @@ class ConnectionConfigTest {
     }
 
     @Test
-    fun `pairUrl always uses clawd scheme`() {
+    fun `pairUrl always uses deskbuddy scheme`() {
         val config = ConnectionConfig("192.168.1.10", 23334, "abcdef1234567890abcdef1234567890")
-        assertEquals("clawd://192.168.1.10:23334/abcdef1234567890abcdef1234567890", config.pairUrl())
+        assertEquals("deskbuddy://192.168.1.10:23334/abcdef1234567890abcdef1234567890", config.pairUrl())
     }
 
     // ── toString masking ─────────────────────────────────────────────
@@ -180,37 +180,37 @@ class ConnectionConfigTest {
         assertTrue(str.contains("***"))
     }
 
-    // ── fromClawdUrl with IPv6 ───────────────────────────────────────
+    // ── fromDeskBuddyUrl with IPv6 ───────────────────────────────────────
 
     // IPv6 in brackets is NOT supported by current regex (colon conflicts with port separator).
-    // isValidHost() accepts "[::1]" but fromClawdUrl() regex cannot parse it.
+    // isValidHost() accepts "[::1]" but fromDeskBuddyUrl() regex cannot parse it.
 
-    // ── fromClawdUrl with exact 16-char token ────────────────────────
+    // ── fromDeskBuddyUrl with exact 16-char token ────────────────────────
 
     @Test
     fun `reject 15-char token`() {
-        assertNull(ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:23334/abcdef123456789"))
+        assertNull(ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:23334/abcdef123456789"))
     }
 
     @Test
     fun `accept exactly 16-char token`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:23334/abcdef1234567890")
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:23334/abcdef1234567890")
         assertNotNull(config)
         assertEquals("abcdef1234567890", config!!.token)
     }
 
-    // ── fromClawdUrl with port 1 and 65535 ───────────────────────────
+    // ── fromDeskBuddyUrl with port 1 and 65535 ───────────────────────────
 
     @Test
     fun `accept port 1`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:1/abcdef1234567890abcdef1234567890")
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:1/abcdef1234567890abcdef1234567890")
         assertNotNull(config)
         assertEquals(1, config!!.port)
     }
 
     @Test
     fun `accept port 65535`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:65535/abcdef1234567890abcdef1234567890")
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:65535/abcdef1234567890abcdef1234567890")
         assertNotNull(config)
         assertEquals(65535, config!!.port)
     }

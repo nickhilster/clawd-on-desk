@@ -17,7 +17,7 @@ class ConnectionConfigIntegrationTest {
         val original = ConnectionConfig("192.168.1.100", 23334, "abcdef1234567890abcdef1234567890")
         val pairUrl = original.pairUrl()
 
-        val parsed = ConnectionConfig.fromClawdUrl(pairUrl)
+        val parsed = ConnectionConfig.fromDeskBuddyUrl(pairUrl)
         assertNotNull(parsed)
         assertEquals(original.host, parsed!!.host)
         assertEquals(original.port, parsed.port)
@@ -65,13 +65,13 @@ class ConnectionConfigIntegrationTest {
 
     @Test
     fun `reject public domains in pairing URL`() {
-        assertNull(ConnectionConfig.fromClawdUrl("clawd://evil.com:23334/abcdef1234567890abcdef1234567890"))
-        assertNull(ConnectionConfig.fromClawdUrl("clawd://example.org:23334/abcdef1234567890abcdef1234567890"))
+        assertNull(ConnectionConfig.fromDeskBuddyUrl("deskbuddy://evil.com:23334/abcdef1234567890abcdef1234567890"))
+        assertNull(ConnectionConfig.fromDeskBuddyUrl("deskbuddy://example.org:23334/abcdef1234567890abcdef1234567890"))
     }
 
     @Test
     fun `accept mDNS dot-local hosts in pairing URL`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://my-mac.local:23334/abcdef1234567890abcdef1234567890")
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://my-mac.local:23334/abcdef1234567890abcdef1234567890")
         assertNotNull(config)
         assertEquals("my-mac.local", config!!.host)
         // Note: isLan for .local hosts requires mDNS resolution (unavailable in JVM unit tests).
@@ -83,19 +83,19 @@ class ConnectionConfigIntegrationTest {
     @Test
     fun `reject non-hex token in pairing URL`() {
         // Token must be hex, at least 16 chars
-        assertNull(ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:23334/not-hex-token!!"))
+        assertNull(ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:23334/not-hex-token!!"))
     }
 
     @Test
     fun `port coercion - zero becomes one`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:0/abcdef1234567890abcdef1234567890")
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:0/abcdef1234567890abcdef1234567890")
         assertNotNull(config)
         assertEquals(1, config!!.port)
     }
 
     @Test
     fun `port coercion - over 65535 becomes 65535`() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:99999/abcdef1234567890abcdef1234567890")
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:99999/abcdef1234567890abcdef1234567890")
         assertNotNull(config)
         assertEquals(65535, config!!.port)
     }

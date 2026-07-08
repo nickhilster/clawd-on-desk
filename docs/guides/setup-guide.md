@@ -189,7 +189,7 @@ node hooks/openclaw-install.js
 
 ## Windows Notes
 
-- **Installer**: GitHub Releases provide separate NSIS installers for Windows x64 and Windows ARM64. Use `Clawd-on-Desk-Setup-<version>-x64.exe` on Intel/AMD Windows, and `Clawd-on-Desk-Setup-<version>-arm64.exe` on Windows on ARM.
+- **Installer**: GitHub Releases provide separate NSIS installers for Windows x64 and Windows ARM64. Use `DeskBuddy-Setup-<version>-x64.exe` on Intel/AMD Windows, and `DeskBuddy-Setup-<version>-arm64.exe` on Windows on ARM.
 - **Auto-update**: packaged Windows installs use `electron-updater`; updates keep the matching architecture.
 
 ## macOS Notes
@@ -197,7 +197,7 @@ node hooks/openclaw-install.js
 - **From source** (`npm start`): works out of the box on Intel and Apple Silicon.
 - **DMG installer**: the app is not signed with an Apple Developer certificate, so macOS Gatekeeper will block it. To open:
   - Right-click the app → **Open** → click **Open** in the dialog, or
-  - Run `xattr -cr /Applications/Clawd\ on\ Desk.app` in Terminal.
+  - Run `xattr -cr /Applications/DeskBuddy.app` in Terminal.
 
 ## Linux Notes
 

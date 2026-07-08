@@ -14,7 +14,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.WindowManager
 import androidx.core.app.NotificationCompat
-import com.teambotics.deskbuddy.mobile.ClawdApp
+import com.teambotics.deskbuddy.mobile.DeskBuddyApp
 import com.teambotics.deskbuddy.mobile.R
 import com.teambotics.deskbuddy.mobile.data.PrefsStore
 import com.teambotics.deskbuddy.mobile.service.WsConnectionService
@@ -217,7 +217,7 @@ class FloatingPetService : Service() {
     // ======================================================================
 
     private fun buildNotification(): Notification {
-        return NotificationCompat.Builder(this, ClawdApp.CHANNEL_SERVICE)
+        return NotificationCompat.Builder(this, DeskBuddyApp.CHANNEL_SERVICE)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle(getString(R.string.pet_notification_title))
             .setContentText(getString(R.string.pet_notification_text))

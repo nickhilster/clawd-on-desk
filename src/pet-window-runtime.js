@@ -57,7 +57,7 @@ function createRenderProcessGoneReloadGuard(options = {}) {
     const key = crashKey || "default";
     const reason = getRenderGoneReason(details);
     if (NON_RELOADABLE_RENDER_GONE_REASONS.has(reason)) {
-      log(`Clawd: not reloading ${key} after render-process-gone (${reason})`);
+      log(`DeskBuddy: not reloading ${key} after render-process-gone (${reason})`);
       return false;
     }
 
@@ -65,7 +65,7 @@ function createRenderProcessGoneReloadGuard(options = {}) {
     const cutoff = ts - crashReloadWindowMs;
     const recent = (reloadsByKey.get(key) || []).filter((value) => value >= cutoff);
     if (recent.length >= crashReloadLimit) {
-      log(`Clawd: stopped reloading ${key} after ${recent.length} crashes in ${crashReloadWindowMs}ms`);
+      log(`DeskBuddy: stopped reloading ${key} after ${recent.length} crashes in ${crashReloadWindowMs}ms`);
       reloadsByKey.set(key, recent);
       return false;
     }
@@ -533,7 +533,7 @@ function createPetWindowRuntime(options = {}) {
       });
       renderWin.on("unresponsive", () => {
         if (isQuitting()) return;
-        console.warn("Clawd: renderer unresponsive — reloading");
+        console.warn("DeskBuddy: renderer unresponsive — reloading");
         reloadWindowWebContents(renderWin);
       });
     }
@@ -547,7 +547,7 @@ function createPetWindowRuntime(options = {}) {
         try {
           flushRuntimeStateToPrefs();
         } catch (err) {
-          console.warn("Clawd: failed to persist prefs during Windows session end:", err && err.message);
+          console.warn("DeskBuddy: failed to persist prefs during Windows session end:", err && err.message);
         }
       };
       renderWin.on("query-session-end", flushForSessionEnd);

@@ -125,27 +125,27 @@ class MainActivity : ComponentActivity() {
         try {
             val request = Json.decodeFromString<PermissionRequestData>(requestJson)
             Log.d("MainActivity", "Sending approval request to channel: ${request.requestId}")
-            ClawdApp.approvalChannel.trySend(request)
+            DeskBuddyApp.approvalChannel.trySend(request)
         } catch (e: Exception) {
             Log.w("MainActivity", "Failed to deserialize request_json: ${e.message}")
         }
     }
 
     /**
-     * Handle clawd:// deep link.
-     * URI format: clawd://host:port/token
+     * Handle deskbuddy:// deep link.
+     * URI format: deskbuddy://host:port/token
      * Parses the URI, saves config, and starts the WsConnectionService.
      */
     private fun handleDeepLink(intent: Intent?) {
         val uri = intent?.data ?: return
-        if (uri.scheme != "clawd") return
+        if (uri.scheme != "deskbuddy") return
 
         val url = uri.toString()
         Log.d("MainActivity", "handleDeepLink: $url")
 
-        val config = ConnectionConfig.fromClawdUrl(url)
+        val config = ConnectionConfig.fromDeskBuddyUrl(url)
         if (config == null) {
-            Log.w("MainActivity", "Invalid clawd:// URI: $url")
+            Log.w("MainActivity", "Invalid deskbuddy:// URI: $url")
             return
         }
 

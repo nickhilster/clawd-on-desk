@@ -89,27 +89,27 @@ function createSettingsEffectRouter(options = {}) {
     if ("showTray" in changes) {
       safeCall(
         logWarn,
-        "Clawd: tray toggle failed:",
+        "DeskBuddy: tray toggle failed:",
         changes.showTray ? createTray : destroyTray
       );
     }
     if ("showDock" in changes) {
-      safeCall(logWarn, "Clawd: applyDockVisibility failed:", applyDockVisibility);
+      safeCall(logWarn, "DeskBuddy: applyDockVisibility failed:", applyDockVisibility);
     }
     if ("lowPowerIdleMode" in changes) {
       sendToRenderer("low-power-idle-mode-change", changes.lowPowerIdleMode);
     }
     if ("keepAwakeWhileWorking" in changes) {
-      safeCall(logWarn, "Clawd: reconcilePowerSaveBlocker failed:", reconcilePowerSaveBlocker);
+      safeCall(logWarn, "DeskBuddy: reconcilePowerSaveBlocker failed:", reconcilePowerSaveBlocker);
     }
     if ("lang" in changes) {
-      safeCall(logWarn, "Clawd: dashboard lang broadcast failed:", sendDashboardI18n);
-      safeCall(logWarn, "Clawd: session HUD lang broadcast failed:", sendSessionHudI18n);
+      safeCall(logWarn, "DeskBuddy: dashboard lang broadcast failed:", sendDashboardI18n);
+      safeCall(logWarn, "DeskBuddy: session HUD lang broadcast failed:", sendSessionHudI18n);
     }
     if ("sessionAliases" in changes) {
       safeCall(
         logWarn,
-        "Clawd: session alias snapshot broadcast failed:",
+        "DeskBuddy: session alias snapshot broadcast failed:",
         emitSessionSnapshot,
         { force: true }
       );
@@ -117,7 +117,7 @@ function createSettingsEffectRouter(options = {}) {
 
     // 2. Reactive side effects.
     if ("hideBubbles" in changes || "permissionBubblesEnabled" in changes) {
-      safeCall(logWarn, "Clawd: syncPermissionShortcuts failed:", syncPermissionShortcuts);
+      safeCall(logWarn, "DeskBuddy: syncPermissionShortcuts failed:", syncPermissionShortcuts);
     }
     if (
       ("permissionBubblesEnabled" in changes && changes.permissionBubblesEnabled === false) ||
@@ -125,7 +125,7 @@ function createSettingsEffectRouter(options = {}) {
     ) {
       safeCall(
         logWarn,
-        "Clawd: dismiss interactive bubbles failed:",
+        "DeskBuddy: dismiss interactive bubbles failed:",
         dismissInteractivePermissionBubbles
       );
     }
@@ -137,7 +137,7 @@ function createSettingsEffectRouter(options = {}) {
         clearCodexNotifyBubbles(undefined, "settings-policy-disabled");
         clearKimiNotifyBubbles(undefined, "settings-policy-disabled");
       } catch (err) {
-        warn(logWarn, "Clawd: clear notification bubbles failed:", err);
+        warn(logWarn, "DeskBuddy: clear notification bubbles failed:", err);
       }
     } else if (
       "notificationBubbleAutoCloseSeconds" in changes &&
@@ -145,7 +145,7 @@ function createSettingsEffectRouter(options = {}) {
     ) {
       safeCall(
         logWarn,
-        "Clawd: refresh notification bubble timers failed:",
+        "DeskBuddy: refresh notification bubble timers failed:",
         refreshPassiveNotifyAutoClose
       );
     }
@@ -153,14 +153,14 @@ function createSettingsEffectRouter(options = {}) {
       ("updateBubbleAutoCloseSeconds" in changes && changes.updateBubbleAutoCloseSeconds === 0) ||
       ("hideBubbles" in changes && changes.hideBubbles === true)
     ) {
-      safeCall(logWarn, "Clawd: hide update bubble failed:", hideUpdateBubbleForPolicy);
+      safeCall(logWarn, "DeskBuddy: hide update bubble failed:", hideUpdateBubbleForPolicy);
     } else if (
       "updateBubbleAutoCloseSeconds" in changes &&
       changes.updateBubbleAutoCloseSeconds > 0
     ) {
       safeCall(
         logWarn,
-        "Clawd: refresh update bubble timer failed:",
+        "DeskBuddy: refresh update bubble timer failed:",
         refreshUpdateBubbleAutoClose
       );
     }
@@ -169,17 +169,17 @@ function createSettingsEffectRouter(options = {}) {
     if ("permissionBubbleAutoCloseSeconds" in changes) {
       safeCall(
         logWarn,
-        "Clawd: refresh permission bubble timer failed:",
+        "DeskBuddy: refresh permission bubble timer failed:",
         refreshPermissionAutoCloseForPolicy
       );
     }
     if ("bubbleFollowPet" in changes) {
-      safeCall(logWarn, "Clawd: repositionFloatingBubbles failed:", repositionFloatingBubbles);
+      safeCall(logWarn, "DeskBuddy: repositionFloatingBubbles failed:", repositionFloatingBubbles);
     }
     if ("textScale" in changes || "textScaleByDisplay" in changes) {
       // applyTextScale owns the whole cascade: per-display zoom on live text
       // windows, fixed-width window resize, and bubble/HUD repositioning.
-      safeCall(logWarn, "Clawd: applyTextScale failed:", applyTextScale);
+      safeCall(logWarn, "DeskBuddy: applyTextScale failed:", applyTextScale);
     }
     if ("sessionHudPinned" in changes) {
       // Pinned transitions are handled inside session-hud.js so the visible
@@ -190,7 +190,7 @@ function createSettingsEffectRouter(options = {}) {
       try {
         handleSessionHudPinnedChanged(changes.sessionHudPinned);
       } catch (err) {
-        warn(logWarn, "Clawd: session HUD pinned change failed:", err);
+        warn(logWarn, "DeskBuddy: session HUD pinned change failed:", err);
       }
     }
     if (
@@ -203,7 +203,7 @@ function createSettingsEffectRouter(options = {}) {
         syncSessionHudVisibility();
         repositionFloatingBubbles();
       } catch (err) {
-        warn(logWarn, "Clawd: session HUD setting sync failed:", err);
+        warn(logWarn, "DeskBuddy: session HUD setting sync failed:", err);
       }
     }
     if ("sessionHudCleanupDetached" in changes && changes.sessionHudCleanupDetached === true) {
@@ -211,12 +211,12 @@ function createSettingsEffectRouter(options = {}) {
         cleanStaleSessions();
         emitSessionSnapshot({ force: true });
       } catch (err) {
-        warn(logWarn, "Clawd: detached session cleanup sweep failed:", err);
+        warn(logWarn, "DeskBuddy: detached session cleanup sweep failed:", err);
       }
     } else if ("sessionHudCleanupDetached" in changes) {
       safeCall(
         logWarn,
-        "Clawd: detached session cleanup snapshot refresh failed:",
+        "DeskBuddy: detached session cleanup snapshot refresh failed:",
         emitSessionSnapshot,
         { force: true }
       );
@@ -230,25 +230,25 @@ function createSettingsEffectRouter(options = {}) {
         cleanStaleSessions();
         emitSessionSnapshot({ force: true });
       } catch (err) {
-        warn(logWarn, "Clawd: stale cleanup config refresh failed:", err);
+        warn(logWarn, "DeskBuddy: stale cleanup config refresh failed:", err);
       }
     }
     if ("allowEdgePinning" in changes) {
       safeCall(
         logWarn,
-        "Clawd: allowEdgePinning re-clamp failed:",
+        "DeskBuddy: allowEdgePinning re-clamp failed:",
         reclampPetAfterEdgePinningChange
       );
     }
     if ("disableMiniMode" in changes && changes.disableMiniMode && getMiniMode()) {
-      safeCall(logWarn, "Clawd: disableMiniMode exit failed:", exitMiniMode);
+      safeCall(logWarn, "DeskBuddy: disableMiniMode exit failed:", exitMiniMode);
     }
 
     // 3. Menu rebuild: only for menu-affecting keys to avoid thrashing on
     // window position / mini state changes.
     for (const key of Object.keys(changes)) {
       if (MENU_AFFECTING_KEYS.has(key)) {
-        safeCall(logWarn, "Clawd: rebuildAllMenus failed:", rebuildAllMenus);
+        safeCall(logWarn, "DeskBuddy: rebuildAllMenus failed:", rebuildAllMenus);
         break;
       }
     }
@@ -264,7 +264,7 @@ function createSettingsEffectRouter(options = {}) {
         }
       }
     } catch (err) {
-      warn(logWarn, "Clawd: settings-changed broadcast failed:", err);
+      warn(logWarn, "DeskBuddy: settings-changed broadcast failed:", err);
     }
   }
 
@@ -272,7 +272,7 @@ function createSettingsEffectRouter(options = {}) {
     const nextTogglePetShortcut = (snapshot && snapshot.shortcuts && snapshot.shortcuts.togglePet) || null;
     if (nextTogglePetShortcut === lastTogglePetShortcut) return;
     lastTogglePetShortcut = nextTogglePetShortcut;
-    safeCall(logWarn, "Clawd: rebuildAllMenus failed:", rebuildAllMenus);
+    safeCall(logWarn, "DeskBuddy: rebuildAllMenus failed:", rebuildAllMenus);
   }
 
   function start() {

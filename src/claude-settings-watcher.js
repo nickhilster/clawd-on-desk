@@ -223,7 +223,7 @@ function createClaudeSettingsWatcher(ctx = {}) {
         lastTrustedSnapshot = takeSnapshot(seedRaw);
       }
     } catch (err) {
-      console.warn("Clawd: could not seed settings baseline:", err.message);
+      console.warn("DeskBuddy: could not seed settings baseline:", err.message);
     }
     try {
       settingsWatcher = fsApi.watch(settingsDir, (_event, filename) => {
@@ -246,13 +246,13 @@ function createClaudeSettingsWatcher(ctx = {}) {
               // since an external CLI may have minimized it and re-registering would
               // drop third-party hooks. See PR description for the production race.
               if (isSuspiciousShrink(lastTrustedSnapshot, currentSnapshot, suspiciousShrinkRatio, suspiciousKeyLossThreshold)) {
-                console.warn("Clawd: settings.json shrank suspiciously — skipping auto-resync to preserve third-party hooks");
+                console.warn("DeskBuddy: settings.json shrank suspiciously — skipping auto-resync to preserve third-party hooks");
                 if (typeof ctx.notifySuspiciousShrink === "function") {
                   ctx.notifySuspiciousShrink(lastTrustedSnapshot, currentSnapshot);
                 }
                 return;
               }
-              console.log("Clawd: hooks missing from settings.json — re-registering");
+              console.log("DeskBuddy: hooks missing from settings.json — re-registering");
               settingsWatchLastSyncTime = nowFn();
               if (typeof ctx.syncClawdHooks === "function") ctx.syncClawdHooks();
             } else if (currentSnapshot) {
@@ -263,11 +263,11 @@ function createClaudeSettingsWatcher(ctx = {}) {
         }, settingsWatchDebounceMs);
       });
       if (settingsWatcher && typeof settingsWatcher.on === "function") settingsWatcher.on("error", (err) => {
-        console.warn("Clawd: settings watcher error:", err.message);
+        console.warn("DeskBuddy: settings watcher error:", err.message);
       });
       return true;
     } catch (err) {
-      console.warn("Clawd: failed to watch settings directory:", err.message);
+      console.warn("DeskBuddy: failed to watch settings directory:", err.message);
       settingsWatcher = null;
       return false;
     }

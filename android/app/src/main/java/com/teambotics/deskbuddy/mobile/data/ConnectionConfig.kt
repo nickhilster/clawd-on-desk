@@ -23,7 +23,7 @@ data class ConnectionConfig(
     /** URL safe for logging — no token included. */
     fun streamUrlMasked(): String = streamUrl()  // already no token in URL
 
-    fun pairUrl(): String = "clawd://$host:$port/$token"
+    fun pairUrl(): String = "deskbuddy://$host:$port/$token"
 
     /** Authorization header value for Bearer token auth. */
     fun authHeader(): String = "Bearer $token"
@@ -54,8 +54,8 @@ data class ConnectionConfig(
             return isLan
         }
 
-        fun fromClawdUrl(url: String): ConnectionConfig? {
-            val regex = Regex("^clawd://([^:]+):(\\d+)/([a-fA-F0-9]{16,})$")
+        fun fromDeskBuddyUrl(url: String): ConnectionConfig? {
+            val regex = Regex("^deskbuddy://([^:]+):(\\d+)/([a-fA-F0-9]{16,})$")
             val match = regex.matchEntire(url) ?: return null
             val host = match.groupValues[1]
 

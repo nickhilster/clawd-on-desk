@@ -45,9 +45,9 @@ class ConnectionConfigAndroidTest {
     }
 
     @Test
-    fun pairUrlUsesClawdScheme() {
+    fun pairUrlUsesDeskBuddyScheme() {
         val config = ConnectionConfig("192.168.1.10", 23334, "abcdef1234567890abcdef1234567890")
-        assertEquals("clawd://192.168.1.10:23334/abcdef1234567890abcdef1234567890", config.pairUrl())
+        assertEquals("deskbuddy://192.168.1.10:23334/abcdef1234567890abcdef1234567890", config.pairUrl())
     }
 
     @Test
@@ -57,8 +57,8 @@ class ConnectionConfigAndroidTest {
     }
 
     @Test
-    fun fromClawdUrlParsesValidLanUrl() {
-        val config = ConnectionConfig.fromClawdUrl("clawd://192.168.1.10:23334/abcdef1234567890abcdef1234567890")
+    fun fromDeskBuddyUrlParsesValidLanUrl() {
+        val config = ConnectionConfig.fromDeskBuddyUrl("deskbuddy://192.168.1.10:23334/abcdef1234567890abcdef1234567890")
         assertNotNull(config)
         assertEquals("192.168.1.10", config!!.host)
         assertEquals(23334, config.port)
@@ -67,7 +67,7 @@ class ConnectionConfigAndroidTest {
     }
 
     @Test
-    fun fromClawdUrlRejectsPublicHost() {
-        assertNull(ConnectionConfig.fromClawdUrl("clawd://evil.com:23334/abcdef1234567890abcdef1234567890"))
+    fun fromDeskBuddyUrlRejectsPublicHost() {
+        assertNull(ConnectionConfig.fromDeskBuddyUrl("deskbuddy://evil.com:23334/abcdef1234567890abcdef1234567890"))
     }
 }

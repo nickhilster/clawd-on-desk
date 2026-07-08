@@ -19,7 +19,7 @@ function buildPairUrlQrSvg(pairUrl) {
     qr.make();
     return qr.createSvgTag({ cellSize: 4, margin: 8, scalable: true });
   } catch (err) {
-    console.warn("Clawd: QR code generation failed:", err && err.message);
+    console.warn("DeskBuddy: QR code generation failed:", err && err.message);
     return null;
   }
 }
@@ -358,7 +358,7 @@ function registerSettingsIpc(options = {}) {
         })
       );
     } catch (err) {
-      console.warn("Clawd: settings:list-themes failed:", err && err.message);
+      console.warn("DeskBuddy: settings:list-themes failed:", err && err.message);
       return [];
     }
   });
@@ -424,7 +424,7 @@ function registerSettingsIpc(options = {}) {
       });
       return { confirmed: response === 0 };
     } catch (err) {
-      console.warn("Clawd: confirm-remove-theme dialog failed:", err && err.message);
+      console.warn("DeskBuddy: confirm-remove-theme dialog failed:", err && err.message);
       return { confirmed: false };
     }
   });
@@ -433,7 +433,7 @@ function registerSettingsIpc(options = {}) {
     try {
       return getAllAgents().filter((agent) => !agent.hiddenFromAgentsTab).map(mapAgentMetadata);
     } catch (err) {
-      console.warn("Clawd: settings:list-agents failed:", err && err.message);
+      console.warn("DeskBuddy: settings:list-agents failed:", err && err.message);
       return [];
     }
   });
@@ -442,7 +442,7 @@ function registerSettingsIpc(options = {}) {
     try {
       return detectAgentInstallations({ fs, path, now });
     } catch (err) {
-      console.warn("Clawd: settings:detect-agent-installations failed:", err && err.message);
+      console.warn("DeskBuddy: settings:detect-agent-installations failed:", err && err.message);
       return {
         checkedAt: now(),
         agents: [],
@@ -457,7 +457,7 @@ function registerSettingsIpc(options = {}) {
     try {
       heroSvgContent = fs.readFileSync(aboutHeroSvgPath, "utf8");
     } catch (err) {
-      console.warn("Clawd: failed to read about hero SVG:", err && err.message);
+      console.warn("DeskBuddy: failed to read about hero SVG:", err && err.message);
     }
     let pendingUpdateVersion = "";
     let autoUpdateCheck = true;

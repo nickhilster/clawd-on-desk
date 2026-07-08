@@ -184,7 +184,7 @@ private fun processImage(imageProxy: ImageProxy, onResult: (ConnectionConfig?) -
         val result = reader.decode(binaryBitmap)
         val raw = result.text
 
-        val config = ConnectionConfig.fromClawdUrl(raw)
+        val config = ConnectionConfig.fromDeskBuddyUrl(raw)
         onResult(config)
     } catch (e: Exception) {
         // QR decode failures are expected (no QR in frame) — debug level only

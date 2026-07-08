@@ -13,7 +13,7 @@ import android.net.wifi.WifiManager
 import android.os.IBinder
 import android.os.PowerManager
 import androidx.core.app.NotificationCompat
-import com.teambotics.deskbuddy.mobile.ClawdApp
+import com.teambotics.deskbuddy.mobile.DeskBuddyApp
 import com.teambotics.deskbuddy.mobile.MainActivity
 import com.teambotics.deskbuddy.mobile.R
 import com.teambotics.deskbuddy.mobile.data.ConnectionConfig

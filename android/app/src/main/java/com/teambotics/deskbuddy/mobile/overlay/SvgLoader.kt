@@ -42,7 +42,7 @@ object SvgLoader {
 
     /**
      * Initialize with application context for real asset existence checks.
-     * Must be called once from [ClawdApp.onCreate].
+     * Must be called once from [DeskBuddyApp.onCreate].
      * Loads `assets/svg_config.json` if present, otherwise uses hardcoded defaults.
      */
     fun init(context: Context) {

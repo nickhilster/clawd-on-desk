@@ -10,7 +10,7 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.channels.Channel
 
 @HiltAndroidApp
-class ClawdApp : Application() {
+class DeskBuddyApp : Application() {
 
     companion object {
         const val CHANNEL_APPROVAL = "clawd_approval"

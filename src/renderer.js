@@ -827,7 +827,7 @@ function forceImageChannelReload(file, state, allowImageFallback = true) {
   if (!allowImageFallback) return false;
   if (!file) return false;
   if (hasVisiblePetElement()) return false;
-  console.warn("Clawd: animation stayed invisible; reloading through the image channel:", file);
+  console.warn("DeskBuddy: animation stayed invisible; reloading through the image channel:", file);
   swapToFile(file, state, false, { allowImageFallback: false });
   return true;
 }

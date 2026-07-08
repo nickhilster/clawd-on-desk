@@ -316,7 +316,7 @@ CSS 动画渲染 (breathe, blink, tail-sway, etc.)
 ```
 WebSocket:  ws://<host>:23334/mobile/ws
 审批回传:  POST http://<host>:23334/mobile/approve
-Deep Link: clawd://<host>:<port>/<token>
+Deep Link: deskbuddy://<host>:<port>/<token>
 ```
 
 > Token 通过 `Authorization: Bearer <token>` header 传输。

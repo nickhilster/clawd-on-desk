@@ -173,7 +173,7 @@ node hooks/openclaw-install.js
 
 ## Windows 说明
 
-- **安装包**：GitHub Releases 提供独立的 Windows x64 和 Windows ARM64 NSIS 安装包。Intel / AMD Windows 设备下载 `Clawd-on-Desk-Setup-<version>-x64.exe`，Windows on ARM 设备下载 `Clawd-on-Desk-Setup-<version>-arm64.exe`。
+- **安装包**：GitHub Releases 提供独立的 Windows x64 和 Windows ARM64 NSIS 安装包。Intel / AMD Windows 设备下载 `DeskBuddy-Setup-<version>-x64.exe`，Windows on ARM 设备下载 `DeskBuddy-Setup-<version>-arm64.exe`。
 - **自动更新**：Windows 安装包使用 `electron-updater`，更新时会保持当前匹配的架构。
 
 ## macOS 说明
@@ -181,7 +181,7 @@ node hooks/openclaw-install.js
 - **源码运行**（`npm start`）：Intel 和 Apple Silicon 均可直接使用。
 - **DMG 安装包**：未签名 Apple 开发者证书，macOS Gatekeeper 会拦截。解决方法：
   - 右键点击应用 → **打开** → 在弹窗中点击 **打开**，或
-  - 在终端运行 `xattr -cr /Applications/Clawd\ on\ Desk.app`
+  - 在终端运行 `xattr -cr /Applications/DeskBuddy.app`
 
 ## Linux 说明
 

@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.teambotics.deskbuddy.mobile.ClawdApp
+import com.teambotics.deskbuddy.mobile.DeskBuddyApp
 import com.teambotics.deskbuddy.mobile.MainActivity
 import com.teambotics.deskbuddy.mobile.R
 import com.teambotics.deskbuddy.mobile.data.PermissionRequestData
@@ -72,7 +72,7 @@ object NotificationHelper {
         val title = context.getString(R.string.notify_permission_title, name)
         val body = request.toolInputSummary ?: context.getString(R.string.notify_permission_body)
 
-        val notification = NotificationCompat.Builder(context, ClawdApp.CHANNEL_APPROVAL)
+        val notification = NotificationCompat.Builder(context, DeskBuddyApp.CHANNEL_APPROVAL)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle(title)
             .setContentText(body)
@@ -122,7 +122,7 @@ object NotificationHelper {
         val title = context.getString(R.string.notify_elicitation_title, name)
         val body = request.toolInputSummary ?: context.getString(R.string.notify_elicitation_body)
 
-        val notification = NotificationCompat.Builder(context, ClawdApp.CHANNEL_APPROVAL)
+        val notification = NotificationCompat.Builder(context, DeskBuddyApp.CHANNEL_APPROVAL)
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle(title)
             .setContentText(body)
