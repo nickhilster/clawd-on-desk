@@ -16,8 +16,8 @@ android {
         applicationId = "com.teambotics.deskbuddy.mobile"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1007
-        versionName = "0.11.0"
+        versionCode = 1008
+        versionName = "0.12.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters += listOf("arm64-v8a")
