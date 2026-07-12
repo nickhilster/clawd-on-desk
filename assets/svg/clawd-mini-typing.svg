@@ -129,7 +129,7 @@
       </g>
     </g>
 
-    <!-- Pixel Laptop (inside rotation group so it leans with Clawd) -->
+    <!-- Pixel Laptop (inside rotation group so it leans with DeskBuddy) -->
     <g id="laptop" transform="translate(3, 11)">
       <!-- Laptop Base --> 
       <rect x="-0.5" y="4" width="8" height="1" fill="#546E7A" rx="0.5"/>

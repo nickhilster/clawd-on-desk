@@ -250,7 +250,7 @@ themes/spark/
 
 1. **Create APNG animations** using the SVG files as keyframe references
 2. **Deploy** animation files to `assets/` directory
-3. **Test** by launching clawd-on-desk with Spark theme selected
+3. **Test** by launching deskbuddy with Spark theme selected
 4. **Verify** each state displays correctly
 5. **Refine** animations based on visual feedback
 
@@ -266,7 +266,7 @@ cp assets/idle-curious.svg assets/thinking-confused.apng
 cp assets/happy-excited.svg assets/happy-excited.apng
 # ... etc
 
-# Test theme loads in clawd-on-desk
+# Test theme loads in deskbuddy
 ```
 
 This allows testing the state machine and UI without waiting for animation conversion.

@@ -13,7 +13,7 @@
 
 ### Bug Fixes
 
-- **DND no longer denies Claude Code permissions on behalf of user** — DND mode now uses `res.destroy()` to let Claude Code fall back to its built-in chat confirmation instead of actively rejecting. Verified on CC 2.1.92+; older CC versions or future upstream changes to destroyed-connection handling may behave differently — if Clawd is in DND and CC hangs on a tool, open the CC terminal and answer there
+- **DND no longer denies Claude Code permissions on behalf of user** — DND mode now uses `res.destroy()` to let Claude Code fall back to its built-in chat confirmation instead of actively rejecting. Verified on CC 2.1.92+; older CC versions or future upstream changes to destroyed-connection handling may behave differently — if DeskBuddy is in DND and CC hangs on a tool, open the CC terminal and answer there
 - **Bubble focus steal fixes** (#75, #80, #98, thanks @stickycandy, @Rladmsrl, @Kevin7Qi) — permission bubbles now open with `show: false`, use `type: "panel"` (`NSPanel`) on macOS, restore topmost state more carefully for floating bubbles, and preserve the previously focused app more reliably on macOS hotkey flows (#80)
 - **Cursor false error animation** (#74, thanks @TaoXieSZ) — `postToolUseFailure` demoted from `error` to `working` for Cursor Agent, since tool failures (file not found, grep no match) are normal workflow, not real errors; task-level errors still trigger error state via `stop` with `status === "error"`
 - **High-DPI drag and display edge robustness** (#103, #124, thanks @sefuzhou770801-hub, @PeterShanxin) — drag now anchors to the main-process DIP cursor, portrait displays keep the pet readable, work-area queries guard against empty-display enumeration (#93), and Windows taskbar-edge topmost behavior is reasserted more reliably. A few remaining `screen.getAllDisplays()` callsites in mini mode will be hardened in 0.6.1
@@ -39,7 +39,7 @@ Release-prep pass that tightened external input surfaces — especially relevant
 
 - **Shared process utilities** — extracted `shared-process.js` from hook scripts, deduplicating PID resolution and stdin reading across all agents
 - **Deduplicated `extractExistingNodeBin`** — single implementation shared across all hook installers
-- **Hook payload testability** — extracted `buildStateBody` from `clawd-hook` and cleaned up state/update callsites to make hook behavior easier to verify
+- **Hook payload testability** — extracted `buildStateBody` from `deskbuddy-hook` and cleaned up state/update callsites to make hook behavior easier to verify
 - **State machine unit tests** — added unit tests for `state.js` core logic (priority, min-display, oneshot, sleep sequence)
 - **Agent config data integrity tests** — validate all agent modules export required fields and consistent event maps
 

@@ -22,12 +22,12 @@ This document holds the state machine, theme system, UI runtime, and platform ca
 - 睡眠序列：20s 鼠标静止 → idle-look → 60s → yawning(3s) → dozing → 10min → collapsing(0.8s) → sleeping；鼠标移动触发 waking(1.5s) → 恢复
 - DND 模式：跳过 dozing，直接 yawning → collapsing → sleeping；同时屏蔽 hook 事件
 - 隐藏桌宠（petHidden，入口：托盘 / 右键菜单 / 快捷键）：语义是「看不见宠物」而非免打扰——隐藏时收起宠物、Session HUD、update bubble 和当时 pending 的权限气泡（恢复显示时回来），但隐藏期间新到的权限请求仍照常弹气泡，这是有意设计、不要当 bug 修；要连权限气泡都静默是 DND 的职责（它有回终端确认的 fallback）。petHidden 不持久化，重启恢复显示
-- working 子动画：Clawd 主题为 1 个会话 → typing，2 个 → headphones groove，3+ → building；Calico / Cloudling 仍为 typing / juggling / building
+- working 子动画：DeskBuddy 主题为 1 个会话 → typing，2 个 → headphones groove，3+ → building；Calico / Cloudling 仍为 typing / juggling / building
 - juggling 子动画：1 个 subagent → juggling，2+ → conducting
 
 ## Theme System
 
-Clawd 是主题化桌宠：动画资源、计时、hitbox、眼球追踪参数都来自主题配置。
+DeskBuddy 是主题化桌宠：动画资源、计时、hitbox、眼球追踪参数都来自主题配置。
 
 - 内置主题目录：`themes/clawd/`、`themes/calico/`、`themes/cloudling/`；`themes/template/` 是脚手架模板
 - 用户主题目录：`<userData>/themes/<id>/theme.json`
@@ -86,21 +86,21 @@ Mini 状态映射：
 
 | 状态 | SVG | 用途 |
 |------|-----|------|
-| `mini-idle` | `clawd-mini-idle.svg` | 待机：呼吸、眨眼、手臂晃动、眼球追踪 |
-| `mini-enter` | `clawd-mini-enter.svg` | 一次性滑入弹跳 |
-| `mini-peek` | `clawd-mini-peek.svg` | Hover 探头 |
-| `mini-alert` | `clawd-mini-alert.svg` | 通知 |
-| `mini-happy` | `clawd-mini-happy.svg` | 完成 |
-| `mini-crabwalk` | `clawd-mini-crabwalk.svg` | 右键进入时的螃蟹步 |
-| `mini-enter-sleep` | `clawd-mini-enter-sleep.svg` | DND 下入场 |
-| `mini-sleep` | `clawd-mini-sleep.svg` | DND 休眠 |
+| `mini-idle` | `deskbuddy-mini-idle.svg` | 待机：呼吸、眨眼、手臂晃动、眼球追踪 |
+| `mini-enter` | `deskbuddy-mini-enter.svg` | 一次性滑入弹跳 |
+| `mini-peek` | `deskbuddy-mini-peek.svg` | Hover 探头 |
+| `mini-alert` | `deskbuddy-mini-alert.svg` | 通知 |
+| `mini-happy` | `deskbuddy-mini-happy.svg` | 完成 |
+| `mini-crabwalk` | `deskbuddy-mini-crabwalk.svg` | 右键进入时的螃蟹步 |
+| `mini-enter-sleep` | `deskbuddy-mini-enter-sleep.svg` | DND 下入场 |
+| `mini-sleep` | `deskbuddy-mini-sleep.svg` | DND 休眠 |
 | `mini-working` | 主题可选 | 1 会话 mini typing；缺失则静默跳过 |
 
 ## State To Animation Mapping
 
 权威表格见 `docs/guides/state-mapping.md`。这里只保留实现层面的补充：
 
-- working 子动画：Clawd 主题为 1 会话 → typing，2 → headphones groove，3+ → building；Calico / Cloudling 仍为 typing / juggling / building
+- working 子动画：DeskBuddy 主题为 1 会话 → typing，2 → headphones groove，3+ → building；Calico / Cloudling 仍为 typing / juggling / building
 - juggling 子动画：1 subagent → juggling，2+ → conducting
 - mini 状态有独立动画槽；`mini-working` 是可选能力
 - 睡眠序列和 DND 行为见上面的 State Machine
@@ -109,7 +109,7 @@ Mini 状态映射：
 ## Assets
 
 - 素材按主题组织：每个主题目录自带 `assets/`
-- `assets/svg/` 与 `assets/gif/` 是默认 Clawd 主题使用的公共根路径
+- `assets/svg/` 与 `assets/gif/` 是默认 DeskBuddy 主题使用的公共根路径
 - 文档预览 GIF 放在 `assets/gif/`，运行时不直接读
 - 需要编辑的源素材先复制到 `assets/source/`
 - SVG 运行时用 `<object type="image/svg+xml">`，其他位图格式走 `<img>`
@@ -155,7 +155,7 @@ Mini 状态映射：
 - 路径统一用 `path.join(__dirname, ...)`
 - 透明无边框浮窗：`frame: false`, `transparent: true`, `alwaysOnTop: true`
 - 使用单实例锁：`app.requestSingleInstanceLock()`
-- 位置持久化到 `clawd-prefs.json`
+- 位置持久化到 `deskbuddy-prefs.json`
 - 多显示器钳制走 `clampToScreen()` + `getNearestWorkArea()`
 
 ## Known Limits

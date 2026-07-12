@@ -21,10 +21,10 @@
 </p>
 
 <p align="center">
-  <img src="assets/hero.gif" alt="DeskBuddy 桌宠动画演示：像素螃蟹会随 AI 编程助手状态实时切换，在睡觉、思考、工具运行时打字、单个子代理时戴耳机律动、多个子代理并行时三球杂耍、权限请求弹出时提醒、任务完成后庆祝。支持 Claude Code、Codex、Cursor、Copilot、Gemini、Antigravity、Qwen、CodeWhale、Pi、OpenClaw 等。">
+  <img src="assets/hero.gif" alt="DeskBuddy 桌宠动画演示：桌宠会随 AI 编程助手状态实时切换，在睡觉、思考、工具运行时打字、单个子代理时戴耳机律动、多个子代理并行时三球杂耍、权限请求弹出时提醒、任务完成后庆祝。支持 Claude Code、Codex、Cursor、Copilot、Gemini、Antigravity、Qwen、CodeWhale、Pi、OpenClaw 等。">
 </p>
 
-DeskBuddy 住在你的桌面上，实时感知 AI 编程助手正在做什么。发起一个长任务，起身去做点别的，等螃蟹告诉你任务完成了再回来。
+DeskBuddy 住在你的桌面上，实时感知 AI 编程助手正在做什么。发起一个长任务，起身去做点别的，等 DeskBuddy 告诉你任务完成了再回来。
 
 你提问时它思考，工具运行时它打字，子代理工作时它会戴耳机律动或三球杂耍，审批权限时它弹卡片，任务完成时它庆祝，你离开时它睡觉。内置三套主题：**Clawd**（像素螃蟹）、**Calico**（三花猫）和 **Cloudling**（云宝），支持自定义主题，也支持导入 Codex Pet 动画包。
 
@@ -40,7 +40,7 @@ DeskBuddy 住在你的桌面上，实时感知 AI 编程助手正在做什么。
 - **Antigravity CLI (agy)** — 可选 command hook，写入 `~/.gemini/config/hooks.json`（从 Settings → Agents 安装，或执行 `npm run install:antigravity-hooks`）；**仅状态同步**：DeskBuddy 不会为 agy 弹任何权限气泡，所有 Allow / Deny / Always-allow 都在 agy 自己的终端菜单里完成
 - **Cursor Agent** — 可选 [Cursor IDE hooks](https://cursor.com/docs/agent/hooks)，写入 `~/.cursor/hooks.json`（从 Settings → Agents 安装，或执行 `npm run install:cursor-hooks`）
 - **CodeBuddy** — 可选 Claude Code 兼容 command hook + HTTP 权限 hook，写入 `~/.codebuddy/settings.json`（从 Settings → Agents 安装，或执行 `node hooks/codebuddy-install.js`）
-- **Kiro CLI** — 可选 command hooks，注入到 `~/.kiro/agents/` 下的自定义 agent 配置中，并自动创建一个 `clawd` agent；安装集成后 DeskBuddy 会继续从内置 `kiro_default` 同步它，尽量保持与默认 agent 一致。macOS 与 Windows 上状态动效已验证可用；需要时可用 `kiro-cli --agent clawd` 或在会话内执行 `/agent swap clawd` 启用 hooks
+- **Kiro CLI** — 可选 command hooks，注入到 `~/.kiro/agents/` 下的自定义 agent 配置中，并自动创建一个 `deskbuddy` agent；安装集成后 DeskBuddy 会继续从内置 `kiro_default` 同步它，尽量保持与默认 agent 一致。macOS 与 Windows 上状态动效已验证可用；需要时可用 `kiro-cli --agent deskbuddy` 或在会话内执行 `/agent swap deskbuddy` 启用 hooks
 - **Kimi Code CLI（Kimi-CLI）** — 可选 command hooks，写入 `~/.kimi/config.toml`（`[[hooks]]` 条目）（从 Settings → Agents 安装，或执行 `npm run install:kimi-hooks`）
 - **Qwen Code** — 可选 command hooks，写入 `~/.qwen/settings.json`（从 Settings → Agents 安装，或执行 `npm run install:qwen-hooks`）；支持状态追踪和 Qwen `PermissionRequest` 桌面权限气泡
 - **CodeWhale** — 可选 state-only lifecycle hooks，写入 `~/.codewhale/config.toml`（`[[hooks.hooks]]` 条目）（从 Settings → Agents 安装，或执行 `npm run install:codewhale-hooks`）；Phase 1 只驱动 idle、thinking、working、sleeping、error、attention、sweeping 等状态动画，不接权限气泡和子代理追踪
@@ -84,7 +84,7 @@ DeskBuddy 住在你的桌面上，实时感知 AI 编程助手正在做什么。
 - **只读设计** — 局域网桥只向外广播状态，手机端无法操作你的电脑（远程审批已在路线图上）
 - **仅限局域网 + 令牌防护** — 配对需要令牌，令牌自动轮换并带宽限期，可一键重新生成或重置访问
 - **可安装** — 标准 PWA，添加到主屏幕即可获得类原生体验
-> 手机伴侣这条线——从最初原型到令牌轮换——由核心贡献者 [@Bynlk](https://github.com/Bynlk) 一手打造并持续主导，他还维护着自带原生安卓 App 的姊妹项目 [clawd-on-mobile](https://github.com/Bynlk/clawd-on-mobile)。
+> 手机伴侣这条线——从最初原型到令牌轮换——由核心贡献者 [@Bynlk](https://github.com/Bynlk) 一手打造并持续主导，他还维护着自带原生安卓 App 的姊妹项目 [deskbuddy-mobile](https://github.com/Bynlk/deskbuddy-mobile)。
 
 ### 系统
 - **点击穿透** — 透明区域的点击直接穿透到下方窗口，只有角色本体可交互
@@ -170,7 +170,7 @@ npm start
 
 ## 自定义主题
 
-DeskBuddy 支持自定义主题——用你自己的角色和动画替换默认的螃蟹。如果你已有 Codex Pet 包，也可以在 `设置…` → `主题` → `导入宠物 zip` 直接导入，DeskBuddy 会自动把 atlas 转成托管主题。
+DeskBuddy 支持自定义主题——用你自己的角色和动画替换默认角色。如果你已有 Codex Pet 包，也可以在 `设置…` → `主题` → `导入宠物 zip` 直接导入，DeskBuddy 会自动把 atlas 转成托管主题。
 
 **快速开始：**
 1. 先生成一个主题骨架：

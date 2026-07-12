@@ -1,10 +1,10 @@
 # Theme Creation And Installation Guide
 
-Install a downloaded Clawd theme, or create your own desktop pet theme with custom characters and animations.
+Install a downloaded DeskBuddy theme, or create your own desktop pet theme with custom characters and animations.
 
 ## Install A Downloaded Theme
 
-A Clawd theme is a folder whose top level contains `theme.json`. The folder name is the theme id; the display name shown in Clawd comes from `theme.json.name`.
+A DeskBuddy theme is a folder whose top level contains `theme.json`. The folder name is the theme id; the display name shown in DeskBuddy comes from `theme.json.name`.
 
 1. Download, clone, or unzip the theme.
 
@@ -19,14 +19,14 @@ A Clawd theme is a folder whose top level contains `theme.json`. The folder name
    ```
    If unzipping creates `pixel-cat/pixel-cat/theme.json`, move the inner folder into the themes directory.
 
-3. Put the theme folder in your Clawd user themes directory:
+3. Put the theme folder in your DeskBuddy user themes directory:
    - Windows: `%APPDATA%/deskbuddy/themes/pixel-cat/`
    - macOS: `~/Library/Application Support/deskbuddy/themes/pixel-cat/`
    - Linux: `~/.config/deskbuddy/themes/pixel-cat/`
 
-4. Open `Settings...` -> `Theme` and select the theme. If Clawd was already open and the theme does not appear, restart Clawd.
+4. Open `Settings...` -> `Theme` and select the theme. If DeskBuddy was already open and the theme does not appear, restart DeskBuddy.
 
-Avoid using a folder id that matches a built-in theme (`clawd`, `calico`, or `cloudling`). Built-in themes take priority over user themes with the same id.
+Avoid using a folder id that matches a built-in theme (`deskbuddy`, `calico`, or `cloudling`). Built-in themes take priority over user themes with the same id.
 
 ## Create A New Theme
 
@@ -34,7 +34,7 @@ Avoid using a folder id that matches a built-in theme (`clawd`, `calico`, or `cl
    ```bash
    node scripts/create-theme.js my-theme
    ```
-   The script writes to your Clawd user themes directory by default:
+   The script writes to your DeskBuddy user themes directory by default:
    - Windows: `%APPDATA%/deskbuddy/themes/my-theme/`
    - macOS: `~/Library/Application Support/deskbuddy/themes/my-theme/`
    - Linux: `~/.config/deskbuddy/themes/my-theme/`
@@ -49,7 +49,7 @@ Avoid using a folder id that matches a built-in theme (`clawd`, `calico`, or `cl
 
 4. Create your assets in the `assets/` folder
 
-5. Open `Settings...` -> `Theme` and select your theme. Restart Clawd if the new folder is not listed yet.
+5. Open `Settings...` -> `Theme` and select your theme. Restart DeskBuddy if the new folder is not listed yet.
 
 6. (Optional) Validate:
    ```bash
@@ -112,7 +112,7 @@ Skip the template entirely. Author all animations as SVG with CSS `@keyframes`:
 - Infinite scalability (no pixelation at any zoom level)
 - CSS animation control (timing, easing, iteration)
 - SVG filter effects (blur, glow, drop-shadow)
-- Reference `assets/svg/clawd-*.svg` in the repo for examples
+- Reference `assets/svg/deskbuddy-*.svg` in the repo for examples
 
 ### External Theme Runtime Limits
 
@@ -122,7 +122,7 @@ External themes are treated as untrusted input. SVG files in user themes are san
 - CSS animation in `<style>` is allowed, but `@import` and unsafe `url(...)` references are stripped
 - `url(#local-id)` fragment references for filters, masks, gradients, and markers are allowed
 
-Do not build a user theme that depends on JavaScript inside SVG files. The built-in Cloudling theme uses `trustedRuntime.scriptedSvgFiles`, but that capability is only honored for themes loaded from Clawd's packaged/repo `themes/` directory. If an external theme declares `trustedRuntime`, Clawd ignores it.
+Do not build a user theme that depends on JavaScript inside SVG files. The built-in Cloudling theme uses `trustedRuntime.scriptedSvgFiles`, but that capability is only honored for themes loaded from DeskBuddy's packaged/repo `themes/` directory. If an external theme declares `trustedRuntime`, DeskBuddy ignores it.
 
 ## theme.json Reference
 
@@ -370,7 +370,7 @@ Mini mode hides the character at the screen edge. Set `"supported": false` or om
 
 If `miniMode.supported` is `true`, the validator expects all 8 mini states shown above. `mini-idle` only needs to be SVG when `mini-idle` is listed in `eyeTracking.states`.
 
-`mini-working` is optional. If you provide `miniMode.states["mini-working"]`, Clawd can show a compact working animation while the pet is in mini mode. If you omit it, working/thinking/juggling events do not break mini mode; Clawd keeps the current mini visual.
+`mini-working` is optional. If you provide `miniMode.states["mini-working"]`, DeskBuddy can show a compact working animation while the pet is in mini mode. If you omit it, working/thinking/juggling events do not break mini mode; DeskBuddy keeps the current mini visual.
 
 ### Timings
 
@@ -452,7 +452,7 @@ This is mainly for special transition assets. Prefer one shared canvas unless a 
 
 ### Layout Normalization
 
-If two themes have very different visible body heights even though the window size is the same, add a `layout` block. This lets Clawd align the character by visible body area and baseline instead of the raw file canvas:
+If two themes have very different visible body heights even though the window size is the same, add a `layout` block. This lets DeskBuddy align the character by visible body area and baseline instead of the raw file canvas:
 
 ```json
 "layout": {
@@ -593,6 +593,6 @@ The validator checks:
 1. Download/clone the theme to the themes directory (see paths above)
 2. In `Settings...` -> `Theme`, check the capability badges (`Tracked idle`, `Animated idle`, `Static theme`, `Mini`, `Direct sleep`, `Fine motion`, `No reactions`) to confirm what the theme supports
 3. Select the theme card. The theme appears by its `name` field from `theme.json`.
-4. Restart Clawd only if a newly copied theme folder does not appear yet.
+4. Restart DeskBuddy only if a newly copied theme folder does not appear yet.
 
 > **Security note:** Third-party SVG files are automatically sanitized — `<script>`, event handlers, and `javascript:` URLs are stripped before rendering.

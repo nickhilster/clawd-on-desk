@@ -2,17 +2,17 @@
 
 [Back to README](../../README.md) · [简体中文](copilot-setup.zh-CN.md)
 
-> **Copilot CLI is installed on demand.** On fresh installs, open **Settings → Agents** and click **Install** for Copilot CLI before using local Copilot tracking. After it is installed and enabled, Clawd writes `copilot-hook.js` into `<COPILOT_HOME or ~/.copilot>/hooks/hooks.json` on launch using marker-based merge that preserves your other hook entries.
+> **Copilot CLI is installed on demand.** On fresh installs, open **Settings → Agents** and click **Install** for Copilot CLI before using local Copilot tracking. After it is installed and enabled, DeskBuddy writes `copilot-hook.js` into `<COPILOT_HOME or ~/.copilot>/hooks/hooks.json` on launch using marker-based merge that preserves your other hook entries.
 >
-> This document is kept as the **advanced / manual fallback**: useful for debugging, customizing the event subset, working offline, or testing Clawd's behavior.
+> This document is kept as the **advanced / manual fallback**: useful for debugging, customizing the event subset, working offline, or testing DeskBuddy's behavior.
 
 ## Auto-sync at a glance
 
-- **Trigger**: Clawd launches *and* Copilot CLI is installed and enabled in Settings.
+- **Trigger**: DeskBuddy launches *and* Copilot CLI is installed and enabled in Settings.
 - **Target file**: `<copilot-home>/hooks/hooks.json`, where `<copilot-home>` is `$COPILOT_HOME` (trimmed, non-empty) or `~/.copilot` if the env is unset.
 - **Registered events (10)**: `sessionStart`, `userPromptSubmitted`, `preToolUse`, `postToolUse`, `sessionEnd`, `errorOccurred`, `agentStop`, `subagentStart`, `subagentStop`, `preCompact`.
 - **Coverage**: only entries containing the `copilot-hook.js` marker are managed; your other entries and other `hooks/*.json` files are left untouched.
-- **`disableAllHooks`**: if either `hooks.json` or `<copilot-home>/settings.json` has `disableAllHooks: true` at the top level, doctor surfaces a warning and suppresses the Fix button (so it does not overwrite your explicit intent). Clawd still writes its entries, but Copilot will not execute them.
+- **`disableAllHooks`**: if either `hooks.json` or `<copilot-home>/settings.json` has `disableAllHooks: true` at the top level, doctor surfaces a warning and suppresses the Fix button (so it does not overwrite your explicit intent). DeskBuddy still writes its entries, but Copilot will not execute them.
 
 ## Manual configuration (fallback)
 
@@ -36,17 +36,17 @@ Create `<copilot-home>/hooks/hooks.json` and replace `/path/to/deskbuddy` with y
 }
 ```
 
-The `bash` / `powershell` fields are Copilot CLI's official per-platform dispatch mechanism (see the [Copilot Hooks Reference](https://docs.github.com/en/copilot/reference/hooks-configuration)). Copilot loads every `.json` file under `<copilot-home>/hooks/` and merges them, so you can freely name additional files (e.g. `clawd.json`, `my-team.json`). Clawd manages only `hooks.json`.
+The `bash` / `powershell` fields are Copilot CLI's official per-platform dispatch mechanism (see the [Copilot Hooks Reference](https://docs.github.com/en/copilot/reference/hooks-configuration)). Copilot loads every `.json` file under `<copilot-home>/hooks/` and merges them, so you can freely name additional files (e.g. `deskbuddy.json`, `my-team.json`). DeskBuddy manages only `hooks.json`.
 
 ## `COPILOT_HOME` custom directory
 
-Copilot CLI supports a `COPILOT_HOME` environment variable that redirects the entire config directory (see the [Config Directory Reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-config-dir-reference)). Clawd reads this env at launch:
+Copilot CLI supports a `COPILOT_HOME` environment variable that redirects the entire config directory (see the [Config Directory Reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-config-dir-reference)). DeskBuddy reads this env at launch:
 
-- **Windows**: system-level environment variables are visible to Clawd automatically; user-level variables take effect after a restart.
-- **macOS / Linux GUI launches**: Clawd.app launched by launchd / Finder **does not inherit** env vars from your shell's `.zshrc` / `.bashrc`. To make `COPILOT_HOME` visible to Clawd:
-  - macOS: run `launchctl setenv COPILOT_HOME /your/path`, then restart Clawd.
+- **Windows**: system-level environment variables are visible to DeskBuddy automatically; user-level variables take effect after a restart.
+- **macOS / Linux GUI launches**: DeskBuddy.app launched by launchd / Finder **does not inherit** env vars from your shell's `.zshrc` / `.bashrc`. To make `COPILOT_HOME` visible to DeskBuddy:
+  - macOS: run `launchctl setenv COPILOT_HOME /your/path`, then restart DeskBuddy.
   - Linux: set it in `~/.profile`, `/etc/environment`, or your desktop entry.
-- **Runtime changes**: the descriptor caches the path doctor displays. Changing `COPILOT_HOME` requires restarting Clawd before doctor will show the new path. The actual hook sync reads the latest env at call time, so a stale doctor path can be misleading if you change the env without restart.
+- **Runtime changes**: the descriptor caches the path doctor displays. Changing `COPILOT_HOME` requires restarting DeskBuddy before doctor will show the new path. The actual hook sync reads the latest env at call time, so a stale doctor path can be misleading if you change the env without restart.
 
 ## Remote SSH
 
@@ -56,6 +56,6 @@ If Copilot CLI is not installed on the remote (`~/.copilot/` missing), the regis
 
 ## Session rename
 
-Copilot CLI stores the current session name in `<copilot-home>/session-state/<sessionId>/workspace.yaml` (`name:` field). `copilot-hook.js` reads that file on every event and forwards the name as the session title to Clawd, so a `/rename` inside Copilot CLI propagates to the Session HUD and Dashboard on the next hook event (next user prompt, tool run, etc.). The `COPILOT_HOME` env is honored by the session-state resolver too.
+Copilot CLI stores the current session name in `<copilot-home>/session-state/<sessionId>/workspace.yaml` (`name:` field). `copilot-hook.js` reads that file on every event and forwards the name as the session title to DeskBuddy, so a `/rename` inside Copilot CLI propagates to the Session HUD and Dashboard on the next hook event (next user prompt, tool run, etc.). The `COPILOT_HOME` env is honored by the session-state resolver too.
 
 Auto-generated names (`user_named: false`) are used as-is, matching Codex thread-name behavior.

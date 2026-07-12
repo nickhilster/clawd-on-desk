@@ -6,15 +6,15 @@
 
 ## Complete Handoff Prompt
 
-You are being asked to create **32 APNG animation files** for a desktop pet companion called "Spark" in a project called clawd-on-desk.
+You are being asked to create **32 APNG animation files** for a desktop pet companion called "Spark" in a project called deskbuddy.
 
 ### What Exists (Context)
 
-**Project:** clawd-on-desk (Electron desktop app that shows animated pet characters reacting to coding agent activity)
+**Project:** deskbuddy (Electron desktop app that shows animated pet characters reacting to coding agent activity)
 
 **Design Files:**
 - Figma file: https://www.figma.com/design/AZk0NbB4h9HX25cy70cjq0
-- 8 SVG keyframe files already created at: `C:\dev\clawd-on-desk\themes\spark\assets\`
+- 8 SVG keyframe files already created at: `C:\dev\deskbuddy\themes\spark\assets\`
   - idle-curious.svg
   - happy-excited.svg
   - thinking-confused.svg
@@ -122,7 +122,7 @@ You are being asked to create **32 APNG animation files** for a desktop pet comp
    - Colors match specifications
    - Timing feels natural and responsive
    - File sizes are reasonable
-   - Deploy to: `C:\dev\clawd-on-desk\themes\spark\assets\`
+   - Deploy to: `C:\dev\deskbuddy\themes\spark\assets\`
 
 ### Example: How to Create "thinking-confused.apng"
 
@@ -142,7 +142,7 @@ You are being asked to create **32 APNG animation files** for a desktop pet comp
 
 ### Deliverable
 
-**Output:** 32 APNG files placed in `C:\dev\clawd-on-desk\themes\spark\assets\`
+**Output:** 32 APNG files placed in `C:\dev\deskbuddy\themes\spark\assets\`
 
 **Each file must:**
 - Be named exactly as specified (filenames matter, they're referenced in theme.json)
@@ -169,7 +169,7 @@ You are being asked to create **32 APNG animation files** for a desktop pet comp
 - [ ] Frame timing matches specifications
 - [ ] File sizes < 500KB each
 - [ ] Total theme < 20MB
-- [ ] Ready for integration with clawd-on-desk app
+- [ ] Ready for integration with deskbuddy app
 
 ---
 

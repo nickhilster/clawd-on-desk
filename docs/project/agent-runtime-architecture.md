@@ -7,7 +7,7 @@ This document holds the deeper runtime and integration notes that were previousl
 ```text
 Claude Code 状态同步（command hook，非阻塞）：
   Claude Code 触发事件
-    → hooks/clawd-hook.js（零依赖 Node 脚本，stdin 读 JSON 取 session_id + source_pid）
+    → hooks/deskbuddy-hook.js（零依赖 Node 脚本，stdin 读 JSON 取 session_id + source_pid）
     → HTTP POST 127.0.0.1:23333/state { state, session_id, event, source_pid, cwd }
     → src/server.js 路由 → src/state.js 状态机（多会话追踪 + 优先级 + 最小显示时长 + 睡眠序列）
     → IPC state-change 事件
@@ -43,16 +43,16 @@ Antigravity CLI (agy) 状态同步（hook-only，stdin JSON + stdout JSON）：
     → hooks/antigravity-hook.js（camelCase payload + argv 事件名 → agents/antigravity-cli.js 映射）
     → HTTP POST 127.0.0.1:23333/state（状态）
     → 同上状态机（agent_id: antigravity-cli）
-  Hook 注册到 ~/.gemini/config/hooks.json 的 clawd hook group，**仅状态事件**。PreToolUse **故意不注册**，权限完全交给 agy 自己 5 选项 native menu（agy 1.0.1 LLM 主动调内置 ask_permission 工具触发，含 "Persist to settings.json" 持久规则）。Stop stdout 返回允许停止的 JSON。
+  Hook 注册到 ~/.gemini/config/hooks.json 的 deskbuddy hook group，**仅状态事件**。PreToolUse **故意不注册**，权限完全交给 agy 自己 5 选项 native menu（agy 1.0.1 LLM 主动调内置 ask_permission 工具触发，含 "Persist to settings.json" 持久规则）。Stop stdout 返回允许停止的 JSON。
 
 Kiro CLI 状态同步（per-agent hook，stdin JSON）：
   Kiro CLI 触发事件
     → hooks/kiro-hook.js（camelCase 事件 → agents/kiro-cli.js 映射 → HTTP POST）
     → 同上状态机（agent_id: kiro-cli）
   注意：Kiro 无 global hooks，hooks/kiro-install.js 把 hook 注入到 ~/.kiro/agents/ 下每个
-  custom agent 配置里，并额外维护一个 "clawd" agent（继承 kiro_default，启动时从 kiro_default
-  重新同步以避免行为漂移）。内置 kiro_default 没有可编辑 JSON，用户需 `kiro-cli --agent clawd`
-  或 `/agent swap clawd` 才能启用 hooks。
+  custom agent 配置里，并额外维护一个 "deskbuddy" agent（继承 kiro_default，启动时从 kiro_default
+  重新同步以避免行为漂移）。内置 kiro_default 没有可编辑 JSON，用户需 `kiro-cli --agent deskbuddy`
+  或 `/agent swap deskbuddy` 才能启用 hooks。
 
 CodeBuddy 状态同步（Claude Code 兼容 hook，command）：
   CodeBuddy 触发事件
@@ -64,12 +64,12 @@ Kimi Code CLI（Kimi-CLI）状态同步（hook-only，config.toml）：
   Kimi Code CLI（Kimi-CLI）触发事件
     → hooks/kimi-hook.js（hook 事件 → agents/kimi-cli.js 映射 → HTTP POST）
     → 同上状态机（agent_id: kimi-cli）
-  Hook 注册到 ~/.kimi/config.toml 的 [[hooks]] 条目；Clawd 启动时会自动同步这些条目。
+  Hook 注册到 ~/.kimi/config.toml 的 [[hooks]] 条目；DeskBuddy 启动时会自动同步这些条目。
 
 opencode 状态同步（in-process plugin，~0ms 延迟）：
   opencode 触发事件（session.created / session.status / message.part.updated 等）
     → hooks/opencode-plugin/index.mjs（Bun 运行时，插件跑在 opencode.exe 进程内）
-    → translateEvent 映射（opencode v2 事件名 → PascalCase Clawd event 名）
+    → translateEvent 映射（opencode v2 事件名 → PascalCase DeskBuddy event 名）
     → session.created 的 event.properties.info.parentID 会被记录为 child → parent 映射，child 状态上报带 headless: true
     → fire-and-forget HTTP POST 127.0.0.1:23333/state
     → 同上状态机（agent_id: opencode）
@@ -77,35 +77,35 @@ opencode 状态同步（in-process plugin，~0ms 延迟）：
 Pi 状态同步（global extension，state-only）：
   Pi 触发 session_start / before_agent_start / tool_call / tool_result / agent_end 等事件
     → ~/.pi/agent/extensions/deskbuddy/index.ts（Pi extension runtime）
-    → hooks/pi-extension-core.js 映射为 PascalCase Clawd event 名
+    → hooks/pi-extension-core.js 映射为 PascalCase DeskBuddy event 名
     → HTTP POST 127.0.0.1:23333/state
     → 同上状态机（agent_id: pi）
 
 OpenClaw 状态同步（in-process plugin，state-only）：
   OpenClaw 触发 session_start / model_call_started / before_tool_call / after_tool_call / model_call_ended 等事件
     → hooks/openclaw-plugin/index.js（plain ESM default object，OpenClaw plugin loader 直接识别）
-    → 映射为 PascalCase Clawd event 名，POST body 只发送 allowlist 字段
+    → 映射为 PascalCase DeskBuddy event 名，POST body 只发送 allowlist 字段
     → fire-and-forget HTTP POST 127.0.0.1:23333/state
     → 同上状态机（agent_id: openclaw）
 
 Hermes Agent 状态同步（Python plugin，Hermes SDK）：
   Hermes 触发 on_session_start / pre_llm_call / post_llm_call / pre_tool_call / post_tool_call / on_session_end / on_session_finalize / on_session_reset
     → hooks/hermes-plugin/__init__.py（plugin 跑在 Hermes worker 进程内）
-    → 映射为 Clawd event + 同步 HTTP POST 127.0.0.1:23333/state
+    → 映射为 DeskBuddy event + 同步 HTTP POST 127.0.0.1:23333/state
     → 同上状态机（agent_id: hermes）
   终端聚焦 metadata 在 plugin register 时用 daemon thread 异步解析进程树；首个 hook 可不带 source_pid。
 
 opencode 权限气泡（event hook + 反向 bridge，非阻塞）：
   opencode 请求权限 → event hook 收到 permission.asked
-    → plugin POST /permission（带 bridge_url + bridge_token）→ Clawd 立即 200 ACK（不挂连接）
-    → Clawd 创建 bubble 窗口 → 用户 Allow/Always/Deny
-    → Clawd POST plugin 的反向 bridge → bridge 用 ctx.client._client.post() 调 opencode 内置 Hono 路由 /permission/:id/reply
+    → plugin POST /permission（带 bridge_url + bridge_token）→ DeskBuddy 立即 200 ACK（不挂连接）
+    → DeskBuddy 创建 bubble 窗口 → 用户 Allow/Always/Deny
+    → DeskBuddy POST plugin 的反向 bridge → bridge 用 ctx.client._client.post() 调 opencode 内置 Hono 路由 /permission/:id/reply
     → opencode 执行对应行为（once/always/reject）
 
 远程 SSH 状态同步（反向端口转发）：
   远程服务器上的 Claude Code / Codex CLI
     → hooks 通过 SSH 隧道 POST 到本地 127.0.0.1:23333
-    → 同上状态机（CLAWD_REMOTE=1 模式跳过 PID 收集）
+    → 同上状态机（DESKBUDDY_REMOTE=1 模式跳过 PID 收集）
 
 权限决策流（Claude Code HTTP hook，阻塞）：
   Claude Code PermissionRequest
@@ -122,7 +122,7 @@ opencode 权限气泡（event hook + 反向 bridge，非阻塞）：
     → hooks/codex-hook.js POST /permission { tool_name, tool_input, tool_input_description, session_id, turn_id }
     → 默认 intercept 模式：main.js 创建普通 Allow / Deny bubble，用户点击后 codex-hook.js stdout 输出官方 JSON decision
     → 显式 native 模式：server 记录 notification 并立即返回 no-decision，Codex AutoReview / 原生审批继续处理
-    → DND / disabled / bubble hidden / Clawd unavailable 时 stdout "{}"，Codex 回到原生审批提示
+    → DND / disabled / bubble hidden / DeskBuddy unavailable 时 stdout "{}"，Codex 回到原生审批提示
 ```
 
 ## Multi-Agent Registry
@@ -146,14 +146,14 @@ opencode 权限气泡（event hook + 反向 bridge，非阻塞）：
 - `agents/codex-log-monitor.js` — Codex JSONL fallback 增量轮询器（文件监视 + 增量读取 + 状态 / metadata fallback，不再做审批猜测）
 - `agents/gemini-log-monitor.js` — legacy Gemini session JSON 轮询器；当前 hook-only 路径不启动
 
-运行时的 agent 安装意图 / 启停 / 权限气泡开关通过 `src/agent-gate.js` 读 `prefs.agents[id].integrationInstalled` / `.enabled` / `.permissionsEnabled`。`enabled` 仍然只表示是否处理该 agent 的事件：关闭会让 `state.js` / `server.js` 停止处理事件、清理 session / bubble；`integrationInstalled` 才表示本机 hook/plugin/extension 是否由 Clawd 维护。snapshot 缺字段时 gate 保守默认 true 以兼容旧版；新安装的 schema 会显式把 Claude Code / Codex 设为已安装且启用，其余 agent 设为未安装且未启用。Claude Code 额外有 `.subagentPermissionsEnabled` 子开关（#451，仅 claude-code 默认条目携带该 flag），控制 Task 子 agent 发起的 PermissionRequest 是否弹泡泡。
+运行时的 agent 安装意图 / 启停 / 权限气泡开关通过 `src/agent-gate.js` 读 `prefs.agents[id].integrationInstalled` / `.enabled` / `.permissionsEnabled`。`enabled` 仍然只表示是否处理该 agent 的事件：关闭会让 `state.js` / `server.js` 停止处理事件、清理 session / bubble；`integrationInstalled` 才表示本机 hook/plugin/extension 是否由 DeskBuddy 维护。snapshot 缺字段时 gate 保守默认 true 以兼容旧版；新安装的 schema 会显式把 Claude Code / Codex 设为已安装且启用，其余 agent 设为未安装且未启用。Claude Code 额外有 `.subagentPermissionsEnabled` 子开关（#451，仅 claude-code 默认条目携带该 flag），控制 Task 子 agent 发起的 PermissionRequest 是否弹泡泡。
 
 ## Hook And Plugin Sync
 
 启动链路只会自动补齐 `integrationInstalled=true` 且 `enabled=true` 的缺失集成：
 
 - `server.js` 启动后异步同步已安装且已启用的 Claude / Codex / Gemini / Antigravity / Cursor / CodeBuddy / Kiro / Kimi / Qwen / Qoder hooks、opencode / OpenClaw / Hermes plugins 和 Pi extension；Hermes 同步会先做无副作用安装探测，未安装时不创建 `~/.hermes`
-- Claude hook 同步时还会扫 `DEPRECATED_CORE_HOOKS`（当前含 `WorktreeCreate`）清掉旧版本留下的过时 clawd hook 条目，仅删 command 指向 `clawd-hook.js` 的那条，用户自己写的同事件 hook 不动
+- Claude hook 同步时还会扫 `DEPRECATED_CORE_HOOKS`（当前含 `WorktreeCreate`）清掉旧版本留下的过时 deskbuddy hook 条目，仅删 command 指向 `deskbuddy-hook.js` 的那条，用户自己写的同事件 hook 不动
 
 Settings Agent 页的 Install 会执行对应 sync 并把 `integrationInstalled=true, enabled=true` 一起提交；Uninstall 会调用 marker-scoped 卸载器，并把 `integrationInstalled=false, enabled=false` 一起提交。单独重新启用一个未安装 agent 只打开事件入口，不会写本机配置；手动安装命令主要用于调试、重装或远程机部署。
 
@@ -191,16 +191,16 @@ opencode、OpenClaw 和 Hermes 是 plugin 形式集成的 agent；OpenClaw Phase
 - 由于 `permission.ask` hook 在 opencode 1.3.13 上未被调用，权限只能走 event hook + 反向 bridge
 - plugin 内发出的 POST 必须 fire-and-forget，避免拖慢 TUI
 - 打包后需要把 `app.asar/` 重写为 `app.asar.unpacked/`
-- Hermes plugin 使用同步 POST，避免短命 `hermes -z` 进程退出前丢事件；Clawd 未启动时有短 cooldown，避免反复扫端口
+- Hermes plugin 使用同步 POST，避免短命 `hermes -z` 进程退出前丢事件；DeskBuddy 未启动时有短 cooldown，避免反复扫端口
 - Hermes 的 `agent_pid` 当前是 plugin worker 进程 PID；`source_pid` 来自异步进程树解析，给终端聚焦使用
 - Hermes config.yaml 是用户 YAML，不做 line-oriented 编辑；安装只复制托管 plugin 文件并调用 `hermes plugins enable deskbuddy`
 
 ## Pi Notes
 
 - Pi 使用 global extension 目录 `~/.pi/agent/extensions/deskbuddy`；安装器复制 `pi-extension.ts` 和自包含的 `pi-extension-core.js`
-- Extension 运行目录不在 Clawd repo 内，不能依赖 `hooks/shared-process.js`；需要的进程树和 HTTP 逻辑保持在 extension 文件内
+- Extension 运行目录不在 DeskBuddy repo 内，不能依赖 `hooks/shared-process.js`；需要的进程树和 HTTP 逻辑保持在 extension 文件内
 - 只在 `ctx.hasUI === true` 或交互式 TTY 模式上报状态，避免 print/RPC 模式污染桌宠状态
-- Pi 是 state-only：`tool_call` 只上报 `PreToolUse` 状态，不等待 Clawd `/permission`，不弹权限气泡，也不调用 `ctx.ui.confirm()`
+- Pi 是 state-only：`tool_call` 只上报 `PreToolUse` 状态，不等待 DeskBuddy `/permission`，不弹权限气泡，也不调用 `ctx.ui.confirm()`
 - 旧版 managed extension 如果仍在已启动的 Pi 进程里向 `/permission` 发请求，server 返回 allow，保持 Pi 默认 YOLO 行为，而不是把 fallback 变成手动确认
 - `tool_call` handler 必须顶层 catch 并返回 `undefined`；Pi 的 `emitToolCall()` 不 catch extension 异常，未捕获异常可能变成通用 `Extension failed, blocking execution`
 - `tool_result` 按 `isError` 拆成 `PostToolUse` / `PostToolUseFailure`
@@ -224,7 +224,7 @@ opencode、OpenClaw 和 Hermes 是 plugin 形式集成的 agent；OpenClaw Phase
 - 不要用 `process.ppid` 做轻量替代：Claude Code / hook 进程链里它通常只是临时 shell PID，不稳定也不可持久化
 - `source_pid` 跟随状态更新送到 `main.js`，用于 Sessions 菜单聚焦
 - 右键 Sessions 子菜单点击后，`focusTerminalWindow()` 会用 PowerShell（Windows）或 `osascript`（macOS）聚焦终端
-- 远程场景通过 `scripts/remote-deploy.sh` + SSH 反向端口转发，把远端 hook 事件回送到本地 Clawd
+- 远程场景通过 `scripts/remote-deploy.sh` + SSH 反向端口转发，把远端 hook 事件回送到本地 DeskBuddy
 
 ## Context Menu Owner Window
 

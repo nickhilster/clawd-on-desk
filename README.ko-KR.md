@@ -21,10 +21,10 @@
 </p>
 
 <p align="center">
-  <img src="assets/hero.gif" alt="DeskBuddy 애니메이션 데모: 픽셀 크랩이 AI 코딩 에이전트 상태에 맞춰 잠자기, 생각하기, 도구 실행 중 타이핑, 서브에이전트 1개일 때 헤드폰 그루브, 여러 서브에이전트 병렬 작업 중 세 개 공 저글링, 권한 요청 알림, 작업 완료 축하로 실시간 전환합니다. Claude Code, Codex, Cursor, Copilot, Gemini, Antigravity, Qwen, Pi, OpenClaw 등을 지원합니다.">
+  <img src="assets/hero.gif" alt="DeskBuddy 애니메이션 데모: 데스크톱 펫이 AI 코딩 에이전트 상태에 맞춰 잠자기, 생각하기, 도구 실행 중 타이핑, 서브에이전트 1개일 때 헤드폰 그루브, 여러 서브에이전트 병렬 작업 중 세 개 공 저글링, 권한 요청 알림, 작업 완료 축하로 실시간 전환합니다. Claude Code, Codex, Cursor, Copilot, Gemini, Antigravity, Qwen, Pi, OpenClaw 등을 지원합니다.">
 </p>
 
-DeskBuddy는 당신의 데스크톱 위에서 살며, AI 코딩 에이전트가 지금 무엇을 하고 있는지 실시간으로 반응합니다. 긴 작업을 시작하고, 잠시 자리를 비운 뒤, 크랩이 완료 소식을 전하면 돌아오면 됩니다.
+DeskBuddy는 당신의 데스크톱 위에서 살며, AI 코딩 에이전트가 지금 무엇을 하고 있는지 실시간으로 반응합니다. 긴 작업을 시작하고, 잠시 자리를 비운 뒤, DeskBuddy가 완료 소식을 전하면 돌아오면 됩니다.
 
 프롬프트를 입력하면 생각하고, 도구가 실행되면 타이핑하고, 서브에이전트가 생기면 헤드폰 그루브나 세 개 공 저글링으로 반응하고, 권한 요청이 오면 카드로 알려 주고, 작업이 끝나면 기뻐하고, 자리를 비우면 잠이 듭니다. 기본 테마로 **Clawd**(픽셀 크랩), **Calico**(삼색 고양이), **Cloudling**(云宝)이 포함되어 있으며, 커스텀 테마와 가져온 Codex Pet 애니메이션 팩도 지원합니다.
 
@@ -40,7 +40,7 @@ DeskBuddy는 당신의 데스크톱 위에서 살며, AI 코딩 에이전트가 
 - **Antigravity CLI (agy)** — `~/.gemini/config/hooks.json`의 command hook 지원 (Antigravity config가 있으면 DeskBuddy 시작 시 자동 등록되며, `npm run install:antigravity-hooks`로 수동 설치 가능). **상태만 동기화**되며, DeskBuddy는 agy 권한 말풍선을 띄우지 않습니다. Allow / Deny / Always-allow 선택은 agy 자체 터미널 메뉴에서 처리합니다.
 - **Cursor Agent** — `~/.cursor/hooks.json`의 [Cursor IDE hooks](https://cursor.com/docs/agent/hooks) 지원 (DeskBuddy 시작 시 자동 등록되며, `npm run install:cursor-hooks`로 수동 설치 가능)
 - **CodeBuddy** — Claude Code 호환 command hook + HTTP permission hook을 `~/.codebuddy/settings.json`에 등록합니다 (DeskBuddy 시작 시 자동 등록되며, `node hooks/codebuddy-install.js`로 수동 설치 가능)
-- **Kiro CLI** — `~/.kiro/agents/` 아래 커스텀 agent 설정에 command hook을 주입하고, 추가로 `clawd` agent를 자동 생성합니다. DeskBuddy가 시작될 때마다 Kiro 기본 `kiro_default`에서 다시 동기화되므로 `kiro-cli --agent clawd` 또는 `/agent swap clawd`로 비교적 원본 동작을 유지한 채 hook을 켤 수 있습니다. 상태 hook은 macOS와 Windows에서 검증되었습니다.
+- **Kiro CLI** — `~/.kiro/agents/` 아래 커스텀 agent 설정에 command hook을 주입하고, 추가로 `deskbuddy` agent를 자동 생성합니다. DeskBuddy가 시작될 때마다 Kiro 기본 `kiro_default`에서 다시 동기화되므로 `kiro-cli --agent deskbuddy` 또는 `/agent swap deskbuddy`로 비교적 원본 동작을 유지한 채 hook을 켤 수 있습니다. 상태 hook은 macOS와 Windows에서 검증되었습니다.
 - **Kimi Code CLI (Kimi-CLI)** — `~/.kimi/config.toml`의 command hook(`[[hooks]]` 항목)을 사용합니다. DeskBuddy 시작 시 자동 등록되며, `npm run install:kimi-hooks`로 수동 설치할 수도 있습니다.
 - **Qwen Code** — `~/.qwen/settings.json`의 command hook을 사용합니다 (DeskBuddy 시작 시 자동 등록되며, `npm run install:qwen-hooks`로 수동 설치 가능). 상태 추적과 Qwen `PermissionRequest` 데스크톱 권한 말풍선을 지원합니다.
 - **opencode** — `~/.config/opencode/opencode.json`의 [플러그인 연동](https://opencode.ai/docs/plugins) 지원 (DeskBuddy 시작 시 자동 등록). 지연 없는 이벤트 스트리밍, 허용/항상 허용/거부 권한 말풍선, `task` 도구로 병렬 서브에이전트를 띄울 때의 building 애니메이션까지 포함합니다.
@@ -81,7 +81,7 @@ DeskBuddy는 당신의 데스크톱 위에서 살며, AI 코딩 에이전트가 
 - **읽기 전용 설계** — LAN 브리지는 상태만 브로드캐스트하며, 휴대폰에서 PC를 조작할 수 없습니다. (원격 승인은 로드맵에 있습니다.)
 - **LAN 전용 + 토큰 보호** — 페어링에는 토큰이 필요하고, 토큰은 유예 기간과 함께 자동으로 회전하며, 클릭 한 번으로 재생성하거나 초기화할 수 있습니다.
 - **설치 가능** — PWA이므로 홈 화면에 추가하면 앱처럼 사용할 수 있습니다.
-> 모바일 컴패니언 라인은 첫 프로토타입부터 토큰 회전까지 코어 컨트리뷰터 [@Bynlk](https://github.com/Bynlk)가 만들고 이끌고 있으며, 네이티브 Android 앱을 갖춘 자매 프로젝트 [clawd-on-mobile](https://github.com/Bynlk/clawd-on-mobile)도 함께 유지보수하고 있습니다.
+> 모바일 컴패니언 라인은 첫 프로토타입부터 토큰 회전까지 코어 컨트리뷰터 [@Bynlk](https://github.com/Bynlk)가 만들고 이끌고 있으며, 네이티브 Android 앱을 갖춘 자매 프로젝트 [deskbuddy-mobile](https://github.com/Bynlk/deskbuddy-mobile)도 함께 유지보수하고 있습니다.
 
 ### 시스템
 - **클릭 스루** — 투명한 부분은 아래 창으로 클릭이 통과되며, DeskBuddy 몸체만 상호작용됩니다.
@@ -165,7 +165,7 @@ npm start
 
 ## 커스텀 테마
 
-DeskBuddy는 커스텀 테마를 지원합니다. 기본 크랩 대신 원하는 캐릭터와 애니메이션으로 바꿀 수 있습니다. 이미 Codex Pet 패키지가 있다면 `Settings…` → `Theme` → `Import pet zip`에서 가져오세요. DeskBuddy가 atlas를 관리형 테마로 자동 변환합니다.
+DeskBuddy는 커스텀 테마를 지원합니다. 기본 캐릭터 대신 원하는 캐릭터와 애니메이션으로 바꿀 수 있습니다. 이미 Codex Pet 패키지가 있다면 `Settings…` → `Theme` → `Import pet zip`에서 가져오세요. DeskBuddy가 atlas를 관리형 테마로 자동 변환합니다.
 
 **빠른 시작:**
 1. 먼저 테마 스캐폴드를 생성합니다.

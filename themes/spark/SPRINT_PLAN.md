@@ -11,7 +11,7 @@
 This sprint completes the Spark pet companion implementation by:
 1. Creating 32 APNG animation files from SVG keyframes
 2. Deploying all assets to the theme directory
-3. Full integration testing with clawd-on-desk
+3. Full integration testing with deskbuddy
 4. Visual polish and refinement
 
 ---
@@ -145,7 +145,7 @@ Tomorrow's Plan: [which animations]
 ## Sprint 3: Integration & Testing
 
 ### Goal
-Deploy animations, integrate with clawd-on-desk, and verify all 13 states work correctly.
+Deploy animations, integrate with deskbuddy, and verify all 13 states work correctly.
 
 ### Phase 3A: Deployment (1 day)
 
@@ -159,13 +159,13 @@ Deploy animations, integrate with clawd-on-desk, and verify all 13 states work c
 **Command:**
 ```bash
 # Copy all animation files to theme
-cp animations/*.apng ~/clawd-on-desk/themes/spark/assets/
+cp animations/*.apng ~/deskbuddy/themes/spark/assets/
 ```
 
 ### Phase 3B: Integration Testing (2-3 days)
 
 **Test Setup:**
-1. Launch clawd-on-desk
+1. Launch deskbuddy
 2. Select Spark theme from theme menu
 3. Run through each test case below
 

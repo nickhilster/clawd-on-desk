@@ -120,7 +120,7 @@ All APNG frames must use:
 3. ⏳ Create multi-frame animations
 4. ⏳ Convert frame sequences → APNG
 5. ⏳ Deploy to `themes/spark/assets/`
-6. ⏳ Integration testing with clawd-on-desk
+6. ⏳ Integration testing with deskbuddy
 
 ---
 

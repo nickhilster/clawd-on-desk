@@ -2,7 +2,7 @@
 
 > 状态：草稿 v1（需求 + 开发计划，暂无代码）。
 > 日期：2026-06-01
-> Issue：https://github.com/rullerzhou-afk/clawd-on-desk/issues/357（"宠物可以支持显示上下文用量吗，感觉很实用"）
+> Issue：https://github.com/rullerzhou-afk/deskbuddy/issues/357（"宠物可以支持显示上下文用量吗，感觉很实用"）
 > 范围：在 Session HUD / Dashboard 里展示每个会话的上下文窗口用量（已用 token vs 上限），数据来自 agent 已经发出的信号。只读遥测；不改 agent 行为、权限流程或动画优先级。
 
 ---
@@ -31,7 +31,7 @@
 
 | Agent | 用量来源 | 可得性 |
 |---|---|---|
-| **Claude Code** | `hooks/clawd-hook.js` 已经在读的 transcript JSONL（`readTranscriptTailEntries`）。assistant 消息条目携带 `usage` 对象（`input_tokens`、`output_tokens`、`cache_read_input_tokens`、`cache_creation_input_tokens`）。上下文窗口大小依模型而定（如 200k）。 | 高——transcript 尾部今天已被解析（用于会话标题 / API 错误），所以无新增文件 IO。 |
+| **Claude Code** | `hooks/deskbuddy-hook.js` 已经在读的 transcript JSONL（`readTranscriptTailEntries`）。assistant 消息条目携带 `usage` 对象（`input_tokens`、`output_tokens`、`cache_read_input_tokens`、`cache_creation_input_tokens`）。上下文窗口大小依模型而定（如 200k）。 | 高——transcript 尾部今天已被解析（用于会话标题 / API 错误），所以无新增文件 IO。 |
 | **Codex CLI** | 会话 JSONL 携带 `token_count` / `event_msg` 记录，含累计 token 用量与上下文窗口信息。该 JSONL 已被 `agents/codex-log-monitor.js` 轮询。 | 中——需在 monitor 里加一个新的解析分支；只有 fallback（非 hook）会话会通过轮询发出。 |
 | **其他 agent**（Copilot、Gemini、Cursor、Kimi、Qwen、opencode、Pi 等） | 现有 hook payload 里没有可靠的用量信号。 | Phase 1 无——指示器直接隐藏。 |
 
@@ -57,7 +57,7 @@ contextUsage = {
 上下文用量走的就是 `model` / `provider` / `sessionTitle` 今天已经在走的同一条路，不引入任何新传输：
 
 ```
-hooks/clawd-hook.js                      (解析 transcript 尾部 → context_usage)
+hooks/deskbuddy-hook.js                      (解析 transcript 尾部 → context_usage)
   → POST /state body: { ..., context_usage: { used, limit } }
 src/server-route-state.js                (像 model/provider 一样校验 data.context_usage)
   → updateSession({ ..., contextUsage })
@@ -116,7 +116,7 @@ sessionHudShowContextUsage: { type: "boolean", default: true },
 ## 5. 分阶段
 
 **Phase 1 — 仅 Claude Code（先发）：**
-1. 扩展 `hooks/clawd-hook.js` 的 transcript 尾部读取，从已解析的条目算出 `context_usage`（无新增文件读）。
+1. 扩展 `hooks/deskbuddy-hook.js` 的 transcript 尾部读取，从已解析的条目算出 `context_usage`（无新增文件读）。
 2. 把 `context_usage` 沿 `server-route-state.js` → `state.js` → snapshot 接通。
 3. 加 `sessionHudShowContextUsage` 偏好 + 设置开关 + i18n。
 4. 渲染 HUD 用量芯片与 Dashboard 详情。
@@ -156,7 +156,7 @@ sessionHudShowContextUsage: { type: "boolean", default: true },
 
 | 文件 | 改动 |
 |---|---|
-| `hooks/clawd-hook.js` | 从 transcript 尾部条目算出 `context_usage`；加进 `/state` body |
+| `hooks/deskbuddy-hook.js` | 从 transcript 尾部条目算出 `context_usage`；加进 `/state` body |
 | `src/server-route-state.js` | 校验 + 转发 `context_usage` → `contextUsage` |
 | `src/state.js` | 在会话上存 `srcContextUsage`（sticky，像 `model`） |
 | `src/state-session-snapshot.js` | 在 `buildSessionSnapshotEntry` 加 `contextUsage` |

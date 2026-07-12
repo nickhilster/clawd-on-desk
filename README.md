@@ -24,10 +24,12 @@
 </p>
 
 <p align="center">
-  <img src="assets/hero.gif" alt="DeskBuddy — a pixel desktop pet that reacts to your AI coding agent in real time. Animated demo: the crab cycles through sleeping, thinking while the model reads the codebase, typing as edit/bash tools run, grooving for one subagent, juggling when multiple subagents run, raising a permission bubble, and celebrating when 14 files / 312 tests are complete. Works with Claude Code, Codex, Cursor, Copilot, Gemini, Antigravity, Qwen, CodeWhale, Pi, OpenClaw and more.">
+  <img src="assets/hero.gif" alt="DeskBuddy — a pixel desktop pet that reacts to your AI coding agent in real time. Animated demo: the pet cycles through sleeping, thinking while the model reads the codebase, typing as edit/bash tools run, grooving for one subagent, juggling when multiple subagents run, raising a permission bubble, and celebrating when tasks are complete. Works with Claude Code, Codex, Cursor, Copilot, Gemini, Antigravity, Qwen, CodeWhale, Pi, OpenClaw and more.">
 </p>
 
-DeskBuddy lives on your desktop and reacts to what your AI coding agent is doing — in real time. Start a long task, walk away, come back when the crab tells you it's done.
+DeskBuddy lives on your desktop and reacts to what your AI coding agent is doing — in real time. Start a long task, walk away, come back when DeskBuddy tells you it's done.
+
+Originally forked from [rullerzhou-afk/clawd-on-desk](https://github.com/rullerzhou-afk/clawd-on-desk), with mobile companion groundwork from [Bynlk/clawd-on-mobile](https://github.com/Bynlk/clawd-on-mobile). DeskBuddy keeps those source repos credited while continuing its own line here.
 
 Thinking when you prompt, typing when tools run, grooving or juggling for subagents, reviewing permissions, celebrating when tasks complete, sleeping when you step away. Ships with three built-in themes: **Clawd** (pixel crab), **Calico** (三花猫), and **Cloudling** (云宝), with full support for custom themes and imported Codex Pet animation packs.
 
@@ -43,7 +45,7 @@ Thinking when you prompt, typing when tools run, grooving or juggling for subage
 - **Antigravity CLI (agy)** — optional command hooks via `~/.gemini/config/hooks.json` (install from Settings → Agents or run `npm run install:antigravity-hooks`); **state-only**: DeskBuddy never pops a permission bubble for agy. Every Allow / Deny / Always-allow choice happens in agy's own terminal menu
 - **Cursor Agent** — optional [Cursor IDE hooks](https://cursor.com/docs/agent/hooks) in `~/.cursor/hooks.json` (install from Settings → Agents or run `npm run install:cursor-hooks`)
 - **CodeBuddy** — optional Claude Code-compatible command hooks + HTTP permission hooks via `~/.codebuddy/settings.json` (install from Settings → Agents or run `node hooks/codebuddy-install.js`)
-- **Kiro CLI** — optional command hooks injected into custom agent configs under `~/.kiro/agents/`, plus an auto-created `clawd` agent that is re-synced from Kiro's built-in `kiro_default` after you install the integration, so you can opt into hooks with minimal behavior drift via `kiro-cli --agent clawd` or `/agent swap clawd`. State hooks are verified on macOS and Windows.
+- **Kiro CLI** — optional command hooks injected into custom agent configs under `~/.kiro/agents/`, plus an auto-created `deskbuddy` agent that is re-synced from Kiro's built-in `kiro_default` after you install the integration, so you can opt into hooks with minimal behavior drift via `kiro-cli --agent deskbuddy` or `/agent swap deskbuddy`. State hooks are verified on macOS and Windows.
 - **Kimi Code CLI (Kimi-CLI)** — optional command hooks via `~/.kimi/config.toml` (`[[hooks]]` entries) (install from Settings → Agents or run `npm run install:kimi-hooks`)
 - **Qwen Code** — optional command hooks via `~/.qwen/settings.json` (install from Settings → Agents or run `npm run install:qwen-hooks`); state tracking and Qwen `PermissionRequest` desktop approval bubbles are supported
 - **CodeWhale** — optional state-only lifecycle hooks via `~/.codewhale/config.toml` (`[[hooks.hooks]]` entries) (install from Settings → Agents or run `npm run install:codewhale-hooks`); Phase 1 drives idle, thinking, working, sleeping, error, attention, and sweeping animations only, without permission bubbles or subagent tracking
@@ -88,9 +90,9 @@ Thinking when you prompt, typing when tools run, grooving or juggling for subage
 - **Push notifications** — get notified on your phone when a session needs attention or finishes, even while the app is backgrounded
 - **Local-only, read-only** — LAN WebSocket bridge, no cloud relay, no write or approval operations from the phone
 - **QR code pairing** — Settings → Mobile shows a scannable QR code alongside the pairing link, so you can connect without typing anything
-- **LAN auto-discovery (mDNS)** — DeskBuddy advertises itself on the local network as `deskbuddy-<hostname>._clawd._tcp.local`
+- **LAN auto-discovery (mDNS)** — DeskBuddy advertises itself on the local network as `deskbuddy-<hostname>._deskbuddy._tcp.local`
 - **Token rotation + reset** — pairing tokens rotate automatically with a grace window, and access can be regenerated or reset in one click
-> Token rotation and grace-period handling were built by upstream core contributor [@Bynlk](https://github.com/Bynlk) for the Mobile Companion line in [rullerzhou-afk/clawd-on-desk](https://github.com/rullerzhou-afk/clawd-on-desk), who also maintains [clawd-on-mobile](https://github.com/Bynlk/clawd-on-mobile), a sister project with a native Android app. This fork layers a multi-machine dashboard on top of that work.
+> Token rotation and grace-period handling were built by upstream core contributor [@Bynlk](https://github.com/Bynlk) for the Mobile Companion line, and this fork layers a multi-machine dashboard on top of that work.
 
 ### System
 - **Click-through** — transparent areas pass clicks to windows below; only DeskBuddy's body is interactive
@@ -176,7 +178,7 @@ Some agents have feature gaps (no permission bubble, polling latency, no termina
 
 ## Custom Themes
 
-DeskBuddy supports custom themes — replace the default crab with your own character and animations. If you already have a Codex Pet package, import its zip from `Settings…` → `Theme` → `Import pet zip`; DeskBuddy turns the atlas into a managed theme automatically.
+DeskBuddy supports custom themes — replace the default character with your own character and animations. If you already have a Codex Pet package, import its zip from `Settings…` → `Theme` → `Import pet zip`; DeskBuddy turns the atlas into a managed theme automatically.
 
 **Quick start:**
 1. Scaffold a theme:

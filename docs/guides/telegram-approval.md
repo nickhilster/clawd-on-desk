@@ -2,8 +2,8 @@
 
 [Back to setup guide](setup-guide.md)
 
-Telegram Approval is an optional remote approval path for existing Clawd
-permission bubbles. When a supported agent asks for tool permission, Clawd keeps
+Telegram Approval is an optional remote approval path for existing DeskBuddy
+permission bubbles. When a supported agent asks for tool permission, DeskBuddy keeps
 the local desktop bubble and also sends an approval card to your Telegram bot.
 The first explicit Allow or Deny decision resolves the same pending permission.
 
@@ -27,7 +27,7 @@ until the previous one is saved, so the **Enable** switch and **Send test**
 button stay disabled until token and recipient are in place.
 
 1. **Step 1 — Bot Token.** Create a dedicated bot with
-   [@BotFather](https://t.me/botfather) using `/newbot`. Open Clawd Settings →
+   [@BotFather](https://t.me/botfather) using `/newbot`. Open DeskBuddy Settings →
    **Remote Approval** → expand the **Telegram** card and paste the token into
    step 1.
 
@@ -35,7 +35,7 @@ button stay disabled until token and recipient are in place.
    only one active `getUpdates` owner per bot token, so sharing a token can
    make one integration miss updates.
 
-   The token is stored outside `clawd-prefs.json` in Clawd's user-data
+   The token is stored outside `deskbuddy-prefs.json` in DeskBuddy's user-data
    `telegram-approval.env` file. After saving, the input collapses to a masked
    preview (`<bot_id>:<first4>……<last4>`) so you can tell two saved tokens
    apart without seeing the raw secret. The raw token never crosses the IPC
@@ -45,7 +45,7 @@ button stay disabled until token and recipient are in place.
    Telegram and send `/start` to get your numeric user id. Paste that number
    into step 2 and save.
 
-   Clawd uses this one number both as the allowed approver (only this user can
+   DeskBuddy uses this one number both as the allowed approver (only this user can
    tap Allow/Deny) and as the chat to deliver approval cards (private chat
    `chat_id` is the same as the user's id). Before testing, send `/start` to
    your own bot at least once so it can initiate the private chat.
@@ -64,11 +64,11 @@ button stay disabled until token and recipient are in place.
 - The desktop permission bubble remains the local fallback.
 - Telegram timeout or network failure does not deny the tool. The local bubble
   stays usable and the agent's existing fallback behavior remains unchanged.
-- If the desktop bubble resolves first, Clawd aborts the in-flight Telegram
+- If the desktop bubble resolves first, DeskBuddy aborts the in-flight Telegram
   approval request.
 - Repeated Telegram taps after a request is already handled do not resolve the
   permission twice.
-- Sidecar logs and Clawd logs redact Telegram tokens, chat ids, and token-like
+- Sidecar logs and DeskBuddy logs redact Telegram tokens, chat ids, and token-like
   values.
 
 ## Native Migration Dogfood
@@ -76,19 +76,19 @@ button stay disabled until token and recipient are in place.
 Use this checklist before marking the v0.9.0 native Telegram migration as
 ready. Run it on Windows with a dedicated Telegram bot token, and capture the
 commit hash, Settings screenshots, Telegram test-card screenshots, and redacted
-Clawd logs as evidence.
+DeskBuddy logs as evidence.
 
-1. Back up the current user-data `clawd-prefs.json`,
+1. Back up the current user-data `deskbuddy-prefs.json`,
    `telegram-approval.env`, and sidecar bridge config. Stop any other
    `getUpdates` owner or webhook for the test bot.
 2. Seed the legacy upgrade path with `tgApproval.enabled=true`, a stored token,
-   and a valid recipient. Start Clawd and verify Settings shows
+   and a valid recipient. Start DeskBuddy and verify Settings shows
    `LEGACY_ACTIVE`, the sidecar owner is running, and the legacy Telegram test
    still resolves a real approval card.
 3. Click **Test native and switch**. Verify the sidecar stops, Telegram receives
    the nonce test card, tapping it from the allowed user moves Settings to
    `NATIVE_ACTIVE`, and the owner line is `sidecar=stopped, native=polling`.
-   Restart Clawd and verify it returns to `NATIVE_ACTIVE`.
+   Restart DeskBuddy and verify it returns to `NATIVE_ACTIVE`.
 4. Force failures separately: invalid token, missing/incorrect recipient, and a
    competing `getUpdates` owner. The test should fail or time out without
    auto-approving a real permission, and legacy users should return to
@@ -104,9 +104,9 @@ Clawd logs as evidence.
 
 ## Release Notes
 
-Packaged builds ship the pinned `cc-connect-clawd` sidecar binary from
-`bin/cc-connect-clawd/`. Source runs use the same directory layout, or the
-`CLAWD_CC_CONNECT_CLAWD_PATH` override for development.
+Packaged builds ship the pinned `deskbuddy-connect` sidecar binary from
+`bin/deskbuddy-connect/`. Source runs use the same directory layout, or the
+`DESKBUDDY_DESKBUDDY_CONNECT_PATH` override for development.
 
 Before release, verify sidecar binaries with:
 

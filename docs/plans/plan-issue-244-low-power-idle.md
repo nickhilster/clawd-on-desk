@@ -2,7 +2,7 @@
 
 > Status: Draft v1, revised after Claude review and Codex code check.
 > Date: 2026-05-07
-> Issue: https://github.com/rullerzhou-afk/clawd-on-desk/issues/244
+> Issue: https://github.com/rullerzhou-afk/deskbuddy/issues/244
 > Scope: Fix the existing Low power idle behavior so passive mouse-follow does not keep idle rendering active. Do not add a new Settings toggle in this pass.
 
 ---
@@ -11,15 +11,15 @@
 
 Reporter environment:
 
-- Clawd version: 0.7.0, also reproduced on 0.6.2
+- DeskBuddy version: 0.7.0, also reproduced on 0.6.2
 - OS: macOS 15, Apple Silicon
 - Low power idle: enabled
 
 Initial report:
 
-- Idle CPU was around 27-30% in one Clawd process and 18-20% in a second process.
+- Idle CPU was around 27-30% in one DeskBuddy process and 18-20% in a second process.
 - Combined idle CPU was around 45-50%, with 6-8% GPU.
-- macOS showed Clawd as "Using Significant Energy".
+- macOS showed DeskBuddy as "Using Significant Energy".
 
 Reporter follow-up after collecting 7 minutes of samples:
 
@@ -107,7 +107,7 @@ Claude review correctly identified:
 Codex code check corrected these points:
 
 1. `tick.js` does not literally do full bounds / hit rect / IPC work on every tick. It deduplicates some work when the cursor has not moved. However, under normal mouse movement those paths can still run frequently enough to matter.
-2. Activity Monitor process attribution is not enough to prove that the second Clawd process is specifically main-process tick plus IPC. That is a plausible hypothesis, not a measured fact.
+2. Activity Monitor process attribution is not enough to prove that the second DeskBuddy process is specifically main-process tick plus IPC. That is a plausible hypothesis, not a measured fact.
 3. The hit window does not currently provide independent hover wake events. `src/hit-renderer.js` handles click, drag, right-click, and focus paths, but not ordinary `mouseenter` / `mouseleave` / hover IPC. Therefore this fix should not fully stop cursor polling unless a separate hover wake path is added.
 4. `test/renderer-low-power.test.js` is currently mostly source-level assertions, not an existing browser-env renderer behavior harness.
 
@@ -379,7 +379,7 @@ npm test
 On macOS arm64 if available:
 
 1. Enable Low power idle.
-2. Leave Clawd in idle for at least 5 seconds.
+2. Leave DeskBuddy in idle for at least 5 seconds.
 3. Keep moving the mouse around the desktop, not dragging or clicking the pet.
 4. Expected: idle SVG remains paused and eye / pointer follow stays frozen while paused.
 5. Trigger a real activity:
@@ -387,7 +387,7 @@ On macOS arm64 if available:
    - drag reaction
    - agent state event
    - Settings toggle off/on
-6. Expected: Clawd resumes animation for that activity.
+6. Expected: DeskBuddy resumes animation for that activity.
 7. Return to idle.
 8. Expected: Low power pause re-engages.
 
@@ -399,7 +399,7 @@ Suggested resource target for this issue:
 
 Record:
 
-- Clawd version / branch
+- DeskBuddy version / branch
 - theme
 - sample duration
 - sample interval
@@ -417,7 +417,7 @@ Follow-up scope:
 
 - Profile active eye-follow without Low power idle pause.
 - Compare built-in themes:
-  - Clawd single-target SVG tracking
+  - DeskBuddy single-target SVG tracking
   - Calico layered tracking
   - Cloudling scripted pointer bridge
 - Separate main-process cursor polling from renderer SVG / CSS animation / GPU compositing cost.

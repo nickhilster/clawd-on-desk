@@ -2,12 +2,12 @@
 
 ## Context
 
-`D:\tmp\codex-pet-lab` has validated that Codex Pet style assets are practical for Clawd:
+`D:\tmp\codex-pet-lab` has validated that Codex Pet style assets are practical for DeskBuddy:
 
 - a pet package can be as small as `pet.json` plus `spritesheet.webp`
 - the atlas is fixed at `1536x1872`, arranged as `8 columns x 9 rows`
 - each frame is `192x208`
-- rows already map cleanly to Clawd's major states
+- rows already map cleanly to DeskBuddy's major states
 
 The current upstream ecosystem has three separate surfaces that should not be conflated:
 
@@ -17,11 +17,11 @@ The current upstream ecosystem has three separate surfaces that should not be co
 
 The product opportunity is not "another theme authoring format." It is simpler:
 
-**A user sees a pet on a website, clicks one button, and the pet appears in Clawd.**
+**A user sees a pet on a website, clicks one button, and the pet appears in DeskBuddy.**
 
-The implementation should keep Clawd's existing state machine, permissions, HUD, session dashboard, DND, and multi-agent integration. Codex Pet packages should become another asset source that Clawd can consume.
+The implementation should keep DeskBuddy's existing state machine, permissions, HUD, session dashboard, DND, and multi-agent integration. Codex Pet packages should become another asset source that DeskBuddy can consume.
 
-This plan is intentionally scoped to compatibility and import flow. It does not propose running OpenPet or any other external desktop pet runtime beside Clawd.
+This plan is intentionally scoped to compatibility and import flow. It does not propose running OpenPet or any other external desktop pet runtime beside DeskBuddy.
 
 ## Upstream References
 
@@ -32,7 +32,7 @@ Use these as the factual basis when changing this plan or implementing the adapt
 - Petdex docs and CLI: `https://petdex.crafter.run/docs`
 - React atlas contract: `https://github.com/backnotprop/codex-pets-react/blob/main/src/lib/atlas.ts`
 
-Clawd's `codex-pet-adapter` must carry its own local copy of the fixed atlas manifest. Do not infer frame counts or durations from `pet.json`; the minimal manifest does not include timing data today.
+DeskBuddy's `codex-pet-adapter` must carry its own local copy of the fixed atlas manifest. Do not infer frame counts or durations from `pet.json`; the minimal manifest does not include timing data today.
 
 When adding that constant to code, pin the upstream source in a nearby comment:
 
@@ -45,28 +45,28 @@ When adding that constant to code, pin the upstream source in a nearby comment:
 
 Do not start the adapter implementation until Spike 0 has been run and recorded in this file. The generated-wrapper MVP is intentionally gated by that spike.
 
-Current Clawd facts that affect this plan:
+Current DeskBuddy facts that affect this plan:
 
 - User-installed themes are non-builtin themes, and non-builtin SVG assets currently go through `theme-loader` sanitization plus `theme-cache`. Generated Codex Pet wrapper themes under `<userData>/themes/` therefore do hit the cache path.
-- Startup currently loads the selected theme immediately after `themeLoader.init()`. Codex Pet theme sync must run before the initial selected-theme load, or the startup fallback/self-heal path can replace a missing generated theme with built-in `clawd` and persist that fallback.
+- Startup currently loads the selected theme immediately after `themeLoader.init()`. Codex Pet theme sync must run before the initial selected-theme load, or the startup fallback/self-heal path can replace a missing generated theme with built-in `deskbuddy` and persist that fallback.
 - The adapter must return the final generated theme ID from materialization. Callers must not assume it is always `codex-pet-<pet-id>` because slug collisions and Unicode IDs require suffixing.
-- `theme.json.source` is display/provenance metadata only. `.clawd-codex-pet.json` is the authoritative managed-theme marker and update/GC source of truth.
+- `theme.json.source` is display/provenance metadata only. `.deskbuddy-codex-pet.json` is the authoritative managed-theme marker and update/GC source of truth.
 
 ## Product Goal
 
-Make Codex Pet packages feel native in Clawd while keeping the user mental model simple:
+Make Codex Pet packages feel native in DeskBuddy while keeping the user mental model simple:
 
-- Website language: "Open in Clawd" / "Take it for a walk"
-- Clawd language: "Pets" or "Imported Pets"
+- Website language: "Open in DeskBuddy" / "Take it for a walk"
+- DeskBuddy language: "Pets" or "Imported Pets"
 - Technical language hidden from normal users: `theme.json`, atlas rows, spritesheet wrappers, state mappings
 
-The user should not need to understand Clawd themes. A Codex Pet should feel like a character choice.
+The user should not need to understand DeskBuddy themes. A Codex Pet should feel like a character choice.
 
 ## Non-Goals
 
-- Do not replace Clawd's current theme system.
+- Do not replace DeskBuddy's current theme system.
 - Do not run a second pet runtime or proxy state into OpenPet.
-- Do not require pet authors to write Clawd `theme.json`.
+- Do not require pet authors to write DeskBuddy `theme.json`.
 - Do not require users to run conversion tools by hand.
 - Do not copy source code from OpenPet. Use compatible ideas and format contracts only.
 - Do not promise full feature parity with built-in themes in the first version. Eye tracking, mini mode, and sleep-specific art can come later.
@@ -90,41 +90,41 @@ The user should not need to understand Clawd themes. A Codex Pet should feel lik
      spritesheet.webp
    ```
 
-3. Clawd scans `~/.codex/pets`.
-4. Clawd shows Yoimiya under Settings -> Theme/Pets as an imported Codex Pet.
+3. DeskBuddy scans `~/.codex/pets`.
+4. DeskBuddy shows Yoimiya under Settings -> Theme/Pets as an imported Codex Pet.
 5. User selects it.
-6. Clawd plays its atlas rows according to Clawd state.
+6. DeskBuddy plays its atlas rows according to DeskBuddy state.
 
-This is the lowest-risk MVP because Petdex and compatible installers already establish the package in the expected directory. Clawd still applies its own stricter validation: Petdex currently accepts spritesheets smaller than the fixed Codex app atlas as long as they are valid submissions, while Clawd MVP only supports exact `1536x1872` 8x9 atlases.
+This is the lowest-risk MVP because Petdex and compatible installers already establish the package in the expected directory. DeskBuddy still applies its own stricter validation: Petdex currently accepts spritesheets smaller than the fixed Codex app atlas as long as they are valid submissions, while DeskBuddy MVP only supports exact `1536x1872` 8x9 atlases.
 
 ### Flow 2: Website One-Click Import
 
-1. User clicks `Open in Clawd` on the pet website.
+1. User clicks `Open in DeskBuddy` on the pet website.
 2. Browser opens:
 
    ```text
-   clawd://import-pet?url=https%3A%2F%2Fexample.test%2Fpets%2Fyoimiya%2Fyoimiya.zip
+   deskbuddy://import-pet?url=https%3A%2F%2Fexample.test%2Fpets%2Fyoimiya%2Fyoimiya.zip
    ```
 
-3. OS asks whether to open Clawd.
-4. Clawd opens a pre-download import confirmation with the source host and package URL.
+3. OS asks whether to open DeskBuddy.
+4. DeskBuddy opens a pre-download import confirmation with the source host and package URL.
 5. User clicks `Import and Use`.
-6. Clawd downloads, validates, installs, materializes a Clawd-compatible wrapper theme, and switches to the pet.
-7. Clawd shows the pet display name after validation succeeds. MVP enforces strict download/package size caps instead of adding a second preflight dialog for display name and package size; a richer preflight can be revisited during polish.
+6. DeskBuddy downloads, validates, installs, materializes a DeskBuddy-compatible wrapper theme, and switches to the pet.
+7. DeskBuddy shows the pet display name after validation succeeds. MVP enforces strict download/package size caps instead of adding a second preflight dialog for display name and package size; a richer preflight can be revisited during polish.
 
 This should be the primary consumer-facing experience after MVP.
 
 ### Flow 3: Manual Download Fallback
 
 1. User downloads a `.zip` package.
-2. User imports it in Clawd from Settings.
-3. Clawd validates and installs it.
+2. User imports it in DeskBuddy from Settings.
+3. DeskBuddy validates and installs it.
 
 This is a safety net for browsers, OS protocol restrictions, or users who do not want custom protocol handling.
 
 ### Flow 4: Agent-Assisted Install Prompt
 
-Some pet sites may not launch Clawd directly. Instead, they can give the user a prompt to paste into Codex, Claude Code, or another local agent:
+Some pet sites may not launch DeskBuddy directly. Instead, they can give the user a prompt to paste into Codex, Claude Code, or another local agent:
 
 ```text
 Install this Codex pet for me.
@@ -137,7 +137,7 @@ top-level folder, verify no zip path escapes the chosen package folder,
 unzip it into ~/.codex/pets, and clean up temp files.
 ```
 
-This flow is lower-level than `Open in Clawd`, but it is valuable because it converges on the same canonical directory:
+This flow is lower-level than `Open in DeskBuddy`, but it is valuable because it converges on the same canonical directory:
 
 ```text
 ~/.codex/pets/<pet-id>/
@@ -145,29 +145,29 @@ This flow is lower-level than `Open in Clawd`, but it is valuable because it con
   spritesheet.webp
 ```
 
-Clawd should treat this as a supported fallback acquisition path. If the agent installs the package correctly, Clawd's local scan and refresh should discover it without any Clawd-specific import step.
+DeskBuddy should treat this as a supported fallback acquisition path. If the agent installs the package correctly, DeskBuddy's local scan and refresh should discover it without any DeskBuddy-specific import step.
 
 ## Recommended UX Copy
 
 On the website:
 
-- Primary button: `Open in Clawd`
+- Primary button: `Open in DeskBuddy`
 - Secondary: `Install with Agent` or `Install with Petdex`
 - Tertiary: `Download zip`
 
 Recommended small print:
 
 ```text
-Works with Codex Pet compatible runtimes. Open it in Clawd, or install it to ~/.codex/pets.
+Works with Codex Pet compatible runtimes. Open it in DeskBuddy, or install it to ~/.codex/pets.
 ```
 
-If a website exposes an agent prompt, the prompt should avoid Clawd-specific internals and should only promise installation into `~/.codex/pets`. Clawd can then say:
+If a website exposes an agent prompt, the prompt should avoid DeskBuddy-specific internals and should only promise installation into `~/.codex/pets`. DeskBuddy can then say:
 
 ```text
-After installing, open Clawd Settings -> Pets and click Refresh Imported Pets.
+After installing, open DeskBuddy Settings -> Pets and click Refresh Imported Pets.
 ```
 
-Inside Clawd:
+Inside DeskBuddy:
 
 - Section title: `Imported Pets`
 - Card badge: `Codex Pet`
@@ -195,7 +195,7 @@ Avoid exposing "theme wrapper" or "spritesheet atlas" in primary UI.
 }
 ```
 
-The Hatch Pet output path uses `spritesheet.webp`. Petdex validation also allows `spritesheet.png`, and some community sites distribute PNG atlases. Clawd should accept both `.webp` and `.png` when dimensions and transparency are valid. The generated wrappers should reference the actual `spritesheetPath` extension instead of assuming WebP.
+The Hatch Pet output path uses `spritesheet.webp`. Petdex validation also allows `spritesheet.png`, and some community sites distribute PNG atlases. DeskBuddy should accept both `.webp` and `.png` when dimensions and transparency are valid. The generated wrappers should reference the actual `spritesheetPath` extension instead of assuming WebP.
 
 ### Atlas Contract
 
@@ -210,7 +210,7 @@ The Hatch Pet output path uses `spritesheet.webp`. Petdex validation also allows
 
 ### Atlas Timing Contract
 
-`pet.json` currently does not contain row frame counts or frame durations. Clawd must ship this as a constant in `src/codex-pet-adapter.js`.
+`pet.json` currently does not contain row frame counts or frame durations. DeskBuddy must ship this as a constant in `src/codex-pet-adapter.js`.
 
 | Row | Animation | Used columns | Durations |
 |---:|---|---:|---|
@@ -230,7 +230,7 @@ Future compatibility hook: if a later Codex Pet manifest adds authoritative timi
 
 ### Row Contract
 
-| Row | Codex Pet animation | Clawd use |
+| Row | Codex Pet animation | DeskBuddy use |
 |---:|---|---|
 | 0 | `idle` | `idle`, static sleep fallback |
 | 1 | `running-right` | optional future drag/autonomous motion |
@@ -248,8 +248,8 @@ MVP validation should reject packages that fail these checks:
 
 - `pet.json` is valid UTF-8 JSON.
 - `id` is a non-empty string. It may contain Unicode because existing local test packages do.
-- Clawd derives a filesystem/theme-safe `slug` separately. Prefer the package folder name if it is already lowercase ASCII letters, digits, or hyphens; otherwise slugify `id` or `displayName`.
-- generated Clawd theme IDs use the safe slug, e.g. `codex-pet-yoimiya`, and preserve the original manifest `id` as `source.id`.
+- DeskBuddy derives a filesystem/theme-safe `slug` separately. Prefer the package folder name if it is already lowercase ASCII letters, digits, or hyphens; otherwise slugify `id` or `displayName`.
+- generated DeskBuddy theme IDs use the safe slug, e.g. `codex-pet-yoimiya`, and preserve the original manifest `id` as `source.id`.
 - slug collision rule:
   - if `codex-pet-<slug>` is free, use it
   - if it is an existing managed Codex Pet theme for the same source package path, keep using it
@@ -264,7 +264,7 @@ MVP validation should reject packages that fail these checks:
 - `.webp` files have a valid RIFF/WebP header; `.png` files have a valid PNG header.
 - decoded image dimensions are exactly `1536x1872`.
 - zip import cannot write paths outside the destination directory.
-- Petdex-installed packages that do not satisfy Clawd's exact atlas contract fail validation with a user-visible diagnostic instead of being treated as broken themes.
+- Petdex-installed packages that do not satisfy DeskBuddy's exact atlas contract fail validation with a user-visible diagnostic instead of being treated as broken themes.
 
 Dimension validation needs image metadata. If we do not want a new image dependency in MVP, use Electron/native image probing in main-process code where possible, and keep a fallback that marks the package invalid when dimensions cannot be verified.
 
@@ -272,7 +272,7 @@ Dimension validation needs image metadata. If we do not want a new image depende
 
 MVP mapping:
 
-| Clawd logical state | Codex Pet row | Reason |
+| DeskBuddy logical state | Codex Pet row | Reason |
 |---|---|---|
 | `idle` | `idle` | calm default |
 | `thinking` | `review` | closer to reading/checking |
@@ -291,7 +291,7 @@ MVP mapping:
 
 Click reaction:
 
-| Clawd reaction | Codex Pet row |
+| DeskBuddy reaction | Codex Pet row |
 |---|---|
 | single click | `jumping` |
 | double/rapid click | `waving` or `jumping` |
@@ -307,29 +307,29 @@ One-shot replay still needs QA. `<object>` normally creates a fresh SVG document
 Mini mode:
 
 - MVP: mark Codex Pet generated themes as `miniMode.supported: false`.
-- Current Clawd menu code already hides/disables mini mode when `theme.miniMode.supported === false`; keep an explicit regression test for this.
+- Current DeskBuddy menu code already hides/disables mini mode when `theme.miniMode.supported === false`; keep an explicit regression test for this.
 - Later: generate mini wrappers from `idle`, `waving`, and `jumping`, but only after normal mode is stable.
 
 Known MVP visual limitations:
 
-- Codex Pet generated themes do not show Clawd's multi-session working tier progression. `working`, `juggling`, `sweeping`, and `carrying` all use `running`.
+- Codex Pet generated themes do not show DeskBuddy's multi-session working tier progression. `working`, `juggling`, `sweeping`, and `carrying` all use `running`.
 - Codex Pet generated themes do not provide native sleep/yawn/wake art. DND uses static or idle fallback visuals.
-- Eye tracking is disabled because Codex Pet frames do not expose Clawd SVG DOM IDs.
+- Eye tracking is disabled because Codex Pet frames do not expose DeskBuddy SVG DOM IDs.
 
 ## Key Design Decision: Generated Wrapper Theme For MVP
 
 There are two viable implementation strategies:
 
 1. Native renderer spritesheet channel
-2. Generate Clawd theme assets that wrap the spritesheet
+2. Generate DeskBuddy theme assets that wrap the spritesheet
 
 The lowest-cost MVP is **generated wrapper theme**, but this is a gated decision, not an unproven assumption.
 
 Why:
 
-- Clawd already knows how to discover, load, select, preview, and persist themes.
-- Clawd already routes states to filenames.
-- Clawd already supports SVG animations through the `<object>` renderer path.
+- DeskBuddy already knows how to discover, load, select, preview, and persist themes.
+- DeskBuddy already routes states to filenames.
+- DeskBuddy already supports SVG animations through the `<object>` renderer path.
 - We avoid converting WebP into GIF/APNG and avoid quality loss.
 - We avoid a larger renderer/state binding refactor in the first version.
 
@@ -348,7 +348,7 @@ Exit criteria:
 - If wrapper playback works but WebP reload IO is too high, either copy the raster into cache once and rely on OS file cache, or promote native spritesheet channel.
 - Do not accept an `<img>`-only pass. SVG-as-image loading cannot fetch the external spritesheet sub-resource, so the wrapper route depends on a forced object channel or another explicitly validated rendering path.
 
-The adapter materializes a Codex Pet package into a normal Clawd user theme:
+The adapter materializes a Codex Pet package into a normal DeskBuddy user theme:
 
 ```text
 <userData>/themes/codex-pet-yoimiya/
@@ -406,7 +406,7 @@ This is still a Codex Pet internally. The theme wrapper is an implementation det
 
 ## Generated `theme.json`
 
-The adapter should generate a conservative Clawd theme:
+The adapter should generate a conservative DeskBuddy theme:
 
 ```json
 {
@@ -470,8 +470,8 @@ The adapter should generate a conservative Clawd theme:
 Implementation notes:
 
 - Existing `validateTheme` is lenient about unknown top-level fields, so `source` can live in `theme.json`, but it is display/provenance metadata only.
-- Keep `.clawd-codex-pet.json` as the authoritative managed-theme marker/update manifest. If `theme.json.source` and the marker disagree, marker data wins for refresh, update, and GC decisions.
-- States must use Clawd's real schema: arrays of filenames or `{ "files": [...], "fallbackTo": "..." }`. Do not generate state objects like `{ "file": "...", "duration": 1200, "loop": true }`; those fail current validation.
+- Keep `.deskbuddy-codex-pet.json` as the authoritative managed-theme marker/update manifest. If `theme.json.source` and the marker disagree, marker data wins for refresh, update, and GC decisions.
+- States must use DeskBuddy's real schema: arrays of filenames or `{ "files": [...], "fallbackTo": "..." }`. Do not generate state objects like `{ "file": "...", "duration": 1200, "loop": true }`; those fail current validation.
 - `rendering.svgChannel: "object"` is a proposed new generated-theme field. `theme-loader` must pass it through to renderer config, and `renderer.js` must honor it for normal state swaps and click reactions without pretending eye tracking is enabled.
 
 ## Theme Cache Adjustment
@@ -511,7 +511,7 @@ Raster reference decisions:
 - Preserve the reference spelling needed by the sanitized SVG at the cache destination, but dedupe source stat/copy work by resolved source path. On Windows, `Spritesheet.WEBP` and `spritesheet.webp` can refer to the same source file; the cache still needs every referenced destination spelling that the SVG may request.
 - MVP cache freshness uses source mtime plus size, not content hashes. This accepts false invalidations and rare false negatives in exchange for avoiding hashing multi-megabyte spritesheets on startup.
 - Copy raster files to a temporary path, verify size/stat, then replace the final cache file and only then write metadata. A crash during copy must leave the next startup able to detect and repair a partial cache file.
-- Adapter version mismatch must force full re-materialization of managed themes before theme load. Theme-loader does not need to read `.clawd-codex-pet.json`; the adapter owns wrapper regeneration and cache invalidation is then driven by changed wrapper/raster mtimes.
+- Adapter version mismatch must force full re-materialization of managed themes before theme load. Theme-loader does not need to read `.deskbuddy-codex-pet.json`; the adapter owns wrapper regeneration and cache invalidation is then driven by changed wrapper/raster mtimes.
 
 Cache metadata migration:
 
@@ -525,11 +525,11 @@ Cache metadata migration:
 
 ### Phase 0: Wrapper Feasibility Spike
 
-Goal: prove the generated-wrapper route under Clawd's real external theme path before building the adapter.
+Goal: prove the generated-wrapper route under DeskBuddy's real external theme path before building the adapter.
 
 Status on 2026-05-05:
 
-- Partial local spike has been run with `D:\tmp\codex-pet-lab\pets\pinky` and disposable user data under `D:\tmp\codex-pet-lab\preview\clawd-wrapper-spike\`.
+- Partial local spike has been run with `D:\tmp\codex-pet-lab\pets\pinky` and disposable user data under `D:\tmp\codex-pet-lab\preview\deskbuddy-wrapper-spike\`.
 - `theme-loader.loadTheme("codex-pet-spike-pinky", { strict: true })` succeeds after generating a schema-correct theme with `schemaVersion: 1`, `viewBox`, array states, `sleepSequence.mode: "direct"`, `eyeTracking.enabled: false`, and `miniMode.supported: false`.
 - The generated user theme is treated as non-builtin, and its wrapper SVG is sanitized into `<userData>/theme-cache/codex-pet-spike-pinky/assets/`.
 - Inline SVG CSS and `@keyframes` survive sanitization.
@@ -547,7 +547,7 @@ Status on 2026-05-05:
 - Full adapter-shaped Pinky fixture has been generated under `D:\tmp\codex-pet-lab\preview\adapter-fixture\` with all MVP atlas rows represented and 12 wrappers: loop wrappers for normal animated states, one static wrapper for sleeping, and one-shot wrappers reserved for reactions. The source atlas passed hatch-pet validation as `1536x1872` RGBA WebP with no warnings.
 - Hidden Electron full-fixture check passed: deleting cached `spritesheet.webp` before load was repaired by `theme-loader`, all first swaps used `<object>` with zero `<img>` nodes and zero eye-tracking targets, every tested state capture was nonblank, and first object-document availability measured roughly `27-32ms` in this environment.
 - One-shot reaction checks passed through the object channel: `waving-once` and `jumping-once` both stayed nonblank at their final `forwards` frame, and five repeated `jumping-once` triggers created fresh object documents with nonblank captures each time.
-- The full fixture exposed an important adapter rule: do not bind normal Clawd states directly to one-shot wrappers. State bindings should use loop/static wrappers; one-shot wrappers belong to reactions, where the renderer deliberately swaps a fresh object document.
+- The full fixture exposed an important adapter rule: do not bind normal DeskBuddy states directly to one-shot wrappers. State bindings should use loop/static wrappers; one-shot wrappers belong to reactions, where the renderer deliberately swaps a fresh object document.
 - Hit-geometry reverse mapping passed for the forced object channel in the fixture: the rendered center point maps back to SVG user-space `{ x: 96, y: 104, inside: true }`.
 - A 100-swap smoke check did not show an immediate leak pattern, but it is not a long-session guarantee. In this run the renderer tab working set moved from about `148.6MB` to `157.8MB`; keep longer soak testing in manual QA.
 - Local package scan found five valid packages with exact `1536x1872` WebP atlases and `192x208` frames: `demo-pet`, `klee`, `paimon`, `pinky`, and `yoimiya宵宫`. `*-run` folders in the lab do not contain `pet.json` and should not be treated as packages.
@@ -556,7 +556,7 @@ Status on 2026-05-05:
 Tasks:
 
 - create a disposable external theme containing one real Codex Pet spritesheet and the same fixture shape the adapter will generate: loop, once, and static wrappers for all MVP atlas rows
-- keep spike files outside the repo, e.g. `D:\tmp\codex-pet-lab\preview\clawd-wrapper-spike-theme\`
+- keep spike files outside the repo, e.g. `D:\tmp\codex-pet-lab\preview\deskbuddy-wrapper-spike-theme\`
 - load it through `theme-loader.loadTheme()` as an external theme
 - confirm the generated user-theme wrapper SVG is sanitized into `theme-cache`, not read directly from the source theme directory
 - confirm the wrapper SVG survives sanitization
@@ -567,7 +567,7 @@ Tasks:
 - trigger `codex-pet-jumping-once.svg` or `codex-pet-waving-once.svg` repeatedly after each reaction duration, at least 5 times, and verify every trigger restarts from frame 0 rather than staying on the final `forwards` frame
 - confirm repeated state changes do not cause obvious IO jank; use Chromium DevTools Network for file requests, and add temporary renderer image-load counters if DevTools does not surface `file://` reloads clearly
 - confirm `eyeTracking.enabled: false` yields `eyeTrackingStates: []` and renderer never attempts `attachEyeTracking`
-- switch back from the Codex Pet spike theme to built-in `clawd` and confirm eye tracking attaches again
+- switch back from the Codex Pet spike theme to built-in `deskbuddy` and confirm eye tracking attaches again
 - confirm `miniMode.supported: false` removes or disables Mini Mode menu entry
 - verify DND/sleep fallback with `sleepSequence.mode: "direct"` and confirm the pet does not look active while DND is enabled
 - compare `image-rendering: auto` and `image-rendering: pixelated` against at least one real atlas frame and choose the default intentionally
@@ -586,7 +586,7 @@ Status on 2026-05-05:
 - Hidden Electron calibration passed for all four fixture themes. Each theme loaded through `theme-loader` strict mode, repaired a deliberately removed cached `spritesheet.webp`, wrote v2 cache metadata with 12 cached SVGs and one raster, rendered through `<object>` with zero `<img>` nodes and zero eye-tracking targets, and produced nonblank captures for `idle`, `working`, `sleeping`, `attention`, `notification`, `error`, and `jumping` reaction.
 - First object-document availability measured about `24-52ms` across the four packages in this environment. Treat this as a local smoke measurement, not a cross-machine latency budget.
 - Unicode path coverage passed for `D:\tmp\codex-pet-lab\pets\yoimiya宵宫`; the generated theme id slugged to `codex-pet-cal-yoimiya`, while source metadata preserved `petId: "yoimiya宵宫"` and the Unicode package path.
-- Current generated fixture themes use `layout.contentBox` equal to the full `192x208` frame. Because Clawd's renderer and hit geometry prefer normalized layout when `layout.contentBox` exists, the `objectScale` magic numbers are not the active positioning mechanism for these generated themes. The effective idle asset rectangle for a `260x260` window was `{ x: 110, y: 200, w: 240, h: 260 }`, with center hit mapping `{ x: 96, y: 104, inside: true }`.
+- Current generated fixture themes use `layout.contentBox` equal to the full `192x208` frame. Because DeskBuddy's renderer and hit geometry prefer normalized layout when `layout.contentBox` exists, the `objectScale` magic numbers are not the active positioning mechanism for these generated themes. The effective idle asset rectangle for a `260x260` window was `{ x: 110, y: 200, w: 240, h: 260 }`, with center hit mapping `{ x: 96, y: 104, inside: true }`.
 - Visual screenshot checks did not show clipping for the four packages. Pinky remains wider and shorter inside the frame; Klee/Paimon/Yoimiya fill the vertical frame more tightly. Yoimiya is narrower but still centered and not cropped. Screenshots are under `D:\tmp\codex-pet-lab\preview\phase-0.5\screenshots\`.
 - Calibration decision for MVP: generated themes should rely on full-frame normalized layout instead of per-package `objectScale` by default. Keep `objectScale` out of the generated output unless Phase 1 finds a concrete renderer path that still needs it as fallback. This removes the need to justify `1.9 / 1.3 / -0.45 / -0.25` for generated Codex Pet themes.
 - Sleep/DND remains visually static but not semantically asleep because it uses `codex-pet-idle-static.svg`. This is acceptable for the technical MVP but should be called out as a visual limitation unless native sleep art is generated later.
@@ -618,7 +618,7 @@ Responsibilities:
 - normalize IDs and display names
 - carry the fixed Codex Pet atlas timing manifest as a local constant
 - generate wrapper SVG text
-- materialize a managed Clawd theme folder
+- materialize a managed DeskBuddy theme folder
 
 Suggested public functions:
 
@@ -633,14 +633,14 @@ function syncCodexPetThemes({ userDataDir, userThemesDir, codexPetsDir })
 Managed generated themes should include a marker file:
 
 ```text
-.clawd-codex-pet.json
+.deskbuddy-codex-pet.json
 ```
 
 Marker contents:
 
 ```json
 {
-  "managedBy": "clawd",
+  "managedBy": "deskbuddy",
   "kind": "codex-pet-theme",
   "schemaVersion": 1,
   "adapterVersion": 1,
@@ -655,11 +655,11 @@ Marker contents:
 }
 ```
 
-This lets Clawd update generated wrappers safely without touching user-authored themes.
+This lets DeskBuddy update generated wrappers safely without touching user-authored themes.
 
 Management boundary:
 
-- `.clawd-codex-pet.json` is authoritative for refresh, update, and garbage collection decisions.
+- `.deskbuddy-codex-pet.json` is authoritative for refresh, update, and garbage collection decisions.
 - `theme.json.source` is for Settings display, diagnostics, and human inspection only.
 - If marker and `theme.json.source` disagree, trust the marker for management and log a diagnostic.
 - If the marker is missing or invalid, treat the theme as an unmanaged user theme and do not delete or overwrite it.
@@ -671,12 +671,12 @@ Management boundary:
 Startup:
 
 1. `theme-loader.init()` sets user theme paths as today.
-2. Clawd calls `syncCodexPetThemes()`.
+2. DeskBuddy calls `syncCodexPetThemes()`.
 3. The adapter scans `~/.codex/pets`.
 4. Valid packages are materialized into managed user themes.
 5. Existing `discoverThemes()` picks them up.
 
-Implementation constraint: in the current app startup path, step 2 must happen before the first `themeLoader.loadTheme()` for the stored selected theme. If async startup sync is used instead, the theme fallback/self-heal logic must be changed so a temporarily missing managed Codex Pet theme does not silently rewrite the user's selected theme to `clawd`.
+Implementation constraint: in the current app startup path, step 2 must happen before the first `themeLoader.loadTheme()` for the stored selected theme. If async startup sync is used instead, the theme fallback/self-heal logic must be changed so a temporarily missing managed Codex Pet theme does not silently rewrite the user's selected theme to `deskbuddy`.
 
 Settings:
 
@@ -696,12 +696,12 @@ Manual refresh:
 Package removal / GC policy:
 
 - If a source package disappears and the generated theme is inactive, remove the managed generated theme on refresh.
-- If the source package disappears while the generated theme is active, switch to built-in `clawd`, persist that fallback explicitly, then remove the managed generated theme.
+- If the source package disappears while the generated theme is active, switch to built-in `deskbuddy`, persist that fallback explicitly, then remove the managed generated theme.
 - If a generated theme has a valid marker but its source path is missing and deletion fails, mark it stale in diagnostics and do not retry destructively in a tight loop.
 
 Acceptance:
 
-- if `npx petdex install yoimiya` has installed a package, Clawd can use it without manual conversion
+- if `npx petdex install yoimiya` has installed a package, DeskBuddy can use it without manual conversion
 - deleting/replacing the package and refreshing updates the generated theme
 - invalid packages are ignored with diagnostics, not fatal startup errors
 
@@ -710,22 +710,22 @@ Acceptance:
 Register a custom protocol:
 
 ```text
-clawd://
+deskbuddy://
 ```
 
 Supported URLs:
 
 ```text
-clawd://import-pet?url=https%3A%2F%2Fsite.test%2Fpets%2Fyoimiya%2Fyoimiya.zip
-clawd://import-pet?url=https%3A%2F%2Fsite.test%2Fpets%2Fyoimiya%2Fpet.json
+deskbuddy://import-pet?url=https%3A%2F%2Fsite.test%2Fpets%2Fyoimiya%2Fyoimiya.zip
+deskbuddy://import-pet?url=https%3A%2F%2Fsite.test%2Fpets%2Fyoimiya%2Fpet.json
 ```
 
 Electron handling:
 
 - Windows/Linux:
   - use single-instance `second-instance` argv parsing
-  - packaged app registers protocol with `app.setAsDefaultProtocolClient("clawd")`
-  - Windows dev builds must pass explicit executable and argv. Under the current Electron dev launch, prefer `app.setAsDefaultProtocolClient("clawd", process.execPath, [path.resolve(process.argv[1] || ".")])` after verifying the actual `process.argv` printed by `npm start`.
+  - packaged app registers protocol with `app.setAsDefaultProtocolClient("deskbuddy")`
+  - Windows dev builds must pass explicit executable and argv. Under the current Electron dev launch, prefer `app.setAsDefaultProtocolClient("deskbuddy", process.execPath, [path.resolve(process.argv[1] || ".")])` after verifying the actual `process.argv` printed by `npm start`.
 - macOS:
   - handle `open-url`
   - buffer `open-url` payloads that arrive before `app.whenReady()`
@@ -735,14 +735,14 @@ Electron handling:
 
 Ownership boundary:
 
-- Clawd owns the protocol handler, local confirmation UI, validation, install, and theme switch.
-- Petdex or any other pet gallery owns adding its own `Open in Clawd` button. Treat that as an upstream PR / collaboration item, not something the Clawd codebase alone can ship.
-- Phase 3 can be accepted locally with a demo HTML page or README link that emits `clawd://import-pet?...`; public gallery support is a separate integration milestone.
+- DeskBuddy owns the protocol handler, local confirmation UI, validation, install, and theme switch.
+- Petdex or any other pet gallery owns adding its own `Open in DeskBuddy` button. Treat that as an upstream PR / collaboration item, not something the DeskBuddy codebase alone can ship.
+- Phase 3 can be accepted locally with a demo HTML page or README link that emits `deskbuddy://import-pet?...`; public gallery support is a separate integration milestone.
 
 Packaging check:
 
 - Add protocol metadata to electron-builder config where required by macOS and packaged builds.
-- On Windows, verify whether the NSIS install mode registers the handler per-user or per-machine for Clawd's current installer settings, whether elevation changes that scope, and whether updates preserve the registration.
+- On Windows, verify whether the NSIS install mode registers the handler per-user or per-machine for DeskBuddy's current installer settings, whether elevation changes that scope, and whether updates preserve the registration.
 - Dev-mode registration must be tested separately because Electron needs explicit executable/path arguments when launched through `npm start`.
 
 Security:
@@ -785,7 +785,7 @@ Settings:
 
 Website:
 
-- primary `Open in Clawd` button emits `clawd://import-pet?...`
+- primary `Open in DeskBuddy` button emits `deskbuddy://import-pet?...`
 - fallback CLI uses Petdex:
 
   ```powershell
@@ -908,12 +908,12 @@ Phase 5:
 - materialized theme passes `theme-loader.validateTheme`
 - generated `theme.json` can be loaded as active theme
 - generated renderer config forces SVG playback through the object channel without enabling eye tracking
-- Clawd state `working` resolves to `codex-pet-running-loop.svg`
-- Clawd state `notification` resolves to `codex-pet-waiting-loop.svg`
-- Clawd state `error` resolves to `codex-pet-failed-loop.svg`
+- DeskBuddy state `working` resolves to `codex-pet-running-loop.svg`
+- DeskBuddy state `notification` resolves to `codex-pet-waiting-loop.svg`
+- DeskBuddy state `error` resolves to `codex-pet-failed-loop.svg`
 - fallback states do not crash when sleep assets are absent
 - `eyeTracking.enabled: false` produces no renderer eye attach attempts even though generated wrappers use the object channel
-- switching from Codex Pet back to built-in `clawd` re-attaches eye tracking normally
+- switching from Codex Pet back to built-in `deskbuddy` re-attaches eye tracking normally
 - `miniMode.supported: false` disables the mini menu path
 - Settings renders malicious `displayName` / `description` as inert text, not HTML
 
@@ -928,7 +928,7 @@ Use packages from `D:\tmp\codex-pet-lab`:
 
 Manual scenarios:
 
-- start Clawd with packages already in `~/.codex/pets`
+- start DeskBuddy with packages already in `~/.codex/pets`
 - refresh imported pets from Settings
 - switch from built-in theme to imported pet
 - trigger `thinking`, `working`, `notification`, `attention`, and `error`
@@ -938,10 +938,10 @@ Manual scenarios:
 - record renderer RSS before and after at least 100 object-channel state swaps
 - leave DND/sleep fallback mounted during a long-running soak and verify memory stays bounded
 - permission bubble and session HUD still anchor acceptably
-- uninstall/delete package and verify Clawd degrades gracefully
-- protocol import with Clawd already running
-- protocol import with Clawd closed
-- agent-assisted install prompt flow: unzip a package into `~/.codex/pets`, then refresh Clawd imported pets
+- uninstall/delete package and verify DeskBuddy degrades gracefully
+- protocol import with DeskBuddy already running
+- protocol import with DeskBuddy closed
+- agent-assisted install prompt flow: unzip a package into `~/.codex/pets`, then refresh DeskBuddy imported pets
 - 50 imported pets add less than 500 ms to startup on the Windows dev machine and keep generated/cache disk growth under 200 MB
 
 ## Security And Rights
@@ -960,25 +960,25 @@ Rules:
 - never put imported text into `innerHTML`; generated `theme.json.name` and `description` remain untrusted all the way through Settings UI
 - sanitize generated or imported SVG
 - keep protocol import confirmation in MVP. Phase 3 uses a one-step pre-download confirmation with source host and URL, then shows pet display name after validation succeeds. Package size is protected by strict caps; showing name + size before download is deferred polish unless the website provides trusted preview metadata separately.
-- treat agent-assisted prompts as a fallback, not the safest path. The prompt should include zip-slip checks, but damage can occur before Clawd's later scan. Prefer `clawd://` import or Petdex for normal users.
+- treat agent-assisted prompts as a fallback, not the safest path. The prompt should include zip-slip checks, but damage can occur before DeskBuddy's later scan. Prefer `deskbuddy://` import or Petdex for normal users.
 
 Rights:
 
 - imported pets may be fan art or third-party character art
-- Clawd should not imply the project owns or endorses imported art
+- DeskBuddy should not imply the project owns or endorses imported art
 - MVP import UI must show package origin host before download and pet display name after validation. Package size must be capped strictly. A richer preflight that shows pet display name and package size before install is deferred until the protocol/gallery contract can provide preview metadata without trusting arbitrary remote text too early.
 - import UI may show source, author, or license only when explicit metadata exists
-- website/package metadata can carry source and license fields as optional extensions, but Clawd must not require them
+- website/package metadata can carry source and license fields as optional extensions, but DeskBuddy must not require them
 
 Suggested disclaimer in import dialog:
 
 ```text
-Only import pets you have the right to use. Clawd will store a local copy and use it as your desktop pet.
+Only import pets you have the right to use. DeskBuddy will store a local copy and use it as your desktop pet.
 ```
 
 ## Migration And Compatibility
 
-Existing Clawd users:
+Existing DeskBuddy users:
 
 - no behavior change unless they install/import Codex Pets
 - built-in themes remain first-class
@@ -987,7 +987,7 @@ Existing Clawd users:
 Existing Codex Pet users:
 
 - packages already in `~/.codex/pets` become discoverable
-- no need to reinstall through Clawd
+- no need to reinstall through DeskBuddy
 
 Existing theme authors:
 
@@ -1003,7 +1003,7 @@ Resource cost:
 
 ## Open Questions
 
-1. Should Clawd use `~/.codex/pets` as the canonical install location for one-click imports, or copy into Clawd userData and optionally mirror to `~/.codex/pets`?
+1. Should DeskBuddy use `~/.codex/pets` as the canonical install location for one-click imports, or copy into DeskBuddy userData and optionally mirror to `~/.codex/pets`?
 
    Recommendation: install to `~/.codex/pets` first. It makes the pet shared across compatible runtimes and matches the website/CLI mental model.
 
@@ -1013,9 +1013,9 @@ Resource cost:
 
 3. Should import be one-click with no confirmation?
 
-   Recommendation: no for MVP. Use one click on website plus one confirmation in Clawd. Remove confirmation only for trusted sources later.
+   Recommendation: no for MVP. Use one click on website plus one confirmation in DeskBuddy. Remove confirmation only for trusted sources later.
 
-4. Should Clawd support website scraping?
+4. Should DeskBuddy support website scraping?
 
    Recommendation: avoid scraping in MVP. Prefer direct `.zip` package URLs from the website button. Accept direct `pet.json` only when it belongs to an explicit package/manifest flow, not by scraping arbitrary gallery pages.
 
@@ -1025,7 +1025,7 @@ Resource cost:
 
 6. Should website-generated agent prompts be treated as an official install path?
 
-   Recommendation: yes, but only as a fallback. The prompt should install into `~/.codex/pets`; Clawd should not rely on the prompt wording for trust or validation. Clawd still validates packages when it scans them.
+   Recommendation: yes, but only as a fallback. The prompt should install into `~/.codex/pets`; DeskBuddy should not rely on the prompt wording for trust or validation. DeskBuddy still validates packages when it scans them.
 
 7. Should generated themes copy, hardlink, symlink, or directly reference the original spritesheet?
 
@@ -1040,9 +1040,9 @@ Resource cost:
 MVP is successful when:
 
 - Spike 0 proves the wrapper path, or the project has been re-scoped around native spritesheet playback with a separate estimate
-- a pet installed to `~/.codex/pets/<id>` appears in Clawd without manual conversion
+- a pet installed to `~/.codex/pets/<id>` appears in DeskBuddy without manual conversion
 - the user can select it from Settings
-- Clawd states visibly animate using the correct atlas rows
+- DeskBuddy states visibly animate using the correct atlas rows
 - generated wrappers render through the object channel without enabling eye tracking
 - DND/sleep fallback is visually still rather than active-looking
 - no built-in theme behavior regresses
@@ -1050,8 +1050,8 @@ MVP is successful when:
 
 One-click import is successful when:
 
-- a website button can open Clawd through `clawd://import-pet`
-- Clawd imports, validates, and switches to the pet
+- a website button can open DeskBuddy through `deskbuddy://import-pet`
+- DeskBuddy imports, validates, and switches to the pet
 - Petdex CLI and zip download fallbacks still work
 - fallback agent-assisted installs into `~/.codex/pets` are discovered by Refresh Imported Pets
 - the user never has to understand `theme.json`
@@ -1064,5 +1064,5 @@ One-click import is successful when:
 4. Add Settings refresh and `Codex Pet` badges.
 5. Test with `D:\tmp\codex-pet-lab` packages, including Unicode IDs and DND fallback.
 6. Add protocol import and download validation.
-7. Update website button to emit `clawd://import-pet` and keep Petdex/zip/agent prompt fallbacks.
+7. Update website button to emit `deskbuddy://import-pet` and keep Petdex/zip/agent prompt fallbacks.
 8. Revisit native spritesheet channel if wrapper IO, cache complexity, or disk growth becomes visible.

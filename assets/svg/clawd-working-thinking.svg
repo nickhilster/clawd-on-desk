@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-15 -25 45 45" width="500" height="500">
-  <!-- clawd thinking bubble v25 (2026-05-15)
+  <!-- deskbuddy thinking bubble v25 (2026-05-15)
 
        v25 = v24 + dreamy edge-flow rewrite.
        Lu's call: v24 flow pixels read as broken — codex used
@@ -18,7 +18,7 @@
 
        v24 = v23 + "脚站定不动".
        Lu's call: legs jiggling per body-lean reads as restless.
-       Fix: lift the 4 leg <rect>s out of #clawd-body so they do
+       Fix: lift the 4 leg <rect>s out of #deskbuddy-body so they do
        NOT inherit body-attend rotate/translate or body-breathe
        scale. Torso / arm / eyes still inherit body motion as
        before. The leg-*-think keyframes are no longer
@@ -33,8 +33,8 @@
          1. Bubble tail: chat-style stair removed.
             Now a real "thought bubble chain" — main bubble +
             two recurring small puffs (1px and 0.5px) trailing
-            down to clawd's head. This is the manga thought-cloud
-            signature; clawd looks like he is thinking, not being
+            down to deskbuddy's head. This is the manga thought-cloud
+            signature; deskbuddy looks like he is thinking, not being
             messaged.
          2. Eyes react: rect eyes during the thinking hold
             switch to ^^ smile eyes for a "got it!" beat
@@ -48,7 +48,7 @@
             ~50deg with a translate so the hand actually reaches
             the cheek/chin area, not the previous +22deg micro-tilt.
          5. Bubble tone switched to white (#FFFFFF), with dots
-            in a slightly deeper Clawd blue (#256891) so they read
+            in a slightly deeper DeskBuddy blue (#256891) so they read
             clearly inside the bubble.
          6. White bubble gets subtle pale-blue pixels outside the
             rim, stepping around the outer contour for a small
@@ -408,7 +408,7 @@
   <rect id="ground-shadow" x="3" y="15" width="9" height="1" fill="#000000" opacity="0.5"/>
 
   <!--
-    v24: legs are lifted out of #clawd-body so they do not inherit
+    v24: legs are lifted out of #deskbuddy-body so they do not inherit
     body-attend (rotate/translate toward bubble) or body-breathe
     (scale). Rendered before #master-group so the torso (which is
     inside master-group) draws on top of the leg tops as before.
@@ -422,7 +422,7 @@
 
   <g id="master-group">
     <g class="body-breathe">
-      <g id="clawd-body" class="body-attend">
+      <g id="deskbuddy-body" class="body-attend">
         <g id="body-color-group" fill="#DE886D">
           <rect id="torso" x="2" y="6" width="11" height="7"/>
           <rect class="arm-left"  id="left-arm"  x="0"  y="9" width="2" height="2"/>
@@ -445,9 +445,9 @@
     <!--
       Left thought bubble.
       v23: bubble path lifted by 1px (path y -3..4 -> -4..3) so
-      there is a 3px gap to clawd's head. Old chat-tail
+      there is a 3px gap to deskbuddy's head. Old chat-tail
       (0,4)(1,4)(1,5) deleted. New chain: 1x1 puff at (1,4) +
-      0.5x0.5 puff at (2,5.5) trailing toward clawd's head top
+      0.5x0.5 puff at (2,5.5) trailing toward deskbuddy's head top
       (y=6).
     -->
     <g class="left-bubble">

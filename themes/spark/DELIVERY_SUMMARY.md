@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-**Spark** — a playful, mischievous pet companion — has been fully designed and configured. The theme is ready for animation production and integration with clawd-on-desk.
+**Spark** — a playful, mischievous pet companion — has been fully designed and configured. The theme is ready for animation production and integration with deskbuddy.
 
 All prerequisites for animation creation are complete:
 - ✅ Character design finalized (8 emotional expressions)
@@ -182,7 +182,7 @@ Convert 8 SVG keyframes into multi-frame APNG animations:
 
 ### Integration & Testing
 - Deploy animations to `themes/spark/assets/`
-- Verify theme loads in clawd-on-desk
+- Verify theme loads in deskbuddy
 - Run 50+ integration test cases
 - Performance validation
 - Visual polish and refinement
@@ -279,7 +279,7 @@ Matches the robot mascot's visual language but with:
 ### For Integration Testing
 1. **Deploy:** APNGs to `themes/spark/assets/`
 2. **Verify:** File names match `theme.json` exactly
-3. **Launch:** clawd-on-desk and select Spark theme
+3. **Launch:** deskbuddy and select Spark theme
 4. **Test:** 50+ test cases in `SPRINT_PLAN.md`
 5. **Sign Off:** All tests pass before release
 
@@ -384,9 +384,9 @@ All documentation is self-contained in the `themes/spark/` directory:
 **By:** Claude + Agent team  
 **Status:** Ready for Phase 2-3 execution
 
-All deliverables stored at: `C:\dev\clawd-on-desk\themes\spark\`
+All deliverables stored at: `C:\dev\deskbuddy\themes\spark\`
 
-Memory saved at: `C:\Users\nick_\.claude\projects\C--dev-clawd-on-desk\memory\project-spark-sprint.md`
+Memory saved at: `C:\Users\nick_\.claude\projects\C--dev-deskbuddy\memory\project-spark-sprint.md`
 
 ---
 

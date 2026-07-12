@@ -15,11 +15,11 @@
 >
 > Status history: Draft v2, revised after 1st Codex review + independent code re-verification (2026-06-04). No code written yet.
 > Date: 2026-06-04
-> Issue: https://github.com/rullerzhou-afk/clawd-on-desk/issues/416
+> Issue: https://github.com/rullerzhou-afk/deskbuddy/issues/416
 > Reporter: sanyimufeng (wq). Owner confirmed repro 2026-06-03.
 > Scope: Two macOS-Dock-only changes discovered together.
 >   - **Part A (#416):** macOS app "Hide" (⌘H / Dock right-click → 隐藏) does nothing for the pet. Make it actually hide/restore the pet.
->   - **Part B (new, unfiled):** Clawd's Dock tile is visibly larger than neighbor apps. Re-pad the icon to the Apple grid.
+>   - **Part B (new, unfiled):** DeskBuddy's Dock tile is visibly larger than neighbor apps. Re-pad the icon to the Apple grid.
 > Out of scope: Windows/Linux behavior (no app-level Hide there); the build/dmg icon (`assets/icon.png`); any new Settings toggle.
 >
 > **v1 → v2 changelog (what the Codex review caught, all re-verified against the shipped code):**
@@ -33,12 +33,12 @@
 
 ## 1. Issue Summary
 
-Reporter: on macOS, right-clicking the Clawd icon in the Dock shows a "隐藏" (Hide) option, but clicking it does nothing — the pet stays on screen and the Dock tile remains.
+Reporter: on macOS, right-clicking the DeskBuddy icon in the Dock shows a "隐藏" (Hide) option, but clicking it does nothing — the pet stays on screen and the Dock tile remains.
 
 Two distinct findings:
 
-1. **Part A — the inert "Hide" (the filed issue).** On a normal app, macOS "Hide" (⌘H) instantly hides all the app's windows (the Dock tile always stays — that part is normal macOS, not removable). On Clawd, even the window-hiding does nothing, because the pet windows opt out of hide. The menu item is present (macOS forces it into every app's Dock menu) but inert.
-2. **Part B — the oversized Dock tile.** Clawd's runtime Dock icon fills 100% of its canvas (zero margin) vs the Apple grid's ~80.5%, so it bulges larger than neighbors.
+1. **Part A — the inert "Hide" (the filed issue).** On a normal app, macOS "Hide" (⌘H) instantly hides all the app's windows (the Dock tile always stays — that part is normal macOS, not removable). On DeskBuddy, even the window-hiding does nothing, because the pet windows opt out of hide. The menu item is present (macOS forces it into every app's Dock menu) but inert.
+2. **Part B — the oversized Dock tile.** DeskBuddy's runtime Dock icon fills 100% of its canvas (zero margin) vs the Apple grid's ~80.5%, so it bulges larger than neighbors.
 
 ---
 
@@ -73,7 +73,7 @@ src/pet-window-runtime.js
 ```
 
 `togglePetVisibility()` is reached from (all cross-platform):
-- The **tray / menu-bar** menu item "隐藏 Clawd / 显示 Clawd" (`src/menu.js:179`, inside `buildTrayMenu`). **The pet right-click `buildContextMenu` does NOT include this item.**
+- The **tray / menu-bar** menu item "隐藏 DeskBuddy / 显示 DeskBuddy" (`src/menu.js:179`, inside `buildTrayMenu`). **The pet right-click `buildContextMenu` does NOT include this item.**
 - The persistent global shortcut `togglePet` (`src/shortcut-actions.js:13`).
 - `bringPetToPrimaryDisplay()` internal use (`src/pet-window-runtime.js:235`).
 
@@ -103,7 +103,7 @@ These collapse into two viable paths, chosen by the probe below.
 
 ### 3.2 Step 0 — Probe FIRST (must run before any Part A coding)
 
-Temporary instrumentation in `main.js` `whenReady` (this session is `darwin` → testable here), then `npm start`. The probe must capture a **continuous `app.isHidden()` change poll** (not just a one-shot read on an event), `app.isActive()`, and must cover the **Dock-right-click-Hide-while-Clawd-is-NOT-frontmost** path — that path fires no `did-resign-active`, which is exactly why v2's one-shot approach was unsafe.
+Temporary instrumentation in `main.js` `whenReady` (this session is `darwin` → testable here), then `npm start`. The probe must capture a **continuous `app.isHidden()` change poll** (not just a one-shot read on an event), `app.isActive()`, and must cover the **Dock-right-click-Hide-while-DeskBuddy-is-NOT-frontmost** path — that path fires no `did-resign-active`, which is exactly why v2's one-shot approach was unsafe.
 
 - **Triggers (test each):** ⌘H (only equivalent when `app.isActive()` is true); **Dock right-click → 隐藏 (the issue's main path — also test while another app is frontmost)**; `osascript` targeting **by pid, not process name**:
   `osascript -e 'tell application "System Events" to set visible of (first process whose unix id is <pid>) to false'`.
@@ -168,7 +168,7 @@ Only if the probe shows `canHide:NO` blocks the app from ever entering hidden st
 - Subscribe to the pet render window's `BrowserWindow` `'hide'`/`'show'` events → `setPetHidden(...)` + sync.
 - **The `hide`/`show` handler MUST gate on `app.isHidden()`** to tell an OS hide from a manual `setPetHidden()` (which itself calls `win.hide()` and fires `'hide'`). Without the gate, a tray/shortcut hide gets mislabeled as an OS hide → wrong restore behavior / loops.
 - On show, call `reapplyMacVisibility()` to re-assert stationary/all-Spaces/topmost (a hide/show cycle can reset collection behavior).
-- Accepted downside: Clawd then also responds to "隐藏其他 / Hide Others" (⌥⌘H). Arguably correct ("hide" means hide); record in the test plan.
+- Accepted downside: DeskBuddy then also responds to "隐藏其他 / Hide Others" (⌥⌘H). Arguably correct ("hide" means hide); record in the test plan.
 - **Must** still drive `petHidden` + all UI sync from the window events, else the OS hides windows while `petHidden` stays false and tray label / permission shortcuts / update-bubble timer desync.
 
 ### 3.5 Shared design (both paths)
@@ -187,10 +187,10 @@ Only if the probe shows `canHide:NO` blocks the app from ever entering hidden st
 1. Pet visible, Dock shown → ⌘H → pet hides, Dock tile stays → click tile → pet returns to same spot/Space.
 2. Dock right-click → 隐藏 → same as (1).
 3. ⌘Tab away and back → pet must **not** have hidden (deactivation ≠ hide).
-4. Tray "隐藏 Clawd", then click the Dock tile → pet returns (per §3.5 policy).
-5. ⌥⌘H "Hide Others" → document/verify behavior (Path 2 will hide Clawd; Path 1 will not unless the app itself is hidden).
+4. Tray "隐藏 DeskBuddy", then click the Dock tile → pet returns (per §3.5 policy).
+5. ⌥⌘H "Hide Others" → document/verify behavior (Path 2 will hide DeskBuddy; Path 1 will not unless the app itself is hidden).
 6. Multi-display + mini mode + live permission bubble + Session HUD: hide/restore each combination; unplug/switch displays while hidden, then restore.
-7. `showDock=false` (accessory): no crash/stuck state; tray "显示 Clawd" still restores.
+7. `showDock=false` (accessory): no crash/stuck state; tray "显示 DeskBuddy" still restores.
 8. Windows/Linux smoke: tray Hide/Show + `togglePet` shortcut unchanged (no mac-hide path runs).
 9. Unit test: `setPetHidden` idempotency + `{applied,deferred,changed}` + the `hiddenByOsHide` reconciliation (pure logic; the AppKit signal stays manual).
 
@@ -216,7 +216,7 @@ Only if the probe shows `canHide:NO` blocks the app from ever entering hidden st
 
 ### 4.1 Goal
 
-Make Clawd's Dock tile match neighbor apps by giving `assets/dock-icon.png` the standard macOS margin. **Keep** the runtime override at `src/main.js:3227` (dropping it would fall back to the 72.6%, low-centered `icon.png`). Only the asset's padding + one comment change.
+Make DeskBuddy's Dock tile match neighbor apps by giving `assets/dock-icon.png` the standard macOS margin. **Keep** the runtime override at `src/main.js:3227` (dropping it would fall back to the 72.6%, low-centered `icon.png`). Only the asset's padding + one comment change.
 
 ### 4.2 Target
 
@@ -241,7 +241,7 @@ Make Clawd's Dock tile match neighbor apps by giving `assets/dock-icon.png` the 
 
 ### 4.4 Test plan
 
-- `npm start` on macOS → compare Clawd's Dock tile against Notes / WeChat / Claude. Should sit on the same baseline.
+- `npm start` on macOS → compare DeskBuddy's Dock tile against Notes / WeChat / Claude. Should sit on the same baseline.
 - Check at multiple Dock sizes + magnification on/off. **Finalize the % by an on-device Dock screenshot** — 80.5% is the starting point, not gospel; tune `TARGET` (~840–860 if it still reads small).
 
 ### 4.5 Notes

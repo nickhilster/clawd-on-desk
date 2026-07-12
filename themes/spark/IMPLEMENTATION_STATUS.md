@@ -179,7 +179,7 @@
 ## File Locations
 
 ```
-Project Root: C:\dev\clawd-on-desk\themes\spark\
+Project Root: C:\dev\deskbuddy\themes\spark\
 
 ✅ Completed:
   - theme.json (full configuration)
@@ -255,7 +255,7 @@ Project Root: C:\dev\clawd-on-desk\themes\spark\
 
 1. Create APNG animation files from the SVG keyframes
 2. Deploy to `themes/spark/assets/`
-3. Test theme loading in clawd-on-desk
+3. Test theme loading in deskbuddy
 4. Verify each state displays and transitions correctly
 
 See **ANIMATION_GUIDE.md** for detailed frame creation instructions.

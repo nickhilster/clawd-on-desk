@@ -1,18 +1,18 @@
 # Remote SSH Guide
 
 The default entry point for Remote SSH is **Settings → Remote SSH** inside the
-Clawd app. The older `scripts/remote-deploy.sh` is now only a fallback for
+DeskBuddy app. The older `scripts/remote-deploy.sh` is now only a fallback for
 source checkout / debugging, and is no longer the primary flow for DMG /
 installer users.
 
 ## Prerequisites
 
-- A local Clawd instance is running
+- A local DeskBuddy instance is running
 - Your machine can reach the remote host via the system `ssh`
 - Node.js is installed on the remote
 - At least one supported remote agent is installed on the remote: Claude Code, Codex CLI, or Copilot CLI
 
-Clawd does not store SSH passwords or private-key passphrases. First-time host
+DeskBuddy does not store SSH passwords or private-key passphrases. First-time host
 key confirmation, passphrase entry, and ssh-agent loading are all handled by
 the system `ssh` and your system terminal.
 
@@ -25,26 +25,26 @@ the system `ssh` and your system terminal.
    - **Private key file**: optional; leave blank to use ssh-agent or `~/.ssh/config`
    - **Remote forward port**: defaults to `23333`; only change to `23334-23337` when you run multiple profiles against the same remote
    - **Host prefix**: optional, used in Sessions / Dashboard to disambiguate the remote
-3. If SSH needs first-time host-key confirmation, a passphrase, or an ssh-agent load, click **Authenticate**. Clawd opens your system terminal to run a plain `ssh` once.
+3. If SSH needs first-time host-key confirmation, a passphrase, or an ssh-agent load, click **Authenticate**. DeskBuddy opens your system terminal to run a plain `ssh` once.
 4. Click **One-click deploy**.
-   - Clawd opens and maintains the `ssh -R` reverse tunnel
-   - Then it copies hook files from the currently installed Clawd to the remote's `~/.claude/hooks/`
+   - DeskBuddy opens and maintains the `ssh -R` reverse tunnel
+   - Then it copies hook files from the currently installed DeskBuddy to the remote's `~/.claude/hooks/`
    - Then it registers Claude Code hooks, Codex official hooks, and Copilot CLI hooks in remote mode when the matching remote agent is installed
    - Connection / deployment logs are shown directly below the profile
 5. Start Claude Code, Codex CLI, or Copilot CLI on the remote. The Dashboard will show the session once the first remote hook event arrives.
 
 For remote-only Copilot CLI tracking on a fresh local install, turn on
-**Copilot CLI** in **Settings → Agents** so Clawd accepts those remote hook
+**Copilot CLI** in **Settings → Agents** so DeskBuddy accepts those remote hook
 events. You do not need to click **Install** unless you also want local Copilot
 hooks on this machine.
 
 If the profile has **Auto-start Codex fallback monitor on connect** enabled,
-Clawd will SSH in after connect to launch `~/.claude/hooks/codex-remote-monitor.js`.
+DeskBuddy will SSH in after connect to launch `~/.claude/hooks/codex-remote-monitor.js`.
 The fallback is not needed when Codex official hooks are working.
 
 ## Key concepts
 
-The `127.0.0.1:<port>` shown in Doctor is normal — it's the Clawd HTTP service
+The `127.0.0.1:<port>` shown in Doctor is normal — it's the DeskBuddy HTTP service
 on **your** machine, not an IP on the remote cluster. Remote hooks don't reach
 your LAN IP directly either.
 
@@ -54,7 +54,7 @@ The actual chain is:
 Remote Claude/Codex/Copilot hook
   -> POST http://127.0.0.1:<remote forward port>
   -> SSH reverse tunnel
-  -> Local Clawd http://127.0.0.1:<local runtime port>
+  -> Local DeskBuddy http://127.0.0.1:<local runtime port>
   -> Dashboard / Session HUD / pet state
 ```
 

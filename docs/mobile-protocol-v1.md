@@ -1,8 +1,8 @@
-# Clawd Mobile Protocol v1
+# DeskBuddy Mobile Protocol v1
 
 ## Scope
 
-Mobile v1 is an opt-in, read-only LAN preview for watching Clawd session state
+Mobile v1 is an opt-in, read-only LAN preview for watching DeskBuddy session state
 from a phone or another browser on the same network.
 
 M1 does not expose remote approval, elicitation, writes, terminal control, raw
@@ -12,7 +12,7 @@ approval remains on the desktop surfaces and other existing remote channels.
 ## Architecture
 
 ```text
-Clawd Desktop
+DeskBuddy Desktop
   State engine
       |
       v
@@ -27,7 +27,7 @@ Clawd Desktop
 ## Security Model
 
 - **Token**: 32-char hex, generated once and stored at
-  `~/.clawd/mobile-token.json`.
+  `~/.deskbuddy/mobile-token.json`.
 - **Transport**: plaintext WebSocket over LAN only. Do not expose it to the
   Internet or untrusted networks.
 - **Binding**: `0.0.0.0:<port>`, so same-LAN devices can reach it.
@@ -101,7 +101,7 @@ Preview entry fields:
 | `sessionId` | string | Session identifier |
 | `title` | string or null | Sanitized session title or agent id fallback |
 | `basename` | string or null | Basename of cwd only, never the full path |
-| `state` | string | Clawd display state |
+| `state` | string | DeskBuddy display state |
 | `recentEvents` | array | Recent event names with timestamps and states only |
 
 `recentEvents[]` entries contain only `{ event, at, state }`. They do not

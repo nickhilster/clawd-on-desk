@@ -1,6 +1,6 @@
 # CodeWhale 适配 DeskBuddy — 完整开发文档
 
-> 基准：DeskBuddy v0.8.1（fork from rullerzhou-afk/clawd-on-desk）
+> 基准：DeskBuddy v0.8.1（fork from rullerzhou-afk/deskbuddy）
 > 日期：2026-06-02 ~ 2026-06-03；review 修复：2026-06-11
 > 状态：**Phase 1 完成，review 反馈已修复，Phase 2 搁置**
 
@@ -54,7 +54,7 @@
 ### 2.2 按需安装与同步
 
 - 全新安装默认不会写入 CodeWhale hooks；需要本机 CodeWhale 追踪时，先到 **Settings → Agents → CodeWhale → Install** 安装并启用集成
-- 安装且启用后，Clawd 启动时会继续同步 7 个 hooks 条目到 `~/.codewhale/config.toml`
+- 安装且启用后，DeskBuddy 启动时会继续同步 7 个 hooks 条目到 `~/.codewhale/config.toml`
 - Settings / Doctor 的 Fix / Repair 会手动重新同步；`npm run install:codewhale-hooks` 仍可用于调试或预注册
 - 卸载支持（`npm run uninstall:codewhale-hooks`）
 
@@ -117,8 +117,8 @@ module.exports = {
 ```
 
 关键字段：
-- `eventSource: "hook"` — 告诉 Clawd 此 agent 通过 hooks 感知事件（区别于 `"log-poll"` / `"plugin-event"` / `"extension"`）
-- `capabilities.sessionEnd: true` — 会话结束时 Clawd 显示 sleeping 动画而非隐藏
+- `eventSource: "hook"` — 告诉 DeskBuddy 此 agent 通过 hooks 感知事件（区别于 `"log-poll"` / `"plugin-event"` / `"extension"`）
+- `capabilities.sessionEnd: true` — 会话结束时 DeskBuddy 显示 sleeping 动画而非隐藏
 - `permissionApproval: false` — Phase 2（权限审批气泡）需要 CodeWhale 源码改动
 
 ### 4.2 `hooks/codewhale-hook.js` — Hook 脚本
@@ -127,7 +127,7 @@ module.exports = {
 
 **架构**：
 ```
-CodeWhale → 设置环境变量 → 调用 hook 脚本 → 翻译事件 → POST /state → Clawd
+CodeWhale → 设置环境变量 → 调用 hook 脚本 → 翻译事件 → POST /state → DeskBuddy
 ```
 
 **环境变量**（CodeWhale 传入）：
@@ -144,14 +144,14 @@ CodeWhale → 设置环境变量 → 调用 hook 脚本 → 翻译事件 → POS
 
 **稳定 Session ID 缓存**：
 
-`mode_change` 等事件可能不带 `DEEPSEEK_SESSION_ID`，如果不处理会导致 Clawd HUD 出现重复标签。解决方案：
+`mode_change` 等事件可能不带 `DEEPSEEK_SESSION_ID`，如果不处理会导致 DeskBuddy HUD 出现重复标签。解决方案：
 1. 首次事件时生成 session id → 写入 `/tmp/codewhale-hook-session`
 2. 后续事件从缓存读取
 3. `session_end` 时清除缓存
 
 **session_title 覆盖**：
 
-Clawd 默认用 `path.basename(cwd)` 作为 HUD 标签，即工作空间目录名（如 `claude_on_desk`）。hook 脚本通过 `session_title: "CodeWhale"` 覆盖，使 HUD 显示正确的 agent 名。
+DeskBuddy 默认用 `path.basename(cwd)` 作为 HUD 标签，即工作空间目录名（如 `claude_on_desk`）。hook 脚本通过 `session_title: "CodeWhale"` 覆盖，使 HUD 显示正确的 agent 名。
 
 ### 4.3 `hooks/codewhale-install.js` — 安装脚本
 
@@ -178,7 +178,7 @@ timeout_secs = 5
 - `mode_change`（background）
 - `on_error`（background）
 
-**幂等性**：已存在的 clawd-managed 条目被更新，手动添加的条目保留。
+**幂等性**：已存在的 deskbuddy-managed 条目被更新，手动添加的条目保留。
 
 **关键修复**：见 [5.1 节](#51-codewhale-installjs-关键修复)。
 
@@ -194,7 +194,7 @@ timeout_secs = 5
 
 #### 5.1.1 Electron 启动路径
 
-Clawd 启动时 `integration-sync.js` 调用 `codewhale-install.js`，此时 `process.execPath` 是 Electron 二进制路径而非 Node.js。错误 hook command 会变成：
+DeskBuddy 启动时 `integration-sync.js` 调用 `codewhale-install.js`，此时 `process.execPath` 是 Electron 二进制路径而非 Node.js。错误 hook command 会变成：
 ```
 electron "/path/to/hook.js" session_start
 ```
@@ -226,7 +226,7 @@ const nodeBin = process.versions.electron ? "node" : (process.execPath || "node"
 - register 会先删除旧 managed entries，再写入 7 个 canonical entries；
 - 第二次 register 返回 `added: 0`、`removed: 0`、`updated: false`，startup sync 不会反复记录无意义日志。
 
-临时副本验证：历史污染配置可从 15 个 Clawd hook 引用收敛到 7 个，第二次注册保持 7 个，卸载后变 0 个。真实用户配置未在验证中写入。
+临时副本验证：历史污染配置可从 15 个 DeskBuddy hook 引用收敛到 7 个，第二次注册保持 7 个，卸载后变 0 个。真实用户配置未在验证中写入。
 
 #### 5.1.3 Windows command quoting
 
@@ -270,7 +270,7 @@ function syncCodewhaleHooks() {
 }
 ```
 
-CodeWhale 只有在 Settings 中安装且启用后才会在 Clawd 启动时自动调用此函数；用户触发 Install / Fix / Repair 时也会调用。
+CodeWhale 只有在 Settings 中安装且启用后才会在 DeskBuddy 启动时自动调用此函数；用户触发 Install / Fix / Repair 时也会调用。
 
 ### 5.5 `src/server-agent-id.js`
 
@@ -325,7 +325,7 @@ CodeWhale 已进入 Doctor descriptor 和 integration checks：
 
 ## 6. 事件映射表
 
-| CodeWhale 事件 | 环境变量关键字段 | Clawd 事件 | 动画状态 | 同步模式 |
+| CodeWhale 事件 | 环境变量关键字段 | DeskBuddy 事件 | 动画状态 | 同步模式 |
 |---|---|---|---|---|
 | `session_start` | DEEPSEEK_SESSION_ID, DEEPSEEK_WORKSPACE, DEEPSEEK_MODE | `SessionStart` | idle | fire-and-forget |
 | `session_end` | DEEPSEEK_SESSION_ID | `SessionEnd` | sleeping | **await** |
@@ -344,7 +344,7 @@ CodeWhale 已进入 Doctor descriptor 和 integration checks：
 
 ### 7.1 未实现：权限审批气泡（Phase 2）
 
-**目标**：当 CodeWhale 需要用户确认工具调用时（如执行 shell 命令、写入文件），Clawd 弹出交互式气泡，用户点击"允许"或"拒绝"后回复给 CodeWhale。
+**目标**：当 CodeWhale 需要用户确认工具调用时（如执行 shell 命令、写入文件），DeskBuddy 弹出交互式气泡，用户点击"允许"或"拒绝"后回复给 CodeWhale。
 
 **阻塞原因**：
 
@@ -386,7 +386,7 @@ CodeWhale 有两个独立的 hook/事件系统：
 
 ### 8.1 螃蟹不动
 
-1. 确认 Clawd 在运行：`curl http://127.0.0.1:23333/state` 返回 `{"ok":true}`
+1. 确认 DeskBuddy 在运行：`curl http://127.0.0.1:23333/state` 返回 `{"ok":true}`
 2. 确认已在 **Settings → Agents → CodeWhale → Install** 安装并启用集成
 3. 确认 hooks 已注册：`grep "codewhale-hook" ~/.codewhale/config.toml` 应有 7 个条目
 4. 确认 hooks 用的是 `node` 而非 `electron`：同上
@@ -404,11 +404,11 @@ CodeWhale 有两个独立的 hook/事件系统：
 
 ### 8.3 多个重复 HUD 标签
 
-旧 session 残留。重启 Clawd 清除，或右键删除。
+旧 session 残留。重启 DeskBuddy 清除，或右键删除。
 
 ### 8.4 Hook 命令用了 electron 而非 node
 
-如果已安装且启用的 CodeWhale 集成在 Clawd 启动同步时覆盖了 hooks：
+如果已安装且启用的 CodeWhale 集成在 DeskBuddy 启动同步时覆盖了 hooks：
 1. 从 **Settings → Agents → CodeWhale → Fix / Repair** 重新同步，或调试时手动运行 `npm run install:codewhale-hooks`
 2. 确认 `codewhale-install.js` 使用 `resolveNodeBin()`，不会在 Electron 启动路径里固定写入裸 `node`
 
@@ -436,7 +436,7 @@ sudo chmod 4755 node_modules/electron/dist/chrome-sandbox
 npm start
 ```
 
-启动后打开 **Settings → Agents → CodeWhale → Install**。安装且启用后，Clawd 会在后续启动时继续同步 CodeWhale hooks。
+启动后打开 **Settings → Agents → CodeWhale → Install**。安装且启用后，DeskBuddy 会在后续启动时继续同步 CodeWhale hooks。
 
 如需在启动桌宠前调试 installer，也可以手动执行：
 
@@ -447,7 +447,7 @@ npm run install:codewhale-hooks
 ### 9.2 日常使用
 
 ```bash
-# 启动 Clawd
+# 启动 DeskBuddy
 cd deskbuddy && npm start
 
 # 启动 CodeWhale（另一个终端）
@@ -470,7 +470,7 @@ pkill -f "electron.*deskbuddy"
 ### 9.4 调试
 
 ```bash
-# 查看 Clawd 状态
+# 查看 DeskBuddy 状态
 curl http://127.0.0.1:23333/state
 
 # 查看已注册 hooks

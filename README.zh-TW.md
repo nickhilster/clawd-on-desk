@@ -41,7 +41,7 @@ DeskBuddy 住在你的桌面上，即時感知 AI 程式設計助理在做什麼
 - **Antigravity CLI (agy)** — 在 `~/.gemini/config/hooks.json` 設定 command hook（已有 Antigravity 設定時 DeskBuddy 啟動會自動註冊，或執行 `npm run install:antigravity-hooks`）；**僅同步狀態**：DeskBuddy 不會為 agy 顯示任何權限對話框，所有 Allow / Deny / Always-allow 都在 agy 自己的終端機選單完成
 - **Cursor Agent** — [Cursor IDE hooks](https://cursor.com/docs/agent/hooks)，設定在 `~/.cursor/hooks.json`（DeskBuddy 啟動時自動註冊，或執行 `npm run install:cursor-hooks`）
 - **CodeBuddy** — 以 Claude Code 相容的 command hook + HTTP 權限 hook 整合，設定寫入 `~/.codebuddy/settings.json`（DeskBuddy 啟動時自動註冊，或執行 `node hooks/codebuddy-install.js`）
-- **Kiro CLI** — command hooks 注入到 `~/.kiro/agents/` 下的自訂 agent 設定，並自動建立 `clawd` agent；DeskBuddy 每次啟動都會從內建的 `kiro_default` 重新同步它，盡量和預設 agent 保持一致。macOS 與 Windows 上狀態動效已驗證可用；需要時可用 `kiro-cli --agent clawd` 或在工作階段內執行 `/agent swap clawd` 啟用 hooks（DeskBuddy 啟動時自動註冊，或執行 `npm run install:kiro-hooks`）
+- **Kiro CLI** — command hooks 注入到 `~/.kiro/agents/` 下的自訂 agent 設定，並自動建立 `deskbuddy` agent；DeskBuddy 每次啟動都會從內建的 `kiro_default` 重新同步它，盡量和預設 agent 保持一致。macOS 與 Windows 上狀態動效已驗證可用；需要時可用 `kiro-cli --agent deskbuddy` 或在工作階段內執行 `/agent swap deskbuddy` 啟用 hooks（DeskBuddy 啟動時自動註冊，或執行 `npm run install:kiro-hooks`）
 - **Kimi Code CLI（Kimi-CLI）** — 在 `~/.kimi/config.toml` 的 `[[hooks]]` 條目設定 command hooks（DeskBuddy 啟動時自動註冊，或執行 `npm run install:kimi-hooks`）
 - **Qwen Code** — 在 `~/.qwen/settings.json` 設定 command hooks（DeskBuddy 啟動時自動註冊，或執行 `npm run install:qwen-hooks`）；支援狀態追蹤和 Qwen `PermissionRequest` 桌面權限對話框
 - **opencode** — [外掛整合](https://opencode.ai/docs/plugins)，寫入 `~/.config/opencode/opencode.json`（DeskBuddy 啟動時自動註冊）；零延遲事件流、Allow/Always/Deny 權限對話框、`task` 工具分派平行子代理時自動播放建築動畫
@@ -86,7 +86,7 @@ DeskBuddy 住在你的桌面上，即時感知 AI 程式設計助理在做什麼
 - **唯讀設計** — 區網橋接只對外廣播狀態，手機端無法操作你的電腦（遠端審批已在規劃中）
 - **僅限區域網路 + 權杖防護** — 配對需要權杖，權杖會自動輪換並附寬限期，可一鍵重新產生或重設存取
 - **可安裝** — 標準 PWA，加入主畫面即可獲得近原生體驗
-> 手機伴侶這條線——從最初原型到權杖輪換——由核心貢獻者 [@Bynlk](https://github.com/Bynlk) 一手打造並持續主導，他還維護著內建原生 Android App 的姊妹專案 [clawd-on-mobile](https://github.com/Bynlk/clawd-on-mobile)。
+> 手機伴侶這條線——從最初原型到權杖輪換——由核心貢獻者 [@Bynlk](https://github.com/Bynlk) 一手打造並持續主導，他還維護著內建原生 Android App 的姊妹專案 [deskbuddy-mobile](https://github.com/Bynlk/deskbuddy-mobile)。
 
 ### 系統
 

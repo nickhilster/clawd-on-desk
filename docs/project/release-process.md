@@ -1,6 +1,6 @@
 # Release Process
 
-Use this flow when preparing a Clawd app release.
+Use this flow when preparing a DeskBuddy app release.
 
 ## Before Tagging
 
@@ -16,7 +16,7 @@ node scripts/verify-sidecar-binaries.js prebuild:all
 4. Run the `Build & Release` workflow manually on `main`.
 
 Manual workflow dispatch builds Windows, macOS, and Linux artifacts, fetches the
-pinned `cc-connect-clawd` sidecar release, verifies source-pinned checksums, and
+pinned `deskbuddy-connect` sidecar release, verifies source-pinned checksums, and
 uploads build artifacts. It does not publish a GitHub Release.
 
 ## Draft Release
@@ -50,11 +50,11 @@ Before launching:
 - Confirm the packaged app shows `0.11.0` metadata.
 - Confirm packaged resources include `app.asar.unpacked/hooks`,
   `app.asar.unpacked/agents`, `app.asar.unpacked/extensions`,
-  `app.asar.unpacked/themes`, and `sidecars/cc-connect-clawd`.
+  `app.asar.unpacked/themes`, and `sidecars/deskbuddy-connect`.
 - Confirm Windows artifacts are architecture-specific x64 / ARM64 installers,
   not a universal NSIS installer.
 - For migration smoke, install v0.10.0 first and save a copy of the old
-  `clawd-prefs.json` before upgrading.
+  `deskbuddy-prefs.json` before upgrading.
 - For Reasonix smoke, prepare a machine with Reasonix initialized so
   `<Reasonix home>/` exists (`%APPDATA%\reasonix` on Windows,
   `~/.reasonix` on macOS/Linux). A skipped install because Reasonix is missing
@@ -84,7 +84,7 @@ Required all-platform checks:
 - Run one real Claude Code or Codex session and confirm the pet reacts to state
   changes and still plays completion happy on Stop.
 - Trigger a long CJK Claude or Codex completion and confirm the Stop event reaches
-  Clawd without a 413 and the happy animation is not dropped.
+  DeskBuddy without a 413 and the happy animation is not dropped.
 - Codex official hook health: disable hooks / leave hooks unreviewed, confirm
   Agents badge or startup nudge reports attention, then repair/review and
   confirm it returns healthy.
@@ -98,7 +98,7 @@ Recommended all-platform checks:
 
 - Free roam: enable it, wait idle, confirm the pet moves, keeps hitbox/HUD/bubble
   alignment, and cancels on mouse move, state change, drag, mini mode, and DND.
-- Dizzy spin: on the Clawd theme, circle the cursor rapidly and confirm dizzy
+- Dizzy spin: on the DeskBuddy theme, circle the cursor rapidly and confirm dizzy
   triggers; repeat on Calico/Cloudling and confirm no unsupported-state glitch.
 - Low-power idle mode: verify sleeping/Cloudling static sleep behavior and that
   the HUD can be reclaimed/reopened without a blank surface.
@@ -151,10 +151,10 @@ draft.
 
 ## Sidecar Dependency
 
-Clawd release builds do not consume upstream `cc-connect` latest artifacts. They
-download the fixed `cc-connect-clawd` fork release pinned by
+DeskBuddy release builds do not consume upstream `cc-connect` latest artifacts. They
+download the fixed `deskbuddy-connect` fork release pinned by
 `scripts/fetch-sidecar-binaries.js`, verify SHA256 values pinned in that script,
 and package those binaries into app resources.
 
 When the sidecar needs an upstream update, publish a new fixed sidecar release
-from the fork first, then update the Clawd pin and rerun the fetch/verify tests.
+from the fork first, then update the DeskBuddy pin and rerun the fetch/verify tests.
