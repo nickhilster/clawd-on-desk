@@ -130,6 +130,11 @@ const { EVENTS: TELEGRAM_MIGRATION_EVENTS } = require("./telegram-migration-stat
 const {
   validateHardwareBuddySettings,
 } = require("./hardware-buddy-settings");
+const {
+  BUILTIN_PLUGIN_IDS,
+  getDefaultPetPluginPrefs,
+  normalizePetPluginPrefs,
+} = require("./pet-plugin-actions");
 
 const TELEGRAM_MIGRATION_RENDERER_EVENTS = new Set([
   TELEGRAM_MIGRATION_EVENTS.USER_TEST_NATIVE,
@@ -368,6 +373,16 @@ const updateRegistry = {
         };
       }
     },
+  },
+  plugins(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      return { status: "error", message: "plugins must be a plain object" };
+    }
+    const normalized = normalizePetPluginPrefs(value, getDefaultPetPluginPrefs());
+    if (Object.keys(normalized).length !== BUILTIN_PLUGIN_IDS.length) {
+      return { status: "error", message: "plugins must only contain supported bundled plugin entries" };
+    }
+    return { status: "ok" };
   },
 
   // ── #329 background update check (Phase 4) ──
@@ -1350,6 +1365,27 @@ function setTextScaleForDisplay(payload, deps) {
   return { status: "ok", commit: { textScaleByDisplay: next } };
 }
 
+function setPetPluginEnabled(payload, deps = {}) {
+  if (!payload || typeof payload !== "object") {
+    return { status: "error", message: "setPetPluginEnabled: payload must be an object" };
+  }
+  const pluginId = typeof payload.pluginId === "string" ? payload.pluginId : "";
+  const value = payload.value;
+  if (!BUILTIN_PLUGIN_IDS.includes(pluginId)) {
+    return { status: "error", message: `setPetPluginEnabled: unknown plugin "${pluginId}"` };
+  }
+  if (typeof value !== "boolean") {
+    return { status: "error", message: "setPetPluginEnabled: value must be a boolean" };
+  }
+  const snapshot = (deps && deps.snapshot) || {};
+  const next = normalizePetPluginPrefs({
+    ...getDefaultPetPluginPrefs(),
+    ...(snapshot.plugins && typeof snapshot.plugins === "object" ? snapshot.plugins : {}),
+    [pluginId]: { enabled: value },
+  });
+  return { status: "ok", commit: { plugins: next } };
+}
+
 const commandRegistry = {
   removeTheme,
   installHooks,
@@ -1382,6 +1418,7 @@ const commandRegistry = {
   resetThemeOverrides,
   importAnimationOverrides,
   setWideHitboxOverride,
+  setPetPluginEnabled,
   setThemeSelection,
   "remoteSsh.add": remoteSshAddProfile,
   "remoteSsh.update": remoteSshUpdateProfile,

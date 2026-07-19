@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rave Raccoon Theme Preview</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      background: #171326;
+      color: #fffdf5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(139, 92, 246, .22), transparent 32rem),
+        radial-gradient(circle at 88% 8%, rgba(50, 230, 226, .13), transparent 28rem),
+        #171326;
+    }
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 520px);
+      gap: 32px;
+      align-items: center;
+      padding: 42px clamp(24px, 5vw, 72px);
+      border-bottom: 1px solid rgba(255,255,255,.09);
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2.3rem, 6vw, 5rem);
+      line-height: .92;
+      letter-spacing: -.07em;
+    }
+    .kicker {
+      color: #c9ff57;
+      font: 800 .78rem/1 ui-monospace, monospace;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+    .lede {
+      max-width: 52ch;
+      color: #d5d0d7;
+      font-size: 1.05rem;
+      line-height: 1.65;
+    }
+    .palette { display: flex; gap: 8px; margin-top: 20px; }
+    .palette span {
+      width: 28px; height: 28px; border-radius: 9px;
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    }
+    .concept {
+      width: 100%;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 28px 70px rgba(0,0,0,.42);
+    }
+    main { padding: 36px clamp(18px, 4vw, 56px) 72px; }
+    .section-title {
+      margin: 26px 0 14px;
+      color: #67f5f2;
+      font: 900 .82rem/1 ui-monospace, monospace;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 14px;
+    }
+    article {
+      min-height: 232px;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      overflow: hidden;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 20px;
+      box-shadow: 0 14px 32px rgba(0,0,0,.2);
+    }
+    article:hover { border-color: rgba(103,245,242,.42); }
+    .stage {
+      min-height: 192px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+    .stage img { width: 100%; height: 190px; object-fit: contain; }
+    .mini .stage img { width: 78%; }
+    .label {
+      padding: 12px 14px 14px;
+      color: #d5d0d7;
+      font: 700 .72rem/1.25 ui-monospace, monospace;
+      overflow-wrap: anywhere;
+      border-top: 1px solid rgba(255,255,255,.07);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <p class="kicker">DeskBuddy theme · Riff v1.0</p>
+      <h1>Rave<br>Raccoon</h1>
+      <p class="lede">
+        A tiny Toronto-inspired night explorer with a city map, a pocket sampler,
+        and an incurable weakness for side quests. Psychedelic glow meets cozy
+        game-character warmth and punchy held-pose cartoon timing.
+      </p>
+      <div class="palette" aria-label="Riff color palette">
+        <span style="background:#252338"></span>
+        <span style="background:#8b5cf6"></span>
+        <span style="background:#ff4fb8"></span>
+        <span style="background:#32e6e2"></span>
+        <span style="background:#c9ff57"></span>
+        <span style="background:#ffcc66"></span>
+      </div>
+    </div>
+    <img class="concept" src="../../assets/source/rave-raccoon/riff-concept-sheet.png" alt="Riff visual development sheet">
+  </header>
+  <main id="preview"></main>
+  <script>
+    const groups = {
+      "Core and idle": [
+        "riff-idle.svg", "riff-idle-sidequest.svg", "riff-idle-map.svg",
+        "riff-idle-dance.svg", "riff-thinking.svg", "riff-working-mix.svg",
+        "riff-working-rave.svg", "riff-working-portal.svg"
+      ],
+      "Events and subagents": [
+        "riff-juggling.svg", "riff-conducting.svg", "riff-happy.svg",
+        "riff-notification.svg", "riff-error.svg", "riff-sweeping.svg",
+        "riff-carrying.svg"
+      ],
+      "Sleep journey": [
+        "riff-yawning.svg", "riff-dozing.svg", "riff-collapsing.svg",
+        "riff-sleeping.svg", "riff-waking.svg"
+      ],
+      "Reactions": [
+        "riff-react-drag.svg", "riff-react-drag-left.svg",
+        "riff-react-drag-right.svg", "riff-react-left.svg",
+        "riff-react-right.svg", "riff-react-annoyed.svg",
+        "riff-react-encore.svg"
+      ],
+      "Mini mode": [
+        "riff-mini-idle.svg", "riff-mini-alert.svg", "riff-mini-happy.svg",
+        "riff-mini-enter.svg", "riff-mini-peek.svg", "riff-mini-working.svg",
+        "riff-mini-crabwalk.svg", "riff-mini-enter-sleep.svg",
+        "riff-mini-sleep.svg"
+      ]
+    };
+    const main = document.querySelector("#preview");
+    for (const [title, files] of Object.entries(groups)) {
+      const heading = document.createElement("h2");
+      heading.className = "section-title";
+      heading.textContent = title;
+      const grid = document.createElement("section");
+      grid.className = "grid";
+      for (const file of files) {
+        const card = document.createElement("article");
+        if (file.includes("-mini-")) card.classList.add("mini");
+        card.innerHTML = `<div class="stage"><img src="assets/${file}" alt=""></div><div class="label">${file}</div>`;
+        grid.append(card);
+      }
+      main.append(heading, grid);
+    }
+  </script>
+</body>
+</html>

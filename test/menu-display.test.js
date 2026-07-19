@@ -42,7 +42,9 @@ function buildBaseCtx(overrides = {}) {
     getDisableMiniMode: () => false,
     getActiveThemeCapabilities: () => ({ miniMode: true }),
     openDashboard: () => {},
+    openSettingsTab: () => {},
     openSettingsWindow: () => {},
+    getPetPluginMenuItems: () => [],
     togglePetVisibility: () => {},
     bringPetToPrimaryDisplay: () => {},
     enableDoNotDisturb: () => {},
@@ -487,6 +489,54 @@ describe("menu dashboard action", () => {
     assert.ok(openDashboard, "tray menu should expose dashboard entry");
     openDashboard.click();
     assert.strictEqual(called, 1);
+  });
+});
+
+describe("menu plugin actions", () => {
+  function fakeElectron() {
+    return {
+      app: { quit: () => {}, setActivationPolicy: () => {}, dock: { show: () => {}, hide: () => {} } },
+      BrowserWindow: function BrowserWindow() {},
+      Menu: {
+        buildFromTemplate(template) {
+          return { template };
+        },
+      },
+      Tray: function Tray() {},
+      nativeImage: {
+        createFromPath() {
+          return {
+            resize() { return this; },
+            setTemplateImage() {},
+          };
+        },
+      },
+      screen: {
+        getAllDisplays: () => [{ id: 1, bounds: { x: 0, y: 0, width: 1920, height: 1080 }, workArea: { x: 0, y: 0, width: 1920, height: 1040 } }],
+        getCursorScreenPoint: () => ({ x: 0, y: 0 }),
+        getDisplayNearestPoint: () => ({ id: 1 }),
+      },
+    };
+  }
+
+  it("projects pet plugins directly into the top level of the context menu", () => {
+    const initMenu = loadMenuWithElectron(fakeElectron());
+    const calls = [];
+    const ctx = buildBaseCtx({
+      getPetPluginMenuItems: () => [
+        { label: "Break Buddy", submenu: [{ label: "Remind me in 5 minutes", click: () => calls.push("break") }] },
+        { label: "Pet Pal", submenu: [{ label: "Open Stats", click: () => calls.push("stats") }] },
+      ],
+    });
+    const menu = initMenu(ctx);
+    menu.buildContextMenu();
+
+    const breakBuddy = ctx.contextMenu.template.find((item) => item.label === "Break Buddy");
+    const petPal = ctx.contextMenu.template.find((item) => item.label === "Pet Pal");
+    assert.ok(breakBuddy, "context menu should expose Break Buddy at top level");
+    assert.ok(petPal, "context menu should expose Pet Pal at top level");
+    petPal.submenu[0].click();
+    assert.deepStrictEqual(calls, ["stats"]);
   });
 });
 

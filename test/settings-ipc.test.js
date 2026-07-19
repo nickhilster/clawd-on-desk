@@ -187,6 +187,9 @@ function createHarness(overrides = {}) {
     getDoNotDisturb: overrides.getDoNotDisturb || (() => false),
     getSoundMuted: overrides.getSoundMuted || (() => false),
     getSoundVolume: overrides.getSoundVolume || (() => 0.4),
+    getStatsSnapshot: overrides.getStatsSnapshot || (() => ({ totals: { totalSessions: 0 } })),
+    getPluginSnapshot: overrides.getPluginSnapshot || (() => ({ plugins: [] })),
+    runPetPluginCommand: overrides.runPetPluginCommand || (() => ({ status: "ok" })),
     getAllAgents: overrides.getAllAgents || (() => []),
     detectAgentInstallations: overrides.detectAgentInstallations,
     getHardwareBuddyStatus: overrides.getHardwareBuddyStatus || (() => null),
@@ -209,6 +212,9 @@ test("settings IPC registers owned channels and leaves animation override channe
   const { ipcMain, runtime } = createHarness();
 
   assert.ok(ipcMain.handlers.has("settings:get-snapshot"));
+  assert.ok(ipcMain.handlers.has("settings:get-stats-snapshot"));
+  assert.ok(ipcMain.handlers.has("settings:get-plugin-snapshot"));
+  assert.ok(ipcMain.handlers.has("settings:run-pet-plugin-command"));
   assert.ok(ipcMain.handlers.has("settings:pick-sound-file"));
   assert.ok(ipcMain.handlers.has("settings:list-themes"));
   assert.ok(ipcMain.handlers.has("settings:detect-agent-installations"));
@@ -319,6 +325,12 @@ test("settings IPC delegates controller and size preview handlers", async () => 
   const { ipcMain, calls } = createHarness();
 
   assert.deepStrictEqual(await ipcMain.invoke("settings:get-snapshot"), { lang: "en" });
+  assert.deepStrictEqual(await ipcMain.invoke("settings:get-stats-snapshot"), { totals: { totalSessions: 0 } });
+  assert.deepStrictEqual(await ipcMain.invoke("settings:get-plugin-snapshot"), { plugins: [] });
+  assert.deepStrictEqual(
+    await ipcMain.invoke("settings:run-pet-plugin-command", { pluginId: "pet-pal", commandId: "open-stats" }),
+    { status: "ok" }
+  );
   assert.deepStrictEqual(
     await ipcMain.invoke("settings:update", null),
     { status: "error", message: "settings:update payload must be { key, value }" }

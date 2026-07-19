@@ -438,6 +438,12 @@ module.exports = function initMenu(ctx) {
       // near the top) makes it harder to hit by accident.
       buildAutoApproveMenuItem(),
     ];
+    const pluginMenuItems = typeof ctx.getPetPluginMenuItems === "function"
+      ? ctx.getPetPluginMenuItems(t)
+      : [];
+    if (Array.isArray(pluginMenuItems) && pluginMenuItems.length) {
+      workGroup.splice(0, 0, ...pluginMenuItems);
+    }
 
     // Display group: just the multi-display "send to display" entry. The mac
     // dock / menu-bar visibility toggles deliberately do NOT live here — they

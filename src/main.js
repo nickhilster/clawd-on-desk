@@ -82,6 +82,8 @@ const {
 const { registerSettingsIpc } = require("./settings-ipc");
 const createSettingsEffectRouter = require("./settings-effect-router");
 const { registerSessionIpc } = require("./session-ipc");
+const { buildStatsSnapshot } = require("./session-stats");
+const { createPetPluginActions } = require("./pet-plugin-actions");
 const { registerPetInteractionIpc } = require("./pet-interaction-ipc");
 const { createSystemWakeRecovery } = require("./system-wake-recovery");
 const { formatLocalTimestamp } = require("./log-timestamp");
@@ -594,6 +596,33 @@ const settingsWindowRuntime = createSettingsWindowRuntime({
     endTextScalePreview();
   },
   onAfterClosed: () => maybeDestroyIdleAnimationPreviewPosterWindow(),
+});
+
+function showPetPluginNotification(payload = {}) {
+  const title = typeof payload.title === "string" && payload.title ? payload.title : "DeskBuddy";
+  const body = typeof payload.body === "string" && payload.body ? payload.body : "";
+  try {
+    const { Notification } = require("electron");
+    if (Notification && typeof Notification.isSupported === "function" && Notification.isSupported()) {
+      const notification = new Notification({ title, body, silent: false });
+      notification.show();
+      return;
+    }
+  } catch {}
+  try {
+    const tray = _menu && typeof _menu.getTray === "function" ? _menu.getTray() : null;
+    if (tray && process.platform === "win32" && typeof tray.displayBalloon === "function") {
+      tray.displayBalloon({ iconType: "info", title, content: body || title });
+    }
+  } catch {}
+}
+
+const petPluginActions = createPetPluginActions({
+  openDashboard: () => showDashboard(),
+  openSettingsTab: (tabId) => settingsWindowRuntime.open({ tab: tabId }),
+  getSnapshot: () => _settingsController.getSnapshot(),
+  applyUpdate: (key, value) => _settingsController.applyUpdate(key, value),
+  notify: (payload) => showPetPluginNotification(payload),
 });
 
 function getSettingsWindow() {
@@ -1832,8 +1861,8 @@ const _tutorial = require("./tutorial")({
   uninstallAgent: (agentId) => _settingsController.applyCommand("uninstallAgentIntegration", { agentId }),
   registerShortcut: (payload) => _settingsController.applyCommand("registerShortcut", payload),
   resetShortcut: (payload) => _settingsController.applyCommand("resetShortcut", payload),
-  // v1: deep-link to a specific tab is deferred — open Settings to its default tab.
-  openSettingsTab: () => settingsWindowRuntime.open(),
+  openSettingsTab: (tab) => settingsWindowRuntime.open({ tab }),
+  runPetPluginCommand: (pluginId, commandId) => petPluginActions.runCommand(pluginId, commandId),
   markTutorialSeen: () => {
     _settingsController.applyUpdate("tutorialSeen", true);
   },
@@ -3022,6 +3051,8 @@ const _menuCtx = {
   checkForUpdates: (...args) => checkForUpdates(...args),
   getUpdateMenuItem: () => getUpdateMenuItem(),
   openDashboard: () => showDashboard(),
+  openSettingsTab: (tabId) => settingsWindowRuntime.open({ tab: tabId }),
+  getPetPluginMenuItems: (t) => petPluginActions.getMenuTemplate({ t }),
   launchClaudeSession: (mode, cwd, sessionId) => launchClaudeSession(mode, cwd, sessionId),
   newSessionWithFolder: async (t) => {
     const parent = win && !win.isDestroyed() ? win : null;
@@ -3401,6 +3432,9 @@ registerSettingsIpc({
     _tutorial.open();
     return { status: "ok" };
   },
+  getStatsSnapshot: () => buildStatsSnapshot(_state.buildSessionSnapshot()),
+  getPluginSnapshot: () => petPluginActions.getSettingsSnapshot(),
+  runPetPluginCommand: (pluginId, commandId) => petPluginActions.runCommand(pluginId, commandId),
   aboutHeroSvgPath: path.join(__dirname, "..", "assets", "svg", "clawd-about-hero.svg"),
   getLanWsServer: () => _lanWss,
 });

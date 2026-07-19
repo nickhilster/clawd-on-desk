@@ -1,0 +1,294 @@
+{
+  "schemaVersion": 1,
+  "name": "Rave Raccoon",
+  "author": "Teambotics",
+  "version": "1.0.0",
+  "description": "Meet Riff: a neon night explorer who treats every coding session like a side quest at the cutest rave in town.",
+  "license": "AGPL-3.0-only",
+  "preview": "riff-idle-sidequest.svg",
+  "viewBox": {
+    "x": -20,
+    "y": -28,
+    "width": 64,
+    "height": 52
+  },
+  "layout": {
+    "contentBox": {
+      "x": -4,
+      "y": -9,
+      "width": 32,
+      "height": 30
+    },
+    "marginBox": {
+      "x": -9,
+      "y": -14,
+      "width": 42,
+      "height": 37
+    },
+    "centerX": 12,
+    "baselineY": 20,
+    "visibleHeightRatio": 0.62,
+    "baselineBottomRatio": 0.05
+  },
+  "eyeTracking": {
+    "enabled": true,
+    "states": [
+      "idle"
+    ],
+    "eyeRatioX": 0.62,
+    "eyeRatioY": 0.48,
+    "maxOffset": 2.4,
+    "bodyScale": 0.22,
+    "shadowStretch": 0.12,
+    "shadowShift": 0.24,
+    "ids": {
+      "eyes": "eyes-js",
+      "body": "body-js",
+      "shadow": "shadow-js"
+    },
+    "shadowOrigin": "12px 19px"
+  },
+  "sleepSequence": {
+    "mode": "full"
+  },
+  "states": {
+    "idle": [
+      "riff-idle.svg"
+    ],
+    "yawning": [
+      "riff-yawning.svg"
+    ],
+    "dozing": [
+      "riff-dozing.svg"
+    ],
+    "collapsing": [
+      "riff-collapsing.svg"
+    ],
+    "thinking": [
+      "riff-thinking.svg"
+    ],
+    "working": [
+      "riff-working-mix.svg"
+    ],
+    "juggling": [
+      "riff-juggling.svg"
+    ],
+    "attention": [
+      "riff-happy.svg"
+    ],
+    "notification": [
+      "riff-notification.svg"
+    ],
+    "error": [
+      "riff-error.svg"
+    ],
+    "sweeping": [
+      "riff-sweeping.svg"
+    ],
+    "carrying": [
+      "riff-carrying.svg"
+    ],
+    "sleeping": [
+      "riff-sleeping.svg"
+    ],
+    "waking": [
+      "riff-waking.svg"
+    ]
+  },
+  "workingTiers": [
+    {
+      "minSessions": 3,
+      "file": "riff-working-portal.svg"
+    },
+    {
+      "minSessions": 2,
+      "file": "riff-working-rave.svg"
+    },
+    {
+      "minSessions": 1,
+      "file": "riff-working-mix.svg"
+    }
+  ],
+  "jugglingTiers": [
+    {
+      "minSessions": 2,
+      "file": "riff-conducting.svg"
+    },
+    {
+      "minSessions": 1,
+      "file": "riff-juggling.svg"
+    }
+  ],
+  "idleAnimations": [
+    {
+      "file": "riff-idle-sidequest.svg",
+      "duration": 11000
+    },
+    {
+      "file": "riff-idle-map.svg",
+      "duration": 12500
+    },
+    {
+      "file": "riff-idle-dance.svg",
+      "duration": 8500
+    }
+  ],
+  "reactions": {
+    "drag": {
+      "file": "riff-react-drag.svg",
+      "fileLeft": "riff-react-drag-left.svg",
+      "fileRight": "riff-react-drag-right.svg"
+    },
+    "clickLeft": {
+      "file": "riff-react-left.svg",
+      "duration": 2600
+    },
+    "clickRight": {
+      "file": "riff-react-right.svg",
+      "duration": 2600
+    },
+    "annoyed": {
+      "file": "riff-react-annoyed.svg",
+      "duration": 3300
+    },
+    "double": {
+      "files": [
+        "riff-react-encore.svg"
+      ],
+      "duration": 3600
+    }
+  },
+  "displayHintMap": {
+    "clawd-working-building.svg": "riff-working-portal.svg",
+    "clawd-working-typing.svg": "riff-working-mix.svg",
+    "clawd-headphones-groove.svg": "riff-working-rave.svg",
+    "clawd-working-juggling.svg": "riff-juggling.svg",
+    "clawd-working-conducting.svg": "riff-conducting.svg",
+    "clawd-working-thinking.svg": "riff-thinking.svg"
+  },
+  "updateVisuals": {
+    "checking": "riff-thinking.svg"
+  },
+  "timings": {
+    "minDisplay": {
+      "attention": 4200,
+      "error": 4800,
+      "sweeping": 5200,
+      "notification": 3600,
+      "carrying": 3600,
+      "working": 1000,
+      "thinking": 1200
+    },
+    "autoReturn": {
+      "attention": 4200,
+      "error": 4800,
+      "sweeping": 300000,
+      "notification": 3600,
+      "carrying": 3600
+    },
+    "yawnDuration": 3200,
+    "collapseDuration": 900,
+    "wakeDuration": 1800,
+    "deepSleepTimeout": 600000,
+    "mouseIdleTimeout": 20000,
+    "mouseSleepTimeout": 60000
+  },
+  "hitBoxes": {
+    "default": {
+      "x": -2,
+      "y": -9,
+      "w": 28,
+      "h": 30
+    },
+    "sleeping": {
+      "x": -5,
+      "y": 5,
+      "w": 34,
+      "h": 16
+    },
+    "wide": {
+      "x": -12,
+      "y": -24,
+      "w": 53,
+      "h": 45
+    }
+  },
+  "wideHitboxFiles": [
+    "riff-idle-sidequest.svg",
+    "riff-thinking.svg",
+    "riff-working-portal.svg",
+    "riff-conducting.svg",
+    "riff-happy.svg",
+    "riff-notification.svg",
+    "riff-error.svg",
+    "riff-carrying.svg",
+    "riff-waking.svg",
+    "riff-react-encore.svg"
+  ],
+  "sleepingHitboxFiles": [
+    "riff-dozing.svg",
+    "riff-collapsing.svg",
+    "riff-sleeping.svg"
+  ],
+  "miniMode": {
+    "supported": true,
+    "offsetRatio": 0.5,
+    "viewBox": {
+      "x": -12,
+      "y": -12,
+      "width": 48,
+      "height": 48
+    },
+    "states": {
+      "mini-idle": [
+        "riff-mini-idle.svg"
+      ],
+      "mini-alert": [
+        "riff-mini-alert.svg"
+      ],
+      "mini-happy": [
+        "riff-mini-happy.svg"
+      ],
+      "mini-enter": [
+        "riff-mini-enter.svg"
+      ],
+      "mini-peek": [
+        "riff-mini-peek.svg"
+      ],
+      "mini-working": [
+        "riff-mini-working.svg"
+      ],
+      "mini-crabwalk": [
+        "riff-mini-crabwalk.svg"
+      ],
+      "mini-enter-sleep": [
+        "riff-mini-enter-sleep.svg"
+      ],
+      "mini-sleep": [
+        "riff-mini-sleep.svg"
+      ]
+    },
+    "timings": {
+      "minDisplay": {
+        "mini-alert": 3000,
+        "mini-happy": 3400,
+        "mini-peek": 1700
+      },
+      "autoReturn": {
+        "mini-alert": 3000,
+        "mini-happy": 3400,
+        "mini-peek": 1700
+      }
+    }
+  },
+  "objectScale": {
+    "widthRatio": 1,
+    "heightRatio": 1,
+    "imgWidthRatio": 1,
+    "offsetX": 0,
+    "offsetY": 0,
+    "imgOffsetX": 0,
+    "objBottom": 0.05,
+    "imgBottom": 0.05
+  }
+}

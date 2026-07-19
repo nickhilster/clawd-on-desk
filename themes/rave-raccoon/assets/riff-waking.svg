@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -28 64 52" role="img" aria-label="Riff wakes with an enormous stretch">
+  <title>Riff wakes with an enormous stretch</title>
+  
+  <defs>
+    <linearGradient id="jacket-gradient" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#22C7C5"/>
+      <stop offset="0.52" stop-color="#087D8F"/>
+      <stop offset="0.53" stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#5B36B9"/>
+    </linearGradient>
+    <radialGradient id="aura-gradient">
+      <stop offset="0" stop-color="#67F5F2" stop-opacity="0"/>
+      <stop offset="0.55" stop-color="#8B5CF6" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#FF4FB8" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft-glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="1.15" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="small-glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation=".45" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="tail-clip">
+      <path d="M18 8 C29 5 31 14 25 18 C21 21 16 18 17 14 C18 12 21 12 23 13"/>
+    </clipPath>
+    <style>
+      svg { overflow: visible; }
+      .outline { stroke: #211D36; stroke-width: .72; stroke-linecap: round; stroke-linejoin: round; }
+      .thin { stroke: #211D36; stroke-width: .48; stroke-linecap: round; stroke-linejoin: round; }
+      .hb-bob { animation: hb-bob 2.8s infinite steps(1,end); transform-origin: 12px 12px; }
+      .hb-tail { animation: hb-tail 2.8s infinite steps(1,end); transform-origin: 19px 12px; }
+      .hb-blink { animation: hb-blink 5.2s infinite steps(1,end); transform-origin: 12px 0px; }
+      .hb-aura { animation: hb-aura 3.2s infinite steps(8,end); transform-origin: 12px 6px; }
+      .hb-pixel-a { animation: hb-pixel-a 1.6s infinite steps(1,end); }
+      .hb-pixel-b { animation: hb-pixel-b 1.6s infinite steps(1,end); }
+      .chat-pop { animation: chat-pop 10.8s infinite steps(1,end); transform-origin: 17px -12px; }
+      .chat-pulse { animation: chat-pulse 1.2s infinite steps(2,end); }
+      @keyframes hb-bob {
+        0%, 15%, 54%, 100% { transform: translateY(0) scale(1); }
+        16%, 18% { transform: translateY(1px) scale(1.03,.97); }
+        19%, 21% { transform: translateY(-2px) scale(.98,1.03); }
+        22%, 53% { transform: translateY(-.45px); }
+      }
+      @keyframes hb-tail {
+        0%, 18%, 52%, 100% { transform: rotate(-4deg); }
+        19%, 21% { transform: rotate(14deg); }
+        22%, 51% { transform: rotate(5deg); }
+      }
+      @keyframes hb-blink {
+        0%, 68%, 72%, 94%, 98%, 100% { transform: scaleY(1); }
+        69%, 71%, 95%, 97% { transform: scaleY(.08); }
+      }
+      @keyframes hb-aura {
+        to { transform: rotate(360deg); }
+      }
+      @keyframes hb-pixel-a { 0%,49% { opacity:.95 } 50%,100% { opacity:.18 } }
+      @keyframes hb-pixel-b { 0%,49% { opacity:.2 } 50%,100% { opacity:1 } }
+      @keyframes chat-pop {
+        0%, 11%, 86%, 100% { opacity:0; transform:scale(.4) translateY(2px); }
+        12%, 14% { opacity:1; transform:scale(1.09) translateY(0); }
+        15%, 82% { opacity:1; transform:scale(1); }
+        83%, 85% { opacity:1; transform:scale(.94); }
+      }
+      @keyframes chat-pulse { 0%,49% { opacity:1 } 50%,100% { opacity:.45 } }
+      
+          .wake {animation:wake 1.8s 1 steps(1,end) forwards;transform-origin:12px 18px}
+          @keyframes wake {0%,15%{transform:rotate(78deg) translate(5px,7px) scale(.88,.76)}16%,34%{transform:scale(1.12,.82) translateY(3px)}35%,50%{transform:scale(.92,1.12) translateY(-4px)}51%,72%{transform:translateY(-1px)}73%,100%{transform:none}}
+        
+    </style>
+  </defs>
+  
+  <g class="hb-aura" opacity=".55" filter="url(#small-glow)">
+    <circle cx="12" cy="6" r="16" fill="none" stroke="#8B5CF6" stroke-width=".55" stroke-dasharray="1.5 3.2"/>
+    <circle cx="12" cy="6" r="12.5" fill="none" stroke="#67F5F2" stroke-width=".48" stroke-dasharray="5 2.5"/>
+    <path d="M-5 6 C2 -5 7 17 14 5 S27 -4 31 8" fill="none" stroke="#FF4FB8" stroke-width=".65" stroke-dasharray="2 2.2"/>
+  </g>
+  <g filter="url(#small-glow)">
+    <rect class="hb-pixel-a" x="-1" y="-5" width="1.2" height="1.2" fill="#C9FF57"/>
+    <rect class="hb-pixel-b" x="27" y="-1" width="1.1" height="1.1" fill="#FF4FB8"/>
+    <path class="hb-pixel-a" d="M30 12 h3 M31.5 10.5 v3" stroke="#67F5F2" stroke-width=".8"/>
+    <path class="hb-pixel-b" d="M-3 12 h3 M-1.5 10.5 v3" stroke="#8B5CF6" stroke-width=".8"/>
+  </g>
+  <ellipse id="shadow-js" cx="12" cy="19.2" rx="9.2" ry="1.65" fill="#211D36" opacity=".18"/>
+  
+  <g class="hb-tail" style="transform-origin:19px 12px">
+    <path d="M18 8 C29 5 31 14 25 18 C21 21 16 18 17 14 C18 12 21 12 23 13" fill="#85869B" class="outline"/>
+    <g clip-path="url(#tail-clip)" fill="#29253C" opacity=".92">
+      <path d="M21 5 L24 6 L21 21 L18 20 Z"/>
+      <path d="M27 7 L30 10 L25 20 L22 18 Z"/>
+    </g>
+    <path d="M18 8 C29 5 31 14 25 18 C21 21 16 18 17 14 C18 12 21 12 23 13" fill="none" class="outline"/>
+  </g>
+  <g id="body-js" class="wake" transform="" style="transform-origin:12px 11px">
+    <ellipse cx="6.2" cy="18.1" rx="3.8" ry="1.8" fill="#29253C" class="outline"/>
+    <ellipse cx="17.8" cy="18.1" rx="3.8" ry="1.8" fill="#29253C" class="outline"/>
+    <path d="M5 6 Q1.8 6.8 -3 -2" fill="none" stroke="#087D8F" stroke-width="3.6" stroke-linecap="round"/>
+    <path d="M19 6 Q22.2 6.8 27 -2" fill="none" stroke="#5B36B9" stroke-width="3.6" stroke-linecap="round"/>
+    <circle cx="-3" cy="-2" r="1.45" fill="#29253C" class="outline"/>
+    <circle cx="27" cy="-2" r="1.45" fill="#29253C" class="outline"/>
+    <path d="M4.6 5.5 Q3.2 10.8 5.6 16.5 Q12 19 18.4 16.5 Q20.8 10.8 19.4 5.5 Z" fill="url(#jacket-gradient)" class="outline"/>
+    <path d="M12 6 V17.2" stroke="#FFCC66" stroke-width=".75"/>
+    <path d="M5.6 8.7 H18.4" stroke="#67F5F2" stroke-width=".45" opacity=".75"/>
+    <path d="M7.3 14.5 Q12 16 16.7 14.5" fill="none" stroke="#211D36" stroke-width=".5" opacity=".75"/>
+    <path d="M6.2 5.2 Q12 1.7 17.8 5.2" fill="none" stroke="#8B5CF6" stroke-width="2.2"/>
+    <path d="M7 5 L17 16.6" stroke="#211D36" stroke-width="1.05" opacity=".86"/>
+    <rect x="15.1" y="12.2" width="4.7" height="4.5" rx=".8" fill="#5B36B9" class="outline"/>
+    <path d="M16 12.2 Q17.5 10.7 19 12.2" fill="none" class="thin"/>
+    <path d="M17.25 13.1 l.55 1.05 1.15 .18 -.84 .82 .2 1.15 -1.06-.55 -1.02 .55 .18-1.15 -.82-.82 1.14-.18z" fill="#C9FF57"/>
+    <g transform="rotate(0 12 0)">
+      <path d="M4 -4 L4.7 -10 L9 -6.7 M20 -4 L19.3 -10 L15 -6.7" fill="#85869B" class="outline"/>
+      <path d="M5.3 -5.5 L5.7 -8.2 L7.8 -6.4 M18.7 -5.5 L18.3 -8.2 L16.2 -6.4" fill="#F8E9C7" opacity=".9"/>
+      <path d="M3.4 -3.8 Q3.7 -8 12 -8.7 Q20.3 -8 20.6 -3.8 L21.4 -.8 L20.2 .1 L21.2 2.3 L19.8 2.6 L20.1 5.8 Q17.2 9.1 12 9.6 Q6.8 9.1 3.9 5.8 L4.2 2.6 L2.8 2.3 L3.8 .1 L2.6 -.8 Z" fill="#B9BBC8" class="outline"/>
+      <path d="M3.9 -2.1 Q7 -5.6 11 -2.6 L9.6 3.3 Q6.3 4.2 4.2 2.1 Z" fill="#29253C"/>
+      <path d="M20.1 -2.1 Q17 -5.6 13 -2.6 L14.4 3.3 Q17.7 4.2 19.8 2.1 Z" fill="#29253C"/>
+      <path d="M8.1 3.2 Q12 .8 15.9 3.2 L15 7 Q12 8.2 9 7 Z" fill="#F8E9C7"/>
+      <path d="M10.6 3.1 Q12 2.3 13.4 3.1 Q12 4.5 10.6 3.1" fill="#211D36"/>
+      
+    <g><path d="M6.4 -2 Q8 -3.6 9.6 -2 M14.3 -2 Q16 -3.6 17.8 -2" fill="none" class="thin"/></g>
+    <g id="eyes-js" class="hb-blink">
+      <ellipse cx="8" cy=".5" rx="2.15" ry="2.5" fill="#FFFDF5" stroke="#211D36" stroke-width=".52"/>
+      <ellipse cx="16" cy=".5" rx="2.15" ry="2.5" fill="#FFFDF5" stroke="#211D36" stroke-width=".52"/>
+      <g >
+        <ellipse cx="8.25" cy=".8" rx=".92" ry="1.25" fill="#211D36"/>
+        <ellipse cx="16.25" cy=".8" rx=".92" ry="1.25" fill="#211D36"/>
+        <circle cx="8.55" cy=".25" r=".34" fill="#FFFDF5"/>
+        <circle cx="16.55" cy=".25" r=".34" fill="#FFFDF5"/>
+      </g>
+    </g>
+    <path d="M9.5 4.1 Q12 7 14.5 4.1 Q12 8.2 9.5 4.1" fill="#FF4FB8" stroke="#211D36" stroke-width=".58"/>
+      <path d="M4.6 -5.1 Q6.2 -7 8 -7.2 M16 -7.2 Q17.8 -7 19.4 -5.1" fill="none" stroke="#FFFDF5" stroke-width=".8" opacity=".8"/>
+    </g>
+    <g filter="url(#small-glow)">
+      <rect x="-1.9" y="-3.8" width="2.9" height=".55" rx=".25" fill="#C9FF57" transform="rotate(-8 -1 -2)"/>
+      <rect x="23" y="-3.8" width="2.9" height=".55" rx=".25" fill="#FF4FB8" transform="rotate(8 24 -2)"/>
+    </g>
+    
+  </g>
+  <g class="chat-pop" filter="url(#small-glow)">
+    <path d="M20 -18.2 L17.8 -15.6 L24 -18.2" fill="#FFFDF5" stroke="#211D36" stroke-width=".62" stroke-linejoin="round"/>
+    <rect x="14" y="-25" width="27" height="7" rx="2.4" fill="#FFFDF5" stroke="#211D36" stroke-width=".68"/>
+    <rect x="15.1" y="-24" width="1.1" height="5" rx=".5" fill="#67F5F2"/>
+    <text x="27.5" y="-20.8" text-anchor="middle" font-family="monospace" font-size="2.85" font-weight="900" fill="#211D36">I'M UP!</text>
+    <rect class="chat-pulse" x="38.7" y="-20.1" width=".85" height=".85" fill="#67F5F2"/>
+  </g>
+</svg>

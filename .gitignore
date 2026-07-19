@@ -145,3 +145,6 @@ relay/node_modules/
 
 # Git worktrees for isolated feature work
 .worktrees/
+
+# Local build/test scratch output (Playwright artifacts, packaged theme zips)
+output/

@@ -73,6 +73,14 @@ function createSettingsWindowRuntime(options = {}) {
   let liftTimer = null;
   let showPendingSettingsWindow = null;
 
+  function normalizeOpenRequest(request) {
+    if (typeof request === "string") return { tab: request };
+    if (!request || typeof request !== "object") return {};
+    return {
+      tab: typeof request.tab === "string" && request.tab ? request.tab : null,
+    };
+  }
+
   function getWindow() {
     return settingsWindow;
   }
@@ -170,6 +178,14 @@ function createSettingsWindowRuntime(options = {}) {
     try { wc.send("settings:text-scale-context-changed"); } catch {}
   }
 
+  function sendTabSelection(win, tabId) {
+    if (typeof tabId !== "string" || !tabId) return;
+    const wc = win && win.webContents;
+    if (!wc || (typeof wc.isDestroyed === "function" && wc.isDestroyed())) return;
+    if (typeof wc.send !== "function") return;
+    try { wc.send("settings:select-tab", tabId); } catch {}
+  }
+
   // textScale changed while settings is open: re-zoom, raise the minimum
   // size, and only grow the window if it now sits below that minimum — never
   // touch a user-chosen size otherwise.
@@ -231,13 +247,15 @@ function createSettingsWindowRuntime(options = {}) {
     app.once("ready", open);
   }
 
-  function open() {
+  function open(request) {
+    const openRequest = normalizeOpenRequest(request);
     if (settingsWindow && !settingsWindow.isDestroyed()) {
       if (typeof showPendingSettingsWindow === "function") {
         showPendingSettingsWindow({ restoreMinimized: true });
       } else {
         showAndFocusSettingsWindow(settingsWindow, { restoreMinimized: true });
       }
+      sendTabSelection(settingsWindow, openRequest.tab);
       return;
     }
 
@@ -280,6 +298,9 @@ function createSettingsWindowRuntime(options = {}) {
     }
     createdWindow.setMenuBarVisibility(false);
     createdWindow.loadFile(settingsHtmlPath);
+    if (openRequest.tab && createdWindow.webContents && typeof createdWindow.webContents.once === "function") {
+      createdWindow.webContents.once("did-finish-load", () => sendTabSelection(createdWindow, openRequest.tab));
+    }
     if (createdWindow.webContents && typeof createdWindow.webContents.once === "function") {
       createdWindow.webContents.once("did-finish-load", () => {
         applyZoomToWindow(createdWindow, getTextScale());

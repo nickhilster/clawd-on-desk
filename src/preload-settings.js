@@ -7,6 +7,9 @@
 //   getSnapshot()                       Promise<snapshot>
 //   update(key, value)                  Promise<{ status, message? }>
 //   command(action, payload)            Promise<{ status, message? }>
+//   getStatsSnapshot()                  Promise<statsSnapshot|null>
+//   getPluginSnapshot()                 Promise<{plugins:Array}>
+//   runPetPluginCommand(pluginId, commandId)
 //   listAgents()                        Promise<Array<{id, name, ...}>>
 //   onChanged(cb)                       cb({ changes, snapshot? }) — fires for
 //                                       every settings-changed broadcast
@@ -29,6 +32,8 @@ const remoteSshStatusListeners = new Set();
 const remoteSshProgressListeners = new Set();
 const hardwareBuddyStatusListeners = new Set();
 const textScaleContextListeners = new Set();
+const selectTabListeners = new Set();
+let pendingSelectedTab = null;
 ipcRenderer.on("settings-changed", (_event, payload) => {
   for (const cb of listeners) {
     try { cb(payload); } catch (err) { console.warn("settings onChanged listener threw:", err); }
@@ -67,9 +72,21 @@ ipcRenderer.on("settings:text-scale-context-changed", () => {
     try { cb(); } catch (err) { console.warn("text scale context listener threw:", err); }
   }
 });
+ipcRenderer.on("settings:select-tab", (_event, payload) => {
+  pendingSelectedTab = typeof payload === "string" ? payload : null;
+  for (const cb of selectTabListeners) {
+    try { cb(payload); } catch (err) { console.warn("select tab listener threw:", err); }
+  }
+});
 
 contextBridge.exposeInMainWorld("settingsAPI", {
   getSnapshot: () => ipcRenderer.invoke("settings:get-snapshot"),
+  getStatsSnapshot: () => ipcRenderer.invoke("settings:get-stats-snapshot"),
+  getPluginSnapshot: () => ipcRenderer.invoke("settings:get-plugin-snapshot"),
+  runPetPluginCommand: (pluginId, commandId) => ipcRenderer.invoke(
+    "settings:run-pet-plugin-command",
+    { pluginId, commandId }
+  ),
   getShortcutFailures: () => ipcRenderer.invoke("settings:getShortcutFailures"),
   getAnimationOverridesData: () => ipcRenderer.invoke("settings:get-animation-overrides-data"),
   openThemeAssetsDir: () => ipcRenderer.invoke("settings:open-theme-assets-dir"),
@@ -88,6 +105,14 @@ contextBridge.exposeInMainWorld("settingsAPI", {
     if (typeof cb !== "function") return () => {};
     textScaleContextListeners.add(cb);
     return () => textScaleContextListeners.delete(cb);
+  },
+  onSelectTab: (cb) => {
+    if (typeof cb !== "function") return () => {};
+    selectTabListeners.add(cb);
+    if (pendingSelectedTab) {
+      try { cb(pendingSelectedTab); } catch (err) { console.warn("select tab listener threw:", err); }
+    }
+    return () => selectTabListeners.delete(cb);
   },
   exportAnimationOverrides: () => ipcRenderer.invoke("settings:export-animation-overrides"),
   importAnimationOverrides: () => ipcRenderer.invoke("settings:import-animation-overrides"),

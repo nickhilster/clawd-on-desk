@@ -43,8 +43,12 @@ const {
   TEXT_SCALE_DEFAULT,
   normalizeTextScaleByDisplay,
 } = require("./text-scale");
+const {
+  getDefaultPetPluginPrefs,
+  normalizePetPluginPrefs,
+} = require("./pet-plugin-actions");
 
-const CURRENT_VERSION = 12;
+const CURRENT_VERSION = 13;
 const DEFAULT_INTEGRATION_INSTALLED_IDS = Object.freeze(["claude-code", "codex"]);
 const DEFAULT_INTEGRATION_INSTALLED_SET = new Set(DEFAULT_INTEGRATION_INSTALLED_IDS);
 
@@ -259,6 +263,11 @@ const SCHEMA = {
   },
   // Theme
   theme: { type: "string", default: "spark" },
+  plugins: {
+    type: "object",
+    defaultFactory: () => getDefaultPetPluginPrefs(),
+    normalize: normalizePlugins,
+  },
   // Phase 2/3 placeholders — schema reserves the keys so future migrations don't need v2.
   agents: {
     type: "object",
@@ -662,6 +671,10 @@ function migrate(raw) {
     if (!("showDock" in out)) out.showDock = true;
     out.version = 12;
   }
+  if (out.version < 13) {
+    if (!("plugins" in out)) out.plugins = getDefaultPetPluginPrefs();
+    out.version = 13;
+  }
   if ((typeof out.version === "number" ? out.version : 0) < CURRENT_VERSION) {
     out.version = CURRENT_VERSION;
   }
@@ -754,6 +767,10 @@ function normalizeAgents(value, defaultsValue) {
     if (touched) out[id] = merged;
   }
   return out;
+}
+
+function normalizePlugins(value, defaultsValue) {
+  return normalizePetPluginPrefs(value, defaultsValue || getDefaultPetPluginPrefs());
 }
 
 function normalizeTransitionOverride(value) {

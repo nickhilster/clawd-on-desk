@@ -37,6 +37,25 @@ const ICONS = {
     '<circle cx="16.5" cy="10.5" r="1" fill="currentColor"/>' +
     '</svg>',
 
+  // bar chart
+  stats:
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="100%" height="100%">' +
+    '<path d="M4 20V10"/>' +
+    '<path d="M10 20V4"/>' +
+    '<path d="M16 20v-7"/>' +
+    '<path d="M22 20v-4"/>' +
+    '<path d="M3 20h19"/>' +
+    '</svg>',
+
+  // grid blocks
+  plugins:
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="100%" height="100%">' +
+    '<rect x="4" y="4" width="6" height="6" rx="1.5"/>' +
+    '<rect x="14" y="4" width="6" height="6" rx="1.5"/>' +
+    '<rect x="4" y="14" width="6" height="6" rx="1.5"/>' +
+    '<rect x="14" y="14" width="6" height="6" rx="1.5"/>' +
+    '</svg>',
+
   // film strip
   animOverrides:
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="100%" height="100%">' +

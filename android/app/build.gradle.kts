@@ -8,6 +8,12 @@ plugins {
     alias(libs.plugins.hilt.android)
 }
 
+val releaseKeystorePath = (
+    (findProperty("KEYSTORE_FILE") as? String?)
+        ?: System.getenv("KEYSTORE_FILE")
+        ?: ""
+).trim()
+
 android {
     namespace = "com.teambotics.deskbuddy.mobile"
     compileSdk = 35
@@ -16,8 +22,8 @@ android {
         applicationId = "com.teambotics.deskbuddy.mobile"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1008
-        versionName = "0.12.1"
+        versionCode = 1010
+        versionName = "0.12.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             abiFilters += listOf("arm64-v8a")
@@ -26,9 +32,7 @@ android {
 
     signingConfigs {
         create("release") {
-            val ks = findProperty("KEYSTORE_FILE") as? String?
-                ?: System.getenv("KEYSTORE_FILE") ?: ""
-            storeFile = if (ks.isNotEmpty()) rootProject.file(ks) else null
+            storeFile = if (releaseKeystorePath.isNotEmpty()) rootProject.file(releaseKeystorePath) else null
             storePassword = findProperty("STORE_PASSWORD") as? String?
                 ?: System.getenv("STORE_PASSWORD") ?: ""
             keyAlias = findProperty("KEY_ALIAS") as? String?
@@ -42,7 +46,9 @@ android {
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release")
+            if (releaseKeystorePath.isNotEmpty()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
         debug {
             isMinifyEnabled = false

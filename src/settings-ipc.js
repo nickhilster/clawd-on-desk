@@ -164,6 +164,12 @@ function registerSettingsIpc(options = {}) {
     code: "quick_commands_unavailable",
     message: "Quick Commands are unavailable",
   }));
+  const getStatsSnapshot = options.getStatsSnapshot || (() => null);
+  const getPluginSnapshot = options.getPluginSnapshot || (() => ({ plugins: [] }));
+  const runPetPluginCommand = options.runPetPluginCommand || (() => ({
+    status: "error",
+    message: "Pet plugin commands are unavailable",
+  }));
   const showTutorial = options.showTutorial || (() => ({
     status: "error",
     message: "Tutorial is unavailable",
@@ -191,6 +197,14 @@ function registerSettingsIpc(options = {}) {
   }
 
   handle("settings:get-snapshot", () => settingsController.getSnapshot());
+  handle("settings:get-stats-snapshot", () => getStatsSnapshot());
+  handle("settings:get-plugin-snapshot", () => getPluginSnapshot());
+  handle("settings:run-pet-plugin-command", (_event, payload) => {
+    if (!payload || typeof payload !== "object") {
+      return { status: "error", message: "settings:run-pet-plugin-command payload must be an object" };
+    }
+    return runPetPluginCommand(payload.pluginId, payload.commandId);
+  });
   handle("settings:update", (_event, payload) => {
     if (!payload || typeof payload !== "object") {
       return { status: "error", message: "settings:update payload must be { key, value }" };

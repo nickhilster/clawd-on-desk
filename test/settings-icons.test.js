@@ -24,11 +24,14 @@ const SIDEBAR_TAB_IDS = [
   "general",
   "agents",
   "theme",
+  "stats",
+  "plugins",
   "animOverrides",
   "shortcuts",
   "telegram-approval",
   "remote-ssh",
   "mobile",
+  "mdown-manager",
   "about",
 ];
 

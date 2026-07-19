@@ -9,6 +9,8 @@ const SIDEBAR_TABS = [
   { id: "general", labelKey: "sidebarGeneral", available: true },
   { id: "agents", labelKey: "sidebarAgents", available: true },
   { id: "theme", labelKey: "sidebarTheme", available: true },
+  { id: "stats", labelKey: "sidebarStats", available: true },
+  { id: "plugins", labelKey: "sidebarPlugins", available: true },
   { id: "animOverrides", labelKey: "sidebarAnimOverrides", available: true },
   { id: "shortcuts", labelKey: "sidebarShortcuts", available: true },
   { id: "telegram-approval", labelKey: "sidebarTelegramApproval", available: true },
@@ -85,6 +87,8 @@ core.ops.installRenderHooks({
 globalThis.DeskBuddySettingsTabGeneral.init(core);
 globalThis.DeskBuddySettingsTabAgents.init(core);
 globalThis.DeskBuddySettingsTabTheme.init(core);
+if (globalThis.DeskBuddySettingsTabStats) globalThis.DeskBuddySettingsTabStats.init(core);
+if (globalThis.DeskBuddySettingsTabPlugins) globalThis.DeskBuddySettingsTabPlugins.init(core);
 // Not a top-level tab anymore — it provides the "on / off" subtab that
 // DeskBuddySettingsTabAnimOverrides renders. init() just wires up the core refs.
 globalThis.DeskBuddySettingsTabAnimMap.init(core);
@@ -98,6 +102,12 @@ if (globalThis.DeskBuddySettingsTabMdownManager) globalThis.DeskBuddySettingsTab
 
 if (window.settingsAPI && typeof window.settingsAPI.onChanged === "function") {
   window.settingsAPI.onChanged((payload) => core.ops.applyChanges(payload));
+}
+
+if (window.settingsAPI && typeof window.settingsAPI.onSelectTab === "function") {
+  window.settingsAPI.onSelectTab((tabId) => {
+    if (typeof tabId === "string" && core.tabs[tabId]) core.ops.selectTab(tabId);
+  });
 }
 
 if (window.settingsAPI && typeof window.settingsAPI.onAnimationPreviewPosterReady === "function") {
